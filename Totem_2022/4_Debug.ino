@@ -1,3 +1,7 @@
+#include "1_HardwareInteraction.h"
+#include "2_ColorModeUtils.h"
+#include "Totem_2022.h"
+
 void debugIndicate() {
   stripSetSolid(BLUE);
   strip.show();

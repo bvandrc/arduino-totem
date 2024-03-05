@@ -1,4 +1,8 @@
-// void setSolidMode(uint8_t index) {
+#include "1_HardwareInteraction.h"
+#include "2_ColorModeUtils.h"
+#include "Totem_2022.h"
+
+//  void setSolidMode(uint8_t index) {
 //   const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
 //   stripSetSolid(COLOR_OPTIONS[index - 1]);
 //   strip.show();
@@ -230,7 +234,7 @@ void fillUpQuadrantsCycle() {
       getNewColor(color3);
       getNewColor(color4);
       uint32_t colors[] = {color1, color2, color3, color4};
-      if (arrayisUnique(colors, 4) && color1 != ogColor1 && color2 != ogColor2 && color3 != ogColor3 &&
+      if (arrayIsUnique(colors, 4) && color1 != ogColor1 && color2 != ogColor2 && color3 != ogColor3 &&
           color4 != ogColor4) {
         break;
       }

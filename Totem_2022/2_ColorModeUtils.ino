@@ -1,3 +1,6 @@
+#include "1_HardwareInteraction.h"
+#include "Totem_2022.h"
+
 // colors - visually tested
 const uint32_t RED = strip.Color(255, 0, 0);
 const uint32_t ORANGE = strip.Color(255, 30, 0);
@@ -12,7 +15,7 @@ const uint32_t OFF = strip.Color(0, 0, 0);
 const uint32_t COLORS[] = {RED, ORANGE, YELLOW, GREEN, SEAFOAM, BLUE, PURPLE};  // order of rage flash as well
 const uint8_t LEN_COLORS = 7;                                                   // better to hardcode array lengths
 
-bool arrayisUnique(uint32_t colors[], uint8_t len_colors) {
+bool arrayIsUnique(uint32_t colors[], uint8_t len_colors) {
   for (uint8_t i = 0; i < len_colors; i++) {
     uint32_t origVal = colors[i];
     for (uint8_t j = 0; j < len_colors; j++) {

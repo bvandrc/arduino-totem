@@ -1,3 +1,7 @@
+#include "1_HardwareInteraction.h"
+#include "3_ColorModes.h"
+#include "4_Debug.h"
+
 // inits
 uint16_t effectMode = 1;    // Chase, Fade
 uint16_t colorScheme = 1;   // Rainbow, Pairs
@@ -11,7 +15,7 @@ bool tapEnabled = true;
 void setup() {
   //  Serial.begin(9600);
   setUpPins();
-  initMoSens();
+  initMotionSensor();
   initStrip();
 }
 

@@ -1,3 +1,5 @@
+#include "Totem_2022.h"
+
 // imports
 #include <Adafruit_LIS3DH.h>    // 1.2.2
 #include <Adafruit_NeoPixel.h>  // 1.8.5
@@ -36,7 +38,7 @@ void setUpPins() {
   // attachInterrupt(digitalPinToInterrupt(MO_SENS_INT_1_PIN), tapFlash, RISING  );
 }
 
-void initMoSens() {
+void initMotionSensor() {
   lis.begin(0x18);
   lis.setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
   lis.setClick(2, CLICKTHRESHHOLD);
