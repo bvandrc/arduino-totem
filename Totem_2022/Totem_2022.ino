@@ -1,12 +1,12 @@
 // inits
-uint16_t effectMode = 1;  // Chase, Fade
-uint16_t colorScheme = 1; // Rainbow, Pairs
-uint16_t brightness = 1;  // 0 to 255
-uint16_t effectSpeed = 10; // 0 to 1024
+uint16_t effectMode = 1;    // Chase, Fade
+uint16_t colorScheme = 1;   // Rainbow, Pairs
+uint16_t brightness = 1;    // 0 to 255
+uint16_t effectSpeed = 10;  // 0 to 1024
 
 bool tapEnabled = true;
 
-//TODO: any locks (ie brightness lock?)
+// TODO: any locks (ie brightness lock?)
 
 void setup() {
   //  Serial.begin(9600);
@@ -72,22 +72,30 @@ bool checkTapFlash() {
 void doTheLightingMode() {
   switch (effectMode) {
     case 1:
-      rainbowChase(); break;
+      rainbowChase();
+      break;
     case 2:
-      rainbowFade(); break;
+      rainbowFade();
+      break;
     case 3:
-      theaterChaseCycle(); break;
+      theaterChaseCycle();
+      break;
     case 4:
-      rainbowTwinkle(); break;
+      rainbowTwinkle();
+      break;
     case 5:
       if (colorScheme < 3) {
-        fillUpQuadrantsCycle(); break;
+        fillUpQuadrantsCycle();
+        break;
       } else {
-        fillUpCycle(); break;
+        fillUpCycle();
+        break;
       }
     case 6:
-      setOneColorMode(colorScheme); break;
+      setOneColorMode(colorScheme);
+      break;
     default:
-      rainbowChase(); break;
+      rainbowChase();
+      break;
   }
 }

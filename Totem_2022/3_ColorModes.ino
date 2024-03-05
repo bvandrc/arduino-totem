@@ -1,8 +1,8 @@
-//void setSolidMode(uint8_t index) {
-//  const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
-//  stripSetSolid(COLOR_OPTIONS[index - 1]);
-//  strip.show();
-//}
+// void setSolidMode(uint8_t index) {
+//   const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
+//   stripSetSolid(COLOR_OPTIONS[index - 1]);
+//   strip.show();
+// }
 
 void setOneColorMode(uint8_t index) {
   const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
@@ -10,17 +10,23 @@ void setOneColorMode(uint8_t index) {
   uint16_t pixelHue;
   switch (index) {
     case 1:
-      pixelHue = 0; break; //red
+      pixelHue = 0;  // red
+      break;
     case 2:
-      pixelHue = 21845; break; //green
+      pixelHue = 21845;  // green
+      break;
     case 3:
-      pixelHue = 43690; break; //blue
+      pixelHue = 43690;  // blue
+      break;
     case 4:
-      pixelHue = 3458; break; // orange
+      pixelHue = 3458;  // orange
+      break;
     case 5:
-      pixelHue = 52246; break; //purple
+      pixelHue = 52246;  // purple
+      break;
     case 6:
-      pixelHue = 27306; break; //seafoam
+      pixelHue = 27306;  // seafoam
+      break;
   }
 
   for (uint8_t i = 0; i < strip.numPixels(); i++) {
@@ -40,7 +46,6 @@ void setOneColorMode(uint8_t index) {
   if (wait(10, 500)) {
     return;
   }
-
 }
 
 void rainbowChase() {
@@ -74,7 +79,7 @@ void rainbowTwinkle() {
     stripSetPixelColor(i, getRandomColor());
     strip.show();
   }
-  uint8_t pixelToChange  = 0;
+  uint8_t pixelToChange = 0;
   while (true) {
     getNewPixel(pixelToChange);
     stripSetPixelColor(pixelToChange, getRandomColor());
@@ -94,7 +99,7 @@ bool colorTwinkle(uint32_t colors[], uint8_t len_colors, uint32_t timeLengthMill
     strip.show();
   }
 
-  uint8_t pixelToChange  = 0;
+  uint8_t pixelToChange = 0;
   while ((millis() - initialTime) < timeLengthMillis) {
     getNewPixel(pixelToChange);
     stripSetPixelColor(pixelToChange, colors[random(len_colors)]);
@@ -124,7 +129,7 @@ bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwis
   unsigned long initialTime = millis();
   while ((millis() - initialTime) < timeLengthMillis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
-      for (uint8_t indx = 0; indx < strip.numPixels() ; indx += (width * 2)) {
+      for (uint8_t indx = 0; indx < strip.numPixels(); indx += (width * 2)) {
         int signedStagger = clockwise ? stagger : -stagger;
         stripFill(color1, indx + signedStagger - (width * 2), width);
         stripFill(color2, indx + signedStagger - (width * 2) + width, width);
@@ -160,7 +165,6 @@ void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_wid
     strip.show();
     delayMicroseconds(delayMicros);
   }
-
 }
 
 bool fillUp(uint32_t c) {
@@ -183,10 +187,10 @@ void fillUpCycle() {
   while (true) {
     getNewColor(color1);
     if (fillUp(color1)) {
-      return ;
+      return;
     }
     if (wait(20, 1000)) {
-      return ;
+      return;
     }
   }
 }
@@ -226,21 +230,20 @@ void fillUpQuadrantsCycle() {
       getNewColor(color3);
       getNewColor(color4);
       uint32_t colors[] = {color1, color2, color3, color4};
-      if (arrayisUnique(colors, 4) && color1 != ogColor1 && color2 != ogColor2 && color3 != ogColor3 && color4 != ogColor4) {
+      if (arrayisUnique(colors, 4) && color1 != ogColor1 && color2 != ogColor2 && color3 != ogColor3 &&
+          color4 != ogColor4) {
         break;
       }
     }
 
     if (fillUpQuadrants(color1, color2, color3, color4)) {
-      return ;
+      return;
     }
     if (wait(20, 1000)) {
-      return ;
+      return;
     }
   }
 }
-
-
 
 void rageFlash() {
   static uint32_t prevFlashColor = ORANGE;
@@ -248,7 +251,7 @@ void rageFlash() {
   uint16_t prevBrightness = brightness;
   brightness = brightness < 200 ? 200 : MAX_BRIGHTNESS;
 
-  uint32_t rageColor = COLORS[random(0, LEN_COLORS)];    // pick random color
+  uint32_t rageColor = COLORS[random(0, LEN_COLORS)];  // pick random color
   while (rageColor == prevFlashColor) {
     rageColor = COLORS[random(0, LEN_COLORS)];
   }

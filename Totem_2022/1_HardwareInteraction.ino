@@ -1,26 +1,22 @@
 // imports
-#include <Adafruit_NeoPixel.h> // 1.8.5
-#include <Adafruit_LIS3DH.h> // 1.2.2
-
+#include <Adafruit_LIS3DH.h>    // 1.2.2
+#include <Adafruit_NeoPixel.h>  // 1.8.5
 
 // pins
-const uint8_t  STRIP_PIN = 5;
-const uint8_t  RAGE_BUTTON_PIN = 2;
-const uint8_t  SPEED_DIAL_PIN = A2;
-const uint8_t  BRIGHTNESS_DIAL_PIN = A3;
-const uint8_t  MODE_DIAL_PIN = A1;
-const uint8_t  COLOR_DIAL_PIN = A0;
-const uint8_t  MIC_PIN = A7;
-const uint8_t  MO_SENS_INT_1_PIN = 3;
+const uint8_t STRIP_PIN = 5;
+const uint8_t RAGE_BUTTON_PIN = 2;
+const uint8_t SPEED_DIAL_PIN = A2;
+const uint8_t BRIGHTNESS_DIAL_PIN = A3;
+const uint8_t MODE_DIAL_PIN = A1;
+const uint8_t COLOR_DIAL_PIN = A0;
+const uint8_t MIC_PIN = A7;
+const uint8_t MO_SENS_INT_1_PIN = 3;
 
 // other consts
-const uint8_t  NUM_PIXELS = 156;
-const uint16_t MAX_BRIGHTNESS = 255;      // not actual max brightness-- don't change this.
+const uint8_t NUM_PIXELS = 156;
+const uint16_t MAX_BRIGHTNESS = 255;  // not actual max brightness-- don't change this.
 const uint16_t DIAL_MIN = 0;
 const uint16_t DIAL_MAX = 1023;
-
-
-
 
 // LED strip init
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);
@@ -34,15 +30,15 @@ Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 #define CLICKTHRESHHOLD 80
 
 void setUpPins() {
-  pinMode(RAGE_BUTTON_PIN, INPUT_PULLUP); // rage button normally CLOSED to GND
-//  pinMode(MO_SENS_INT_1_PIN, INPUT); 
+  pinMode(RAGE_BUTTON_PIN, INPUT_PULLUP);  // rage button normally CLOSED to GND
+                                           //  pinMode(MO_SENS_INT_1_PIN, INPUT);
   //  attachInterrupt(digitalPinToInterrupt(RAGE_BUTTON_PIN), rageFlash, HIGH ); cant figure out why this wont work
-  // attachInterrupt(digitalPinToInterrupt(MO_SENS_INT_1_PIN), tapFlash, RISING  ); 
+  // attachInterrupt(digitalPinToInterrupt(MO_SENS_INT_1_PIN), tapFlash, RISING  );
 }
 
 void initMoSens() {
   lis.begin(0x18);
-  lis.setRange(LIS3DH_RANGE_4_G);   // 2, 4, 8 or 16 G
+  lis.setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
   lis.setClick(2, CLICKTHRESHHOLD);
   delay(100);
 }
@@ -61,8 +57,8 @@ bool checkTapped() {
 }
 
 void initStrip() {
-  strip.begin(); // initialize
-  strip.setBrightness(150); // max brightness of strip (actual max is 255)
+  strip.begin();             // initialize
+  strip.setBrightness(150);  // max brightness of strip (actual max is 255)
   strip.show();
 
   /*  72 pixels (2021 totem):
@@ -82,8 +78,6 @@ void initStrip() {
   */
 }
 
-
-
 // INPUTS
 bool rageButtonPushed() {
   return digitalRead(RAGE_BUTTON_PIN);
@@ -99,15 +93,15 @@ uint8_t getColorDialPosition() {
 
 uint8_t getSelectorPosition(uint8_t pin) {
   uint16_t readVal = analogRead(pin);
-  if (readVal < ( DIAL_MAX * 1.0 / 10.0)) {
+  if (readVal < (DIAL_MAX * 1.0 / 10.0)) {
     return 6;
   } else if (readVal < (DIAL_MAX * 3.0 / 10.0)) {
     return 5;
-  } else if (readVal < (DIAL_MAX * 5.0 / 10.0) ) {
+  } else if (readVal < (DIAL_MAX * 5.0 / 10.0)) {
     return 4;
-  } else if (readVal < (DIAL_MAX * 7.0 / 10.0) ) {
+  } else if (readVal < (DIAL_MAX * 7.0 / 10.0)) {
     return 3;
-  } else if (readVal < (DIAL_MAX * 9.0 / 10.0) ) {
+  } else if (readVal < (DIAL_MAX * 9.0 / 10.0)) {
     return 2;
   } else {
     return 1;
@@ -115,8 +109,8 @@ uint8_t getSelectorPosition(uint8_t pin) {
 }
 
 void getBrightnessDial() {
-  uint16_t readVal =  analogRead(BRIGHTNESS_DIAL_PIN);
-  brightness =  map(readVal, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
+  uint16_t readVal = analogRead(BRIGHTNESS_DIAL_PIN);
+  brightness = map(readVal, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
   // TODO: scale this dial logarithmically
 }
 
@@ -136,7 +130,7 @@ void stripFill(uint32_t c = 0, int first = 0, uint16_t count = 0) {
   uint32_t newC = getColorWithBrightness(c);
   if (first < 0) {
     strip.fill(newC, 0, count + first);
-  }  else {
+  } else {
     strip.fill(newC, (uint16_t)first, count);
   }
 }
@@ -144,9 +138,8 @@ void stripFill(uint32_t c = 0, int first = 0, uint16_t count = 0) {
 // https://forums.adafruit.com/viewtopic.php?t=41143
 uint32_t getColorWithBrightness(uint32_t c) {
   uint8_t r = (uint8_t)(c >> 16);
-  uint8_t g = (uint8_t)(c >>  8);
+  uint8_t g = (uint8_t)(c >> 8);
   uint8_t b = (uint8_t)(c);
-
 
   uint8_t newR = (r * brightness / MAX_BRIGHTNESS);
   uint8_t newG = (g * brightness / MAX_BRIGHTNESS);
@@ -157,9 +150,8 @@ uint32_t getColorWithBrightness(uint32_t c) {
 
 uint32_t setColorBrightness(uint32_t c, uint16_t br) {
   uint8_t r = (uint8_t)(c >> 16);
-  uint8_t g = (uint8_t)(c >>  8);
+  uint8_t g = (uint8_t)(c >> 8);
   uint8_t b = (uint8_t)(c);
-
 
   uint8_t newR = (r * br / MAX_BRIGHTNESS);
   uint8_t newG = (g * br / MAX_BRIGHTNESS);
@@ -167,13 +159,6 @@ uint32_t setColorBrightness(uint32_t c, uint16_t br) {
 
   return strip.Color(newR, newG, newB);
 }
-
-
-
-
-
-
-
 
 /* DEBOUNCE EXAMPLE
 
