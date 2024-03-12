@@ -1,13 +1,13 @@
-#include "1_HardwareInteraction.h"
-#include "3_ColorModes.h"
-#include "4_Debug.h"
+#include "1_HardwareInputs.h"
+#include "2_HardwareOutputs.h"
+#include "4_ColorModes.h"
+#include "5_Debug.h"
 
-// inits
+// Global variable inits
 uint16_t effectMode = 1;    // Chase, Fade
 uint16_t colorScheme = 1;   // Rainbow, Pairs
 uint16_t brightness = 1;    // 0 to 255
 uint16_t effectSpeed = 10;  // 0 to 1024
-
 bool tapEnabled = true;
 
 // TODO: any locks (ie brightness lock?)

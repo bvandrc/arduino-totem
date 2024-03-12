@@ -1,5 +1,6 @@
-#include "1_HardwareInteraction.h"
-#include "2_ColorModeUtils.h"
+#include "1_HardwareInputs.h"
+#include "2_HardwareOutputs.h"
+#include "3_ColorModeUtils.h"
 #include "Totem_2022.h"
 
 //  void setSolidMode(uint8_t index) {
