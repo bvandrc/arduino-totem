@@ -9,8 +9,9 @@ extern Adafruit_NeoPixel strip;
 
 extern void initStrip();
 
+extern uint32_t getColorBrightnessAdjusted(uint32_t c, uint8_t br);
+
 extern void stripSetPixelColor(uint16_t n, uint32_t c);
 extern void stripFill(uint32_t c, int first, uint16_t count);
-extern uint32_t setColorBrightness(uint32_t c, uint16_t br);
 
 #endif

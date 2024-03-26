@@ -7,14 +7,32 @@
 const uint8_t STRIP_PIN = 5;
 
 // Other consts
-const uint8_t NUM_PIXELS = 156;
+const uint8_t NUM_PIXELS = 205;
 
 // LED strip
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
+/*
+Side 1 ("Front" - side with stems)
+Middle | 2 - 26
+Left   | 27 - 36
+Top    | 37 - 64
+Right  | 65 - 74
+Bottom | 75 - 102
+
+"Left" inside lights  - 1, 103
+"Right" inside lights - 104
+
+Side 2 ("Back" - side with yellow flowers)
+Middle | 105 - 129
+Left   | 130 - 139
+Top    | 140 - 167
+Right  | 168 - 177
+Bottom | 178 - 205
+*/
 void initStrip() {
-  strip.begin();             // initialize
-  strip.setBrightness(150);  // max brightness of strip (actual max is 255)
+  strip.begin();            // initialize
+  strip.setBrightness(20);  // max brightness of strip (actual max is 255)
   strip.show();
 
   /*  72 pixels (2021 totem):
@@ -34,42 +52,30 @@ void initStrip() {
   */
 }
 
+// https://forums.adafruit.com/viewtopic.php?t=41143
+uint32_t getColorBrightnessAdjusted(uint32_t c, uint8_t this_brightness) {
+  uint8_t r = (uint8_t)(c >> 16);
+  uint8_t g = (uint8_t)(c >> 8);
+  uint8_t b = (uint8_t)(c);
+
+  uint8_t newR = (r * this_brightness / MAX_BRIGHTNESS);
+  uint8_t newG = (g * this_brightness / MAX_BRIGHTNESS);
+  uint8_t newB = (b * this_brightness / MAX_BRIGHTNESS);
+
+  return strip.Color(newR, newG, newB);
+}
+
 // Set pixel color (taking brightness into account) from 'packed' 32-bit RGB color:
 void stripSetPixelColor(uint16_t n, uint32_t c) {
-  uint32_t newC = getColorWithBrightness(c);
+  uint32_t newC = getColorBrightnessAdjusted(c, brightness);
   strip.setPixelColor(n, newC);
 }
 
 void stripFill(uint32_t c = 0, int first = 0, uint16_t count = 0) {
-  uint32_t newC = getColorWithBrightness(c);
+  uint32_t newC = getColorBrightnessAdjusted(c, brightness);
   if (first < 0) {
     strip.fill(newC, 0, count + first);
   } else {
     strip.fill(newC, (uint16_t)first, count);
   }
-}
-
-// https://forums.adafruit.com/viewtopic.php?t=41143
-uint32_t getColorWithBrightness(uint32_t c) {
-  uint8_t r = (uint8_t)(c >> 16);
-  uint8_t g = (uint8_t)(c >> 8);
-  uint8_t b = (uint8_t)(c);
-
-  uint8_t newR = (r * brightness / MAX_BRIGHTNESS);
-  uint8_t newG = (g * brightness / MAX_BRIGHTNESS);
-  uint8_t newB = (b * brightness / MAX_BRIGHTNESS);
-
-  return strip.Color(newR, newG, newB);
-}
-
-uint32_t setColorBrightness(uint32_t c, uint16_t br) {
-  uint8_t r = (uint8_t)(c >> 16);
-  uint8_t g = (uint8_t)(c >> 8);
-  uint8_t b = (uint8_t)(c);
-
-  uint8_t newR = (r * br / MAX_BRIGHTNESS);
-  uint8_t newG = (g * br / MAX_BRIGHTNESS);
-  uint8_t newB = (b * br / MAX_BRIGHTNESS);
-
-  return strip.Color(newR, newG, newB);
 }

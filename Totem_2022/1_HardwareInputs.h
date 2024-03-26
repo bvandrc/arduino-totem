@@ -3,7 +3,7 @@
 
 extern const uint16_t DIAL_MIN;
 extern const uint16_t DIAL_MAX;
-extern const uint16_t MAX_BRIGHTNESS;
+extern const uint8_t MAX_BRIGHTNESS;
 
 extern void setUpPins();
 extern void initMotionSensor();

@@ -253,7 +253,7 @@ void fillUpQuadrantsCycle() {
 void rageFlash() {
   static uint32_t prevFlashColor = ORANGE;
 
-  uint16_t prevBrightness = brightness;
+  uint8_t prevBrightness = brightness;
   brightness = brightness < 200 ? 200 : MAX_BRIGHTNESS;
 
   uint32_t rageColor = COLORS[random(0, LEN_COLORS)];  // pick random color
@@ -279,9 +279,9 @@ void tapFlash() {
   static uint32_t color2 = ORANGE;
   getTwoNewColors(color1, color2);
 
-  uint16_t prevBrightness = brightness;
+  uint8_t prevBrightness = brightness;
   brightness = brightness < 200 ? 200 : MAX_BRIGHTNESS;
 
-  bullet(setColorBrightness(color1, 50), color2, 10, 35);
+  bullet(getColorBrightnessAdjusted(color1, 50), color2, 10, 35);
   brightness = prevBrightness;
 }

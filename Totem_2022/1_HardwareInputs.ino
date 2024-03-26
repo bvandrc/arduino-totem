@@ -14,10 +14,10 @@ const uint8_t MO_SENS_INT_1_PIN = 3;
 // Other consts
 const uint16_t DIAL_MIN = 0;
 const uint16_t DIAL_MAX = 1023;
-const uint16_t MAX_BRIGHTNESS = 255;  // not actual max brightness-- don't change this.
+const uint8_t MAX_BRIGHTNESS = 255;  // not actual max brightness-- don't change this.
 
 // Motion sensor
-Adafruit_LIS3DH lis = Adafruit_LIS3DH();
+Adafruit_LIS3DH motionSensor = Adafruit_LIS3DH();
 
 // Adjust this number for the sensitivity of the 'click' force
 // this strongly depend on the range! for 16G, try 5-10
@@ -34,9 +34,9 @@ void setUpPins() {
 }
 
 void initMotionSensor() {
-  lis.begin(0x18);
-  lis.setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
-  lis.setClick(2, CLICKTHRESHHOLD);
+  motionSensor.begin(0x18);
+  motionSensor.setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
+  motionSensor.setClick(2, CLICKTHRESHHOLD);
   delay(100);
 }
 
@@ -44,7 +44,7 @@ bool checkTapped() {
   if (!tapEnabled) {
     return false;
   } else {
-    uint8_t tap = lis.getClick();
+    uint8_t tap = motionSensor.getClick();
     if (tap == 0 || !(tap & 0x30)) {
       return false;
     } else {
