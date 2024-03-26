@@ -8,7 +8,8 @@ const uint8_t STRIP_PIN = 5;
 
 // Other consts
 const uint8_t NUM_PIXELS = 206;
-const uint8_t NUM_IN_QUADRANT = 38;
+const uint8_t NUM_AROUND_EDGE = 76;
+const uint8_t NUM_IN_QUADRANT = 38;  // NUM_AROUND_EDGE / 2
 
 // LED strip
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);

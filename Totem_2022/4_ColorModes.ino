@@ -200,7 +200,7 @@ void fillUpCycle() {
 }
 
 bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
-  for (uint8_t i = 0; i < (strip.numPixels() / 4); i++) {
+  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     stripSetPixelColorQuadrant(1, i, color1);
     stripSetPixelColorQuadrant(2, i, color2);
     stripSetPixelColorQuadrant(3, i, color3);

@@ -3,6 +3,7 @@
 
 #include <Adafruit_NeoPixel.h>
 
+extern const uint8_t NUM_AROUND_EDGE;
 extern const uint8_t NUM_IN_QUADRANT;
 
 extern Adafruit_NeoPixel strip;
