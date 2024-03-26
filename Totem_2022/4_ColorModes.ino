@@ -5,7 +5,7 @@
 
 //  void setSolidMode(uint8_t index) {
 //   const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
-//   stripSetSolid(COLOR_OPTIONS[index - 1]);
+//   strip.fill(COLOR_OPTIONS[index - 1]);
 //   strip.show();
 // }
 
@@ -36,7 +36,7 @@ void setOneColorMode(uint8_t index) {
 
   for (uint8_t i = 0; i < strip.numPixels(); i++) {
     if (effectSpeed < 10) {
-      stripSetSolid(COLOR_OPTIONS[index - 1]);
+      strip.fill(COLOR_OPTIONS[index - 1]);
       break;
     }
 
@@ -69,8 +69,7 @@ void rainbowChase() {
 
 void rainbowFade() {
   for (long hue = 0; hue < 5 * 65536; hue += 256) {
-    stripSetSolid(strip.gamma32(strip.ColorHSV(hue)));
-
+    strip.fill(strip.gamma32(strip.ColorHSV(hue)));
     strip.show();
 
     if (wait(10, 500)) {
@@ -163,7 +162,7 @@ void theaterChaseCycle() {
 
 void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delayMicros) {
   for (uint8_t i = 0; i < (strip.numPixels() / 4); i++) {
-    stripSetSolid(background_color);
+    strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
       stripSetPixelColorQuadrants(i + j, bullet_color);
     }
@@ -186,7 +185,7 @@ bool fillUp(uint32_t c) {
 void fillUpCycle() {
   static uint32_t color1 = ORANGE;
 
-  stripSetSolid(OFF);
+  strip.clear();
   strip.show();
 
   while (true) {
@@ -220,7 +219,7 @@ void fillUpQuadrantsCycle() {
   static uint32_t color3 = ORANGE;
   static uint32_t color4 = ORANGE;
 
-  stripSetSolid(OFF);
+  strip.clear();
   strip.show();
 
   while (true) {
@@ -262,10 +261,10 @@ void rageFlash() {
   }
 
   do {
-    stripSetSolid(rageColor);
+    strip.fill(rageColor);
     strip.show();
     delay(50);
-    stripSetSolid(OFF);
+    strip.clear();
     strip.show();
     delay(50);
   } while (rageButtonPushed());

@@ -11,7 +11,6 @@ const uint32_t SEAFOAM = strip.Color(0, 255, 130);
 const uint32_t BLUE = strip.Color(0, 0, 255);
 const uint32_t PURPLE = strip.Color(200, 0, 255);
 const uint32_t WHITE = strip.Color(255, 255, 255);
-const uint32_t OFF = strip.Color(0, 0, 0);
 
 const uint32_t COLORS[] = {RED, ORANGE, YELLOW, GREEN, SEAFOAM, BLUE, PURPLE};  // order of rage flash as well
 const uint8_t LEN_COLORS = 7;                                                   // better to hardcode array lengths
@@ -57,37 +56,33 @@ bool wait(uint32_t lowMillis, uint32_t highMillis) {
   return false;
 }
 
-void stripSetPixelColorBothSides(uint16_t n, uint32_t c) {
-  stripSetPixelColor(n, c);
-  stripSetPixelColor(n + (NUM_PIXELS / 2), c);
+void stripSetPixelColorBothSides(uint16_t index, uint32_t color) {
+  stripSetPixelColor(index, color);
+  stripSetPixelColor(index + (NUM_PIXELS / 2), color);
 }
 
-void stripSetPixelColorQuadrants(uint16_t n, uint32_t c) {
-  stripSetPixelColorBothSides(n, c);
-  stripSetPixelColorBothSides(int(((NUM_PIXELS - 1) / 2) - n), c);
+void stripSetPixelColorQuadrants(uint16_t index, uint32_t color) {
+  stripSetPixelColorBothSides(index, color);
+  stripSetPixelColorBothSides(int(((NUM_PIXELS - 1) / 2) - index), color);
 }
 
-void stripSetPixelColorQuadrant(uint8_t q, uint16_t n, uint32_t c) {
-  switch (q) {
+void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
+  switch (quadrant) {
     case 1:
-      stripSetPixelColor(n, c);
+      stripSetPixelColor(index, color);
       break;
     case 2:
-      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) - n), c);
+      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) - index), color);
       break;
     case 3:
-      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) + 1 + n), c);
+      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) + 1 + index), color);
       break;
     case 4:
-      stripSetPixelColor(NUM_PIXELS - 1 - n, c);
+      stripSetPixelColor(NUM_PIXELS - 1 - index, color);
       break;
     default:
       break;
   }
-}
-
-void stripSetSolid(uint32_t c) {
-  stripFill(c, 0, NUM_PIXELS);
 }
 
 void getNewColor(uint32_t &color) {

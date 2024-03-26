@@ -53,10 +53,10 @@ void initStrip() {
 }
 
 // https://forums.adafruit.com/viewtopic.php?t=41143
-uint32_t getColorBrightnessAdjusted(uint32_t c, uint8_t this_brightness) {
-  uint8_t r = (uint8_t)(c >> 16);
-  uint8_t g = (uint8_t)(c >> 8);
-  uint8_t b = (uint8_t)(c);
+uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
+  uint8_t r = (uint8_t)(color >> 16);
+  uint8_t g = (uint8_t)(color >> 8);
+  uint8_t b = (uint8_t)(color);
 
   uint8_t newR = (r * this_brightness / MAX_BRIGHTNESS);
   uint8_t newG = (g * this_brightness / MAX_BRIGHTNESS);
@@ -66,16 +66,16 @@ uint32_t getColorBrightnessAdjusted(uint32_t c, uint8_t this_brightness) {
 }
 
 // Set pixel color (taking brightness into account) from 'packed' 32-bit RGB color:
-void stripSetPixelColor(uint16_t n, uint32_t c) {
-  uint32_t newC = getColorBrightnessAdjusted(c, brightness);
-  strip.setPixelColor(n, newC);
+void stripSetPixelColor(uint16_t index, uint32_t color) {
+  uint32_t newColor = getColorBrightnessAdjusted(color, brightness);
+  strip.setPixelColor(index, newColor);
 }
 
-void stripFill(uint32_t c = 0, int first = 0, uint16_t count = 0) {
-  uint32_t newC = getColorBrightnessAdjusted(c, brightness);
+void stripFill(uint32_t color, int first, uint16_t count) {
+  uint32_t newColor = getColorBrightnessAdjusted(color, brightness);
   if (first < 0) {
-    strip.fill(newC, 0, count + first);
+    strip.fill(newColor, 0, count + first);
   } else {
-    strip.fill(newC, (uint16_t)first, count);
+    strip.fill(newColor, (uint16_t)first, count);
   }
 }
