@@ -57,7 +57,7 @@ void rainbowChase() {
   for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
     for (uint8_t i = 0; i < strip.numPixels() / 2; i++) {
       uint16_t pixelHue = firstPixelHue + (i * 65536L / (strip.numPixels() / 2));
-      stripSetPixelColorBothSides(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+      stripSetPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(pixelHue)));
     }
     strip.show();
 
@@ -135,8 +135,8 @@ bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwis
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
       for (uint8_t indx = 0; indx < strip.numPixels(); indx += (width * 2)) {
         int signedStagger = clockwise ? stagger : -stagger;
-        stripFill(color1, indx + signedStagger - (width * 2), width);
-        stripFill(color2, indx + signedStagger - (width * 2) + width, width);
+        stripFillSegment(color1, indx + signedStagger - (width * 2), width);
+        stripFillSegment(color2, indx + signedStagger - (width * 2) + width, width);
       }
       strip.show();
 
@@ -161,19 +161,19 @@ void theaterChaseCycle() {
 }
 
 void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delayMicros) {
-  for (uint8_t i = 0; i < (strip.numPixels() / 4); i++) {
+  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
     strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
-      stripSetPixelColorQuadrants(i + j, bullet_color);
+      stripSetPixelColorAllQuadrants(i + j, bullet_color);
     }
     strip.show();
     delayMicroseconds(delayMicros);
   }
 }
 
-bool fillUp(uint32_t c) {
-  for (uint8_t i = 0; i < (strip.numPixels() / 4); i++) {
-    stripSetPixelColorQuadrants(i, c);
+bool fillUp(uint32_t color) {
+  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
+    stripSetPixelColorAllQuadrants(i, color);
     strip.show();
     if (wait(10, 1000)) {
       return true;

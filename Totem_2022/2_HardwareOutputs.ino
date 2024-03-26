@@ -7,7 +7,8 @@
 const uint8_t STRIP_PIN = 5;
 
 // Other consts
-const uint8_t NUM_PIXELS = 205;
+const uint8_t NUM_PIXELS = 206;
+const uint8_t NUM_IN_QUADRANT = 38;
 
 // LED strip
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);
@@ -71,7 +72,78 @@ void stripSetPixelColor(uint16_t index, uint32_t color) {
   strip.setPixelColor(index, newColor);
 }
 
-void stripFill(uint32_t color, int first, uint16_t count) {
+void stripSetPixelColorBackside(uint16_t index, uint32_t color) {
+  uint16_t otherSide;
+  if (2 <= index && index <= 26) {
+    // middle
+    otherSide = map(index, 2, 26, 129, 105);
+  } else if (27 <= index && index <= 36) {
+    // left
+    otherSide = map(index, 27, 36, 177, 168);
+  } else if (37 <= index && index <= 64) {
+    // top
+    otherSide = map(index, 37, 64, 167, 140);
+  } else if (65 <= index && index <= 74) {
+    // right
+    otherSide = map(index, 65, 74, 139, 130);
+  } else if (75 <= index && index <= 102) {
+    // bottom
+    otherSide = map(index, 75, 102, 205, 178);
+  }
+  // TODO: inside lights (1,103, 104)
+  stripSetPixelColor(otherSide, color);
+}
+
+void stripSetPixelColorBothSides(uint16_t index, uint32_t color) {
+  stripSetPixelColor(index, color);
+  stripSetPixelColorBackside(index, color);
+}
+
+void stripSetPixelColorBothSidesAsym(uint16_t index, uint32_t color) {
+  stripSetPixelColor(index, color);
+  stripSetPixelColor(index + (NUM_PIXELS / 2), color);
+}
+
+void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
+  uint16_t actualIndex;
+  if (quadrant == 1 || quadrant == 4) {
+    if (1 <= index && index <= 14) {
+      // bottom
+      actualIndex = map(index, 1, 14, 89, 102);
+    } else if (15 <= index && index <= 24) {
+      // left
+      actualIndex = map(index, 15, 24, 27, 36);
+    } else if (25 <= index && index <= NUM_IN_QUADRANT) {
+      // top
+      actualIndex = map(index, 25, NUM_IN_QUADRANT, 37, 50);
+    }
+  } else if (quadrant == 2 || quadrant == 3) {
+    if (1 <= index && index <= 14) {
+      // bottom
+      actualIndex = map(index, 1, 14, 88, 75);
+    } else if (15 <= index && index <= 24) {
+      // right
+      actualIndex = map(index, 15, 24, 74, 65);
+    } else if (25 <= index && index <= NUM_IN_QUADRANT) {
+      // top
+      actualIndex = map(index, 25, NUM_IN_QUADRANT, 64, 51);
+    }
+  }
+
+  if (quadrant == 1 || quadrant == 2) {
+    stripSetPixelColor(actualIndex, color);
+  } else {
+    stripSetPixelColorBackside(actualIndex, color);
+  }
+}
+
+void stripSetPixelColorAllQuadrants(uint16_t index, uint32_t color) {
+  for (uint8_t i = 1; i <= 4; i++) {
+    stripSetPixelColorQuadrant(i, index, color);
+  }
+}
+
+void stripFillSegment(uint32_t color, int first, uint16_t count) {
   uint32_t newColor = getColorBrightnessAdjusted(color, brightness);
   if (first < 0) {
     strip.fill(newColor, 0, count + first);

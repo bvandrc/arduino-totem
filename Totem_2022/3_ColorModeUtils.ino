@@ -56,35 +56,6 @@ bool wait(uint32_t lowMillis, uint32_t highMillis) {
   return false;
 }
 
-void stripSetPixelColorBothSides(uint16_t index, uint32_t color) {
-  stripSetPixelColor(index, color);
-  stripSetPixelColor(index + (NUM_PIXELS / 2), color);
-}
-
-void stripSetPixelColorQuadrants(uint16_t index, uint32_t color) {
-  stripSetPixelColorBothSides(index, color);
-  stripSetPixelColorBothSides(int(((NUM_PIXELS - 1) / 2) - index), color);
-}
-
-void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
-  switch (quadrant) {
-    case 1:
-      stripSetPixelColor(index, color);
-      break;
-    case 2:
-      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) - index), color);
-      break;
-    case 3:
-      stripSetPixelColor(int(((NUM_PIXELS - 1) / 2) + 1 + index), color);
-      break;
-    case 4:
-      stripSetPixelColor(NUM_PIXELS - 1 - index, color);
-      break;
-    default:
-      break;
-  }
-}
-
 void getNewColor(uint32_t &color) {
   uint32_t newColor;
   do {
@@ -107,7 +78,7 @@ void getTwoNewColors(uint32_t &color1, uint32_t &color2) {
 void getNewPixel(uint8_t &pixel) {
   uint32_t newPixel;
   do {
-    newPixel = random(NUM_PIXELS);
+    newPixel = random(strip.numPixels());
   } while (newPixel == pixel || abs(newPixel - pixel) < 5);
   pixel = newPixel;
 }
