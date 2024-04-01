@@ -151,7 +151,7 @@ void theaterChaseCycle() {
 }
 
 void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delayMicros) {
-  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
+  for (uint8_t i = 1; i <= NUM_IN_QUADRANT + bullet_width; i++) {
     strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
       strip.setPixelColorAllQuadrants(i + j, bullet_color);
@@ -190,7 +190,7 @@ void fillUpCycle() {
 }
 
 bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
-  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
+  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
     strip.setPixelColorQuadrant(1, i, color1);
     strip.setPixelColorQuadrant(2, i, color2);
     strip.setPixelColorQuadrant(3, i, color3);
