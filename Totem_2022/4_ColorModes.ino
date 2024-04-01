@@ -4,55 +4,44 @@
 #include "4_ColorModes.h"
 #include "Totem_2022.h"
 
-//  void setSolidMode(uint8_t index) {
-//   const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
-//   strip.fill(COLOR_OPTIONS[index - 1]);
+// void singleColorTwinkle(uint16_t hue) {
+//   // case 1:
+//   //   pixelHue = 0;  // red
+//   //   break;
+//   // case 2:
+//   //   pixelHue = 21845;  // green
+//   //   break;
+//   // case 3:
+//   //   pixelHue = 43690;  // blue
+//   //   break;
+//   // case 4:
+//   //   pixelHue = 3458;  // orange
+//   //   break;
+//   // case 5:
+//   //   pixelHue = 52246;  // purple
+//   //   break;
+//   // case 6:
+//   //   pixelHue = 27306;  // seafoam
+//   //   break;
+
+//   for (uint8_t i = 0; i < strip.numPixels(); i++) {
+//     if (effectSpeed < 10) {
+//       strip.fill(strip.gamma32(strip.ColorHSV(pixelHue)));
+//       break;
+//     }
+
+//     uint8_t pixelSaturation = random(150, 256);
+//     uint8_t pixelValue = random(100, 256);
+
+//     strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue, pixelSaturation, pixelValue)));
+//   }
+
 //   strip.show();
+
+//   if (wait(10, 500)) {
+//     return;
+//   }
 // }
-
-void setOneColorMode(uint8_t index) {
-  const uint32_t COLOR_OPTIONS[] = {RED, GREEN, BLUE, ORANGE, PURPLE, SEAFOAM};
-
-  uint16_t pixelHue;
-  switch (index) {
-    case 1:
-      pixelHue = 0;  // red
-      break;
-    case 2:
-      pixelHue = 21845;  // green
-      break;
-    case 3:
-      pixelHue = 43690;  // blue
-      break;
-    case 4:
-      pixelHue = 3458;  // orange
-      break;
-    case 5:
-      pixelHue = 52246;  // purple
-      break;
-    case 6:
-      pixelHue = 27306;  // seafoam
-      break;
-  }
-
-  for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    if (effectSpeed < 10) {
-      strip.fill(COLOR_OPTIONS[index - 1]);
-      break;
-    }
-
-    uint8_t pixelSaturation = random(150, 256);
-    uint8_t pixelValue = random(100, 256);
-
-    strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue, pixelSaturation, pixelValue)));
-  }
-
-  strip.show();
-
-  if (wait(10, 500)) {
-    return;
-  }
-}
 
 void rainbowChase() {
   for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
@@ -118,8 +107,8 @@ bool colorTwinkle(uint32_t colors[], uint8_t len_colors, uint32_t timeLengthMill
 }
 
 void colorTwinkleCycle() {
-  static uint32_t color1 = ORANGE;
-  static uint32_t color2 = ORANGE;
+  static uint32_t color1 = strip.ORANGE;
+  static uint32_t color2 = strip.ORANGE;
 
   while (true) {
     getTwoNewColors(color1, color2);
@@ -150,8 +139,8 @@ bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwis
 }
 
 void theaterChaseCycle() {
-  static uint32_t color1 = ORANGE;
-  static uint32_t color2 = ORANGE;
+  static uint32_t color1 = strip.ORANGE;
+  static uint32_t color2 = strip.ORANGE;
 
   while (true) {
     getTwoNewColors(color1, color2);
@@ -184,7 +173,7 @@ bool fillUp(uint32_t color) {
 }
 
 void fillUpCycle() {
-  static uint32_t color1 = ORANGE;
+  static uint32_t color1 = strip.ORANGE;
 
   strip.clear();
   strip.show();
@@ -215,10 +204,10 @@ bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t
 }
 
 void fillUpQuadrantsCycle() {
-  static uint32_t color1 = ORANGE;
-  static uint32_t color2 = ORANGE;
-  static uint32_t color3 = ORANGE;
-  static uint32_t color4 = ORANGE;
+  static uint32_t color1 = strip.ORANGE;
+  static uint32_t color2 = strip.ORANGE;
+  static uint32_t color3 = strip.ORANGE;
+  static uint32_t color4 = strip.ORANGE;
 
   strip.clear();
   strip.show();
@@ -251,14 +240,14 @@ void fillUpQuadrantsCycle() {
 }
 
 void rageFlash() {
-  static uint32_t prevFlashColor = ORANGE;
+  static uint32_t prevFlashColor = strip.ORANGE;
 
   uint8_t prevBrightness = brightnessVal;
   brightnessVal = brightnessVal < 200 ? 200 : MAX_BRIGHTNESS;
 
-  uint32_t rageColor = COLORS[random(0, LEN_COLORS)];  // pick random color
+  uint32_t rageColor = strip.COLORS[random(0, strip.LEN_COLORS)];  // pick random color
   while (rageColor == prevFlashColor) {
-    rageColor = COLORS[random(0, LEN_COLORS)];
+    rageColor = strip.COLORS[random(0, strip.LEN_COLORS)];
   }
 
   do {
@@ -275,8 +264,8 @@ void rageFlash() {
 }
 
 void tapFlash() {
-  static uint32_t color1 = ORANGE;
-  static uint32_t color2 = ORANGE;
+  static uint32_t color1 = strip.ORANGE;
+  static uint32_t color2 = strip.ORANGE;
   getTwoNewColors(color1, color2);
 
   uint8_t prevBrightness = brightnessVal;

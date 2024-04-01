@@ -23,13 +23,13 @@ MyMotionSensor::MyMotionSensor() : Adafruit_LIS3DH() {
 }
 
 void MyMotionSensor::init() {
-  (*this).begin(0x18);
-  (*this).setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
+  begin(0x18);
+  setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
   // Click threshold. Adjust this number for the sensitivity of the 'click' force
   // this strongly depend on the range! for 16G, try 5-10
   // for 8G, try 10-20. for 4G try 20-40. for 2G try 40-80
   // higher numbers are less sensitive
-  (*this).setClick(2, 80);
+  setClick(2, 80);
   delay(100);
 }
 
@@ -38,7 +38,7 @@ bool MyMotionSensor::checkTapped() {
     return false;
   }
 
-  uint8_t tap = (*this).getClick();
+  uint8_t tap = getClick();
   if (tap == 0 || !(tap & 0x30)) {
     return false;
   } else {

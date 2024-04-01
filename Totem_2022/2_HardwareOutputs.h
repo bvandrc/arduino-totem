@@ -23,6 +23,18 @@ class MyNeoPixel : public Adafruit_NeoPixel {
   void setPixelColorBothSidesAsym(uint16_t index, uint32_t color);
   void setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color);
   void setPixelColorAllQuadrants(uint16_t index, uint32_t color);
+
+  // constants
+  static const uint32_t RED;
+  static const uint32_t ORANGE;
+  static const uint32_t YELLOW;
+  static const uint32_t GREEN;
+  static const uint32_t SEAFOAM;
+  static const uint32_t BLUE;
+  static const uint32_t PURPLE;
+
+  static const uint32_t COLORS[];
+  static const uint8_t LEN_COLORS;
 };
 
 extern MyNeoPixel strip;

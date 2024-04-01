@@ -78,10 +78,9 @@ bool checkTapFlash() {
 void doTheLightingMode() {
   switch (effectMode) {
     case 1:
+    case 2:
       rainbowChase();
       break;
-    case 2:
-      rainbowFade();
       break;
     case 3:
       theaterChaseCycle();
@@ -98,7 +97,7 @@ void doTheLightingMode() {
         break;
       }
     case 6:
-      setOneColorMode(colorScheme);
+      rainbowFade();
       break;
     default:
       rainbowChase();

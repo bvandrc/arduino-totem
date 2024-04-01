@@ -1,18 +1,6 @@
 #ifndef COLOR_MODE_UTILS_H
 #define COLOR_MODE_UTILS_H
 
-extern const uint32_t RED;
-extern const uint32_t ORANGE;
-extern const uint32_t YELLOW;
-extern const uint32_t GREEN;
-extern const uint32_t SEAFOAM;
-extern const uint32_t BLUE;
-extern const uint32_t PURPLE;
-extern const uint32_t WHITE;
-
-extern const uint32_t COLORS[];
-extern const uint8_t LEN_COLORS;
-
 extern bool arrayIsUnique(uint32_t colors[], uint8_t len_colors);
 
 extern uint32_t getDelay(uint32_t lowTime, uint32_t highTime);

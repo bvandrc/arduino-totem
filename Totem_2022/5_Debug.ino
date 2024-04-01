@@ -4,13 +4,13 @@
 #include "Totem_2022.h"
 
 void debugIndicate() {
-  strip.fill(BLUE);
+  strip.fill(strip.BLUE);
   strip.show();
   delay(5000);
 }
 
 void debugIndicateSettingChange(bool setting) {
-  strip.fill(setting ? GREEN : RED);
+  strip.fill(setting ? strip.GREEN : strip.RED);
   strip.show();
   delay(5000);
 }

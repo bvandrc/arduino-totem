@@ -3,19 +3,6 @@
 #include "3_ColorModeUtils.h"
 #include "Totem_2022.h"
 
-// colors - visually tested
-const uint32_t RED = strip.Color(255, 0, 0);
-const uint32_t ORANGE = strip.Color(255, 30, 0);
-const uint32_t YELLOW = strip.Color(255, 255, 0);
-const uint32_t GREEN = strip.Color(0, 255, 0);
-const uint32_t SEAFOAM = strip.Color(0, 255, 130);
-const uint32_t BLUE = strip.Color(0, 0, 255);
-const uint32_t PURPLE = strip.Color(200, 0, 255);
-const uint32_t WHITE = strip.Color(255, 255, 255);
-
-const uint32_t COLORS[] = {RED, ORANGE, YELLOW, GREEN, SEAFOAM, BLUE, PURPLE};  // order of rage flash as well
-const uint8_t LEN_COLORS = 7;                                                   // better to hardcode array lengths
-
 bool arrayIsUnique(uint32_t colors[], uint8_t len_colors) {
   for (uint8_t i = 0; i < len_colors; i++) {
     uint32_t origVal = colors[i];
@@ -60,7 +47,7 @@ bool wait(uint32_t lowMillis, uint32_t highMillis) {
 void getNewColor(uint32_t &color) {
   uint32_t newColor;
   do {
-    newColor = COLORS[random(LEN_COLORS)];
+    newColor = strip.COLORS[random(strip.LEN_COLORS)];
   } while (newColor == color);
   color = newColor;
 }
@@ -69,8 +56,8 @@ void getTwoNewColors(uint32_t &color1, uint32_t &color2) {
   uint32_t newColor1;
   uint32_t newColor2;
   do {
-    newColor1 = COLORS[random(LEN_COLORS)];
-    newColor2 = COLORS[random(LEN_COLORS)];
+    newColor1 = strip.COLORS[random(strip.LEN_COLORS)];
+    newColor2 = strip.COLORS[random(strip.LEN_COLORS)];
   } while (newColor1 == color1 || newColor2 == color2 || newColor1 == newColor2);
   color1 = newColor1;
   color2 = newColor2;
