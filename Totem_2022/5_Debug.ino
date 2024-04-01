@@ -18,10 +18,10 @@ void debugIndicateSettingChange(bool setting) {
 void debugToggleCurrentSetting() {
   debugIndicate();
 
-  switch (colorScheme) {
+  switch (bottom_dial_global) {
     case 1:
-      tapEnabled = !tapEnabled;
-      debugIndicateSettingChange(tapEnabled);
+      tap_enabled_global = !tap_enabled_global;
+      debugIndicateSettingChange(tap_enabled_global);
       break;
     case 2:
       break;

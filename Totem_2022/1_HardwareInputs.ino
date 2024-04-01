@@ -34,7 +34,7 @@ void MyMotionSensor::init() {
 }
 
 bool MyMotionSensor::checkTapped() {
-  if (!tapEnabled) {
+  if (!tap_enabled_global) {
     return false;
   }
 
@@ -61,16 +61,16 @@ bool rageButtonPushed() {
 }
 
 uint8_t getSelectorPosition(uint8_t pin) {
-  uint16_t readVal = analogRead(pin);
-  if (readVal < (DIAL_MAX * 1.0 / 10.0)) {
+  uint16_t read_val = analogRead(pin);
+  if (read_val < (DIAL_MAX * 1.0 / 10.0)) {
     return 6;
-  } else if (readVal < (DIAL_MAX * 3.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 3.0 / 10.0)) {
     return 5;
-  } else if (readVal < (DIAL_MAX * 5.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 5.0 / 10.0)) {
     return 4;
-  } else if (readVal < (DIAL_MAX * 7.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 7.0 / 10.0)) {
     return 3;
-  } else if (readVal < (DIAL_MAX * 9.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 9.0 / 10.0)) {
     return 2;
   } else {
     return 1;
@@ -86,11 +86,11 @@ uint8_t getColorDialPosition() {
 }
 
 void getBrightnessDial() {
-  uint16_t readVal = analogRead(BRIGHTNESS_DIAL_PIN);
-  brightnessVal = map(readVal, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
+  uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
+  brightness_global = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
   // TODO: scale this dial logarithmically
 }
 
 void getSpeedDial() {
-  effectSpeed = analogRead(SPEED_DIAL_PIN);
+  speed_global = analogRead(SPEED_DIAL_PIN);
 }

@@ -5,35 +5,23 @@
 #include "Totem_2022.h"
 
 // void singleColorTwinkle(uint16_t hue) {
-//   // case 1:
-//   //   pixelHue = 0;  // red
-//   //   break;
-//   // case 2:
-//   //   pixelHue = 21845;  // green
-//   //   break;
-//   // case 3:
-//   //   pixelHue = 43690;  // blue
-//   //   break;
-//   // case 4:
-//   //   pixelHue = 3458;  // orange
-//   //   break;
-//   // case 5:
-//   //   pixelHue = 52246;  // purple
-//   //   break;
-//   // case 6:
-//   //   pixelHue = 27306;  // seafoam
-//   //   break;
+//   //   hue = 0;  // red
+//   //   hue = 21845;  // green
+//   //   hue = 43690;  // blue
+//   //   hue = 3458;  // orange
+//   //   hue = 52246;  // purple
+//   //   hue = 27306;  // seafoam
 
 //   for (uint8_t i = 0; i < strip.numPixels(); i++) {
-//     if (effectSpeed < 10) {
-//       strip.fill(strip.gamma32(strip.ColorHSV(pixelHue)));
+//     if (speed_global < 10) {
+//       strip.fill(strip.gamma32(strip.ColorHSV(hue)));
 //       break;
 //     }
 
-//     uint8_t pixelSaturation = random(150, 256);
-//     uint8_t pixelValue = random(100, 256);
+//     uint8_t saturation = random(150, 256);
+//     uint8_t value = random(100, 256);
 
-//     strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue, pixelSaturation, pixelValue)));
+//     strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(hue, saturation, value)));
 //   }
 
 //   strip.show();
@@ -44,10 +32,10 @@
 // }
 
 void rainbowChase() {
-  for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
+  for (long first_pixel_hue = 0; first_pixel_hue < 5 * 65536; first_pixel_hue += 256) {
     for (uint8_t i = 0; i < strip.numPixels() / 2; i++) {
-      uint16_t pixelHue = firstPixelHue + (i * 65536L / (strip.numPixels() / 2));
-      strip.setPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536L / (strip.numPixels() / 2));
+      strip.setPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
     }
     strip.show();
 
@@ -73,10 +61,10 @@ void rainbowTwinkle() {
     strip.setPixelColor(i, getRandomColor());
     strip.show();
   }
-  uint8_t pixelToChange = 0;
+  uint8_t pixel_to_change = 0;
   while (true) {
-    getNewPixel(pixelToChange);
-    strip.setPixelColor(pixelToChange, getRandomColor());
+    getNewPixel(pixel_to_change);
+    strip.setPixelColor(pixel_to_change, getRandomColor());
     strip.show();
 
     if (wait(2, 200)) {
@@ -86,17 +74,17 @@ void rainbowTwinkle() {
 }
 
 bool colorTwinkle(uint32_t colors[], uint8_t len_colors, uint32_t timeLengthMillis) {
-  unsigned long initialTime = millis();
+  unsigned long initial_time = millis();
 
   for (uint8_t i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, colors[random(len_colors)]);
     strip.show();
   }
 
-  uint8_t pixelToChange = 0;
-  while ((millis() - initialTime) < timeLengthMillis) {
-    getNewPixel(pixelToChange);
-    strip.setPixelColor(pixelToChange, colors[random(len_colors)]);
+  uint8_t pixel_to_change = 0;
+  while ((millis() - initial_time) < timeLengthMillis) {
+    getNewPixel(pixel_to_change);
+    strip.setPixelColor(pixel_to_change, colors[random(len_colors)]);
     strip.show();
 
     if (wait(2, 200)) {
@@ -119,14 +107,14 @@ void colorTwinkleCycle() {
   }
 }
 
-bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwise, uint32_t timeLengthMillis) {
-  unsigned long initialTime = millis();
-  while ((millis() - initialTime) < timeLengthMillis) {
+bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
+  unsigned long initial_time = millis();
+  while ((millis() - initial_time) < time_length_millis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
-      for (uint8_t indx = 0; indx < strip.numPixels(); indx += (width * 2)) {
-        int signedStagger = clockwise ? stagger : -stagger;
-        strip.fill(color1, indx + signedStagger - (width * 2), width);
-        strip.fill(color2, indx + signedStagger - (width * 2) + width, width);
+      for (uint8_t i = 0; i < strip.numPixels(); i += (width * 2)) {
+        int signed_stagger = clockwise ? stagger : -stagger;
+        strip.fill(color1, i + signed_stagger - (width * 2), width);
+        strip.fill(color2, i + signed_stagger - (width * 2) + width, width);
       }
       strip.show();
 
@@ -150,14 +138,14 @@ void theaterChaseCycle() {
   }
 }
 
-void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delayMicros) {
+void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delay_micros) {
   for (uint8_t i = 1; i <= NUM_IN_QUADRANT + bullet_width; i++) {
     strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
       strip.setPixelColorAllQuadrants(i + j, bullet_color);
     }
     strip.show();
-    delayMicroseconds(delayMicros);
+    delayMicroseconds(delay_micros);
   }
 }
 
@@ -213,10 +201,10 @@ void fillUpQuadrantsCycle() {
   strip.show();
 
   while (true) {
-    uint32_t ogColor1 = color1;
-    uint32_t ogColor2 = color2;
-    uint32_t ogColor3 = color3;
-    uint32_t ogColor4 = color4;
+    uint32_t og_color1 = color1;
+    uint32_t og_color2 = color2;
+    uint32_t og_color3 = color3;
+    uint32_t og_color4 = color4;
 
     while (true) {
       getNewColor(color1);
@@ -224,8 +212,8 @@ void fillUpQuadrantsCycle() {
       getNewColor(color3);
       getNewColor(color4);
       uint32_t colors[] = {color1, color2, color3, color4};
-      if (arrayIsUnique(colors, 4) && color1 != ogColor1 && color2 != ogColor2 && color3 != ogColor3 &&
-          color4 != ogColor4) {
+      if (arrayIsUnique(colors, 4) && color1 != og_color1 && color2 != og_color2 && color3 != og_color3 &&
+          color4 != og_color4) {
         break;
       }
     }
@@ -240,18 +228,16 @@ void fillUpQuadrantsCycle() {
 }
 
 void rageFlash() {
-  static uint32_t prevFlashColor = strip.ORANGE;
+  static uint32_t prev_flash_color = strip.ORANGE;
 
-  uint8_t prevBrightness = brightnessVal;
-  brightnessVal = brightnessVal < 200 ? 200 : MAX_BRIGHTNESS;
+  uint8_t prev_brightness = brightness_global;
+  brightness_global = brightness_global < 200 ? 200 : MAX_BRIGHTNESS;
 
-  uint32_t rageColor = strip.COLORS[random(0, strip.LEN_COLORS)];  // pick random color
-  while (rageColor == prevFlashColor) {
-    rageColor = strip.COLORS[random(0, strip.LEN_COLORS)];
-  }
+  static uint32_t rage_color = strip.ORANGE;
+  getNewColor(rage_color);
 
   do {
-    strip.fill(rageColor);
+    strip.fill(rage_color);
     strip.show();
     delay(50);
     strip.clear();
@@ -259,8 +245,8 @@ void rageFlash() {
     delay(50);
   } while (rageButtonPushed());
 
-  prevFlashColor = rageColor;
-  brightnessVal = prevBrightness;
+  prev_flash_color = rage_color;
+  brightness_global = prev_brightness;
 }
 
 void tapFlash() {
@@ -268,9 +254,9 @@ void tapFlash() {
   static uint32_t color2 = strip.ORANGE;
   getTwoNewColors(color1, color2);
 
-  uint8_t prevBrightness = brightnessVal;
-  brightnessVal = brightnessVal < 200 ? 200 : MAX_BRIGHTNESS;
+  uint8_t prev_brightness = brightness_global;
+  brightness_global = brightness_global < 200 ? 200 : MAX_BRIGHTNESS;
 
   bullet(strip.getColorBrightnessAdjusted(color1, 50), color2, 10, 35);
-  brightnessVal = prevBrightness;
+  brightness_global = prev_brightness;
 }

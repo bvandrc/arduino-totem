@@ -58,8 +58,8 @@ void MyNeoPixel::init() {
 }
 
 void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
-  uint32_t newColor = getColorBrightnessAdjusted(color, brightnessVal);
-  Adafruit_NeoPixel::setPixelColor(index, newColor);
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_global);
+  Adafruit_NeoPixel::setPixelColor(index, new_color);
 }
 
 void MyNeoPixel::show() {
@@ -77,11 +77,11 @@ void MyNeoPixel::show() {
 }
 
 void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
-  uint32_t newColor = getColorBrightnessAdjusted(color, brightnessVal);
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_global);
   if (first < 0) {
-    Adafruit_NeoPixel::fill(newColor, 0, count + first);
+    Adafruit_NeoPixel::fill(new_color, 0, count + first);
   } else {
-    Adafruit_NeoPixel::fill(newColor, (uint16_t)first, count);
+    Adafruit_NeoPixel::fill(new_color, (uint16_t)first, count);
   }
 }
 
@@ -91,33 +91,33 @@ uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_bri
   uint8_t g = (uint8_t)(color >> 8);
   uint8_t b = (uint8_t)(color);
 
-  uint8_t newR = (r * this_brightness / MAX_BRIGHTNESS);
-  uint8_t newG = (g * this_brightness / MAX_BRIGHTNESS);
-  uint8_t newB = (b * this_brightness / MAX_BRIGHTNESS);
+  uint8_t new_r = (r * this_brightness / MAX_BRIGHTNESS);
+  uint8_t new_g = (g * this_brightness / MAX_BRIGHTNESS);
+  uint8_t new_b = (b * this_brightness / MAX_BRIGHTNESS);
 
-  return Color(newR, newG, newB);
+  return Color(new_r, new_g, new_b);
 }
 
 void MyNeoPixel::setPixelColorBackside(uint16_t index, uint32_t color) {
-  uint16_t otherSide;
+  uint16_t other_side_index;
   if (2 <= index && index <= 26) {
     // middle
-    otherSide = map(index, 2, 26, 129, 105);
+    other_side_index = map(index, 2, 26, 129, 105);
   } else if (27 <= index && index <= 36) {
     // left
-    otherSide = map(index, 27, 36, 177, 168);
+    other_side_index = map(index, 27, 36, 177, 168);
   } else if (37 <= index && index <= 64) {
     // top
-    otherSide = map(index, 37, 64, 167, 140);
+    other_side_index = map(index, 37, 64, 167, 140);
   } else if (65 <= index && index <= 74) {
     // right
-    otherSide = map(index, 65, 74, 139, 130);
+    other_side_index = map(index, 65, 74, 139, 130);
   } else if (75 <= index && index <= 102) {
     // bottom
-    otherSide = map(index, 75, 102, 205, 178);
+    other_side_index = map(index, 75, 102, 205, 178);
   }
   // NOTE: does not account for inside lights (1,103, 104)
-  setPixelColor(otherSide, color);
+  setPixelColor(other_side_index, color);
 }
 
 void MyNeoPixel::setPixelColorBothSides(uint16_t index, uint32_t color) {
@@ -135,35 +135,35 @@ void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_
     return;
   }
 
-  uint16_t actualIndex;
+  uint16_t actual_index;
   if (quadrant == 1 || quadrant == 4) {
     if (1 <= index && index <= 14) {
       // bottom
-      actualIndex = map(index, 1, 14, 89, 102);
+      actual_index = map(index, 1, 14, 89, 102);
     } else if (15 <= index && index <= 24) {
       // left
-      actualIndex = map(index, 15, 24, 27, 36);
+      actual_index = map(index, 15, 24, 27, 36);
     } else if (25 <= index && index <= NUM_IN_QUADRANT) {
       // top
-      actualIndex = map(index, 25, NUM_IN_QUADRANT, 37, 50);
+      actual_index = map(index, 25, NUM_IN_QUADRANT, 37, 50);
     }
   } else if (quadrant == 2 || quadrant == 3) {
     if (1 <= index && index <= 14) {
       // bottom
-      actualIndex = map(index, 1, 14, 88, 75);
+      actual_index = map(index, 1, 14, 88, 75);
     } else if (15 <= index && index <= 24) {
       // right
-      actualIndex = map(index, 15, 24, 74, 65);
+      actual_index = map(index, 15, 24, 74, 65);
     } else if (25 <= index && index <= NUM_IN_QUADRANT) {
       // top
-      actualIndex = map(index, 25, NUM_IN_QUADRANT, 64, 51);
+      actual_index = map(index, 25, NUM_IN_QUADRANT, 64, 51);
     }
   }
 
   if (quadrant == 1 || quadrant == 2) {
-    setPixelColor(actualIndex, color);
+    setPixelColor(actual_index, color);
   } else {
-    setPixelColorBackside(actualIndex, color);
+    setPixelColorBackside(actual_index, color);
   }
 }
 

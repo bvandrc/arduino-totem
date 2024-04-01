@@ -18,25 +18,25 @@ bool arrayIsUnique(uint32_t colors[], uint8_t len_colors) {
 }
 
 // apply custom delay range to speed dial, return ms for wait command
-uint32_t getDelay(uint32_t lowTime, uint32_t highTime) {
-  if (effectSpeed < 10) {
+uint32_t getDelay(uint32_t low_time, uint32_t high_time) {
+  if (speed_global < 10) {
     return 4000000000;  // frozen
   } else {
-    return map(effectSpeed, DIAL_MAX, 10, lowTime, highTime);  // higher speed = lower millis
+    return map(speed_global, DIAL_MAX, 10, low_time, high_time);  // higher speed = lower millis
   }
 }
 
-bool wait(uint32_t lowMillis, uint32_t highMillis) {
-  uint32_t waitTimeMillis = getDelay(lowMillis, highMillis);
-  unsigned long initialTime = millis();
-  while ((millis() - initialTime) < waitTimeMillis) {
+bool wait(uint32_t low_millis, uint32_t high_millis) {
+  uint32_t wait_time_millis = getDelay(low_millis, high_millis);
+  unsigned long initial_time = millis();
+  while ((millis() - initial_time) < wait_time_millis) {
     getBrightnessDial();
     getSpeedDial();
     if (checkRageFlash() || checkTapFlash()) {
       return false;  // want to return so can re-instate normal mode colors after flash, but dont want to change state
                      // (restart mode)
     }
-    waitTimeMillis = getDelay(lowMillis, highMillis);
+    wait_time_millis = getDelay(low_millis, high_millis);
     if (checkModeChange()) {
       return true;
     }
@@ -45,30 +45,30 @@ bool wait(uint32_t lowMillis, uint32_t highMillis) {
 }
 
 void getNewColor(uint32_t &color) {
-  uint32_t newColor;
+  uint32_t new_color;
   do {
-    newColor = strip.COLORS[random(strip.LEN_COLORS)];
-  } while (newColor == color);
-  color = newColor;
+    new_color = strip.COLORS[random(strip.LEN_COLORS)];
+  } while (new_color == color);
+  color = new_color;
 }
 
 void getTwoNewColors(uint32_t &color1, uint32_t &color2) {
-  uint32_t newColor1;
-  uint32_t newColor2;
+  uint32_t new_color1;
+  uint32_t new_color2;
   do {
-    newColor1 = strip.COLORS[random(strip.LEN_COLORS)];
-    newColor2 = strip.COLORS[random(strip.LEN_COLORS)];
-  } while (newColor1 == color1 || newColor2 == color2 || newColor1 == newColor2);
-  color1 = newColor1;
-  color2 = newColor2;
+    new_color1 = strip.COLORS[random(strip.LEN_COLORS)];
+    new_color2 = strip.COLORS[random(strip.LEN_COLORS)];
+  } while (new_color1 == color1 || new_color2 == color2 || new_color1 == new_color2);
+  color1 = new_color1;
+  color2 = new_color2;
 }
 
 void getNewPixel(uint8_t &pixel) {
-  uint32_t newPixel;
+  uint32_t new_pixel;
   do {
-    newPixel = random(strip.numPixels());
-  } while (newPixel == pixel || abs(newPixel - pixel) < 5);
-  pixel = newPixel;
+    new_pixel = random(strip.numPixels());
+  } while (new_pixel == pixel || abs(new_pixel - pixel) < 5);
+  pixel = new_pixel;
 }
 
 uint32_t getRandomColor() {
