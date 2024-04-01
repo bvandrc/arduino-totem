@@ -3,11 +3,12 @@
 #include "3_ColorModeUtils.h"
 #include "4_ColorModes.h"
 #include "5_Debug.h"
+#include "Totem_2022.h"
 
 // Global variable inits
 uint8_t effectMode = 1;     // Chase, Fade
 uint8_t colorScheme = 1;    // Rainbow, Pairs
-uint8_t brightness = 1;     // 0 to 255
+uint8_t brightnessVal = 1;  // 0 to 255
 uint16_t effectSpeed = 10;  // 0 to 1024
 bool tapEnabled = true;
 
@@ -16,8 +17,8 @@ bool tapEnabled = true;
 void setup() {
   //  Serial.begin(9600);
   setUpPins();
-  initMotionSensor();
-  initStrip();
+  motionSensor.init();
+  strip.init();
 }
 
 void loop() {
@@ -66,7 +67,7 @@ bool checkRageFlash() {
 }
 
 bool checkTapFlash() {
-  if (checkTapped()) {
+  if (motionSensor.checkTapped()) {
     tapFlash();
     return true;
   } else {
