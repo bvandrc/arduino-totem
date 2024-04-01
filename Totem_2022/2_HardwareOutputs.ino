@@ -100,9 +100,9 @@ uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_bri
   uint8_t g = (uint8_t)(color >> 8);
   uint8_t b = (uint8_t)(color);
 
-  uint8_t new_r = (r * this_brightness / MAX_BRIGHTNESS);
-  uint8_t new_g = (g * this_brightness / MAX_BRIGHTNESS);
-  uint8_t new_b = (b * this_brightness / MAX_BRIGHTNESS);
+  uint8_t new_r = (r * this_brightness) >> 8;
+  uint8_t new_g = (g * this_brightness) >> 8;
+  uint8_t new_b = (b * this_brightness) >> 8;
 
   return Color(new_r, new_g, new_b);
 }
