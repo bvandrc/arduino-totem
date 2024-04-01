@@ -40,7 +40,7 @@ void rainbowChase() {
     }
     strip.show();
 
-    if (wait(10, 1000)) {
+    if (wait(50, 5000)) {
       return;
     }
   }
