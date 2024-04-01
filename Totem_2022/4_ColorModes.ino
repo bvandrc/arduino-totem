@@ -35,14 +35,18 @@ void rainbowChase() {
   const uint16_t hue_step = 65536 / NUM_AROUND_EDGE;
   for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += hue_step) {
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
+      // +/- determines chase direction
+      uint16_t this_pixel_hue = first_pixel_hue - (i * hue_step);
+      strip.setPixelColorEdge(1, i, strip.ColorHSV(this_pixel_hue));
+    }
+
+    for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
-      for (uint8_t side = 1; side <= 2; side++) {
-        strip.setPixelColorEdge(side, i, strip.ColorHSV(this_pixel_hue));
-      }
+      strip.setPixelColorEdge(2, i, strip.ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_1);
+      uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_1);
       strip.setPixelColorMiddleSide1(i, strip.ColorHSV(this_pixel_hue));
     }
 
