@@ -33,8 +33,8 @@
 
 void rainbowChase() {
   for (long first_pixel_hue = 0; first_pixel_hue < 5 * 65536; first_pixel_hue += 256) {
-    for (uint8_t i = 1; i <= NUM_AROUND_EDGE; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + ((i - 1) * 65536L / NUM_AROUND_EDGE);
+    for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
+      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536L / NUM_AROUND_EDGE);
       strip.setPixelColorEdge(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
     }
     strip.show();
@@ -139,7 +139,7 @@ void theaterChaseCycle() {
 }
 
 void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delay_micros) {
-  for (uint8_t i = 1; i <= NUM_IN_QUADRANT + bullet_width; i++) {
+  for (uint8_t i = 0; i < NUM_IN_QUADRANT + bullet_width; i++) {
     strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
       strip.setPixelColorAllQuadrants(i + j, bullet_color);
@@ -150,7 +150,7 @@ void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_wid
 }
 
 bool fillUp(uint32_t color) {
-  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
+  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     strip.setPixelColorAllQuadrants(i, color);
     strip.show();
     if (wait(10, 1000)) {
@@ -178,7 +178,7 @@ void fillUpCycle() {
 }
 
 bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
-  for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
+  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     strip.setPixelColorQuadrant(1, i, color1);
     strip.setPixelColorQuadrant(2, i, color2);
     strip.setPixelColorQuadrant(3, i, color3);
