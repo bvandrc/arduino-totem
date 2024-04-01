@@ -72,5 +72,5 @@ void getNewPixel(uint8_t &pixel) {
 }
 
 uint32_t getRandomColor() {
-  return strip.gamma32(strip.ColorHSV(random(65535)));
+  return strip.ColorHSV(random(65535));
 }

@@ -60,6 +60,10 @@ void MyNeoPixel::init() {
   show();
 }
 
+uint32_t MyNeoPixel::ColorHSV(uint16_t hue) {
+  return gamma32(Adafruit_NeoPixel::ColorHSV(hue));
+}
+
 void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
   uint32_t new_color = getColorBrightnessAdjusted(color, brightness_global);
   Adafruit_NeoPixel::setPixelColor(index, new_color);

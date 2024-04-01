@@ -15,6 +15,7 @@ class MyNeoPixel : public Adafruit_NeoPixel {
 
   // overrides
   void setPixelColor(uint16_t index, uint32_t color);
+  uint32_t ColorHSV(uint16_t hue);
   void show();
   void fill(uint32_t color = 0, int first = 0, uint16_t count = 0);
 

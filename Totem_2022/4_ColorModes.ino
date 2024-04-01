@@ -14,14 +14,14 @@
 
 //   for (uint8_t i = 0; i < strip.numPixels(); i++) {
 //     if (speed_global < 10) {
-//       strip.fill(strip.gamma32(strip.ColorHSV(hue)));
+//       strip.fill(strip.ColorHSV(hue));
 //       break;
 //     }
 
 //     uint8_t saturation = random(150, 256);
 //     uint8_t value = random(100, 256);
 
-//     strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(hue, saturation, value)));
+//     strip.setPixelColor(i, strip.ColorHSV(hue));
 //   }
 
 //   strip.show();
@@ -37,18 +37,18 @@ void rainbowChase() {
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
       for (uint8_t side = 1; side <= 2; side++) {
-        strip.setPixelColorEdge(side, i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
+        strip.setPixelColorEdge(side, i, strip.ColorHSV(this_pixel_hue));
       }
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_1);
-      strip.setPixelColorMiddleSide1(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
+      strip.setPixelColorMiddleSide1(i, strip.ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_2);
-      strip.setPixelColorMiddleSide2(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
+      strip.setPixelColorMiddleSide2(i, strip.ColorHSV(this_pixel_hue));
     }
 
     strip.show();
@@ -60,8 +60,8 @@ void rainbowChase() {
 }
 
 void rainbowFade() {
-  for (long hue = 0; hue < 5 * 65536; hue += 256) {
-    strip.fill(strip.gamma32(strip.ColorHSV(hue)));
+  for (uint16_t hue = 0; hue < 65536; hue += 100) {
+    strip.fill(strip.ColorHSV((hue)));
     strip.show();
 
     if (wait(10, 500)) {
