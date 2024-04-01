@@ -1,6 +1,7 @@
 #include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
+#include "4_ColorModes.h"
 #include "Totem_2022.h"
 
 //  void setSolidMode(uint8_t index) {
@@ -43,7 +44,7 @@ void setOneColorMode(uint8_t index) {
     uint8_t pixelSaturation = random(150, 256);
     uint8_t pixelValue = random(100, 256);
 
-    stripSetPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue, pixelSaturation, pixelValue)));
+    strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue, pixelSaturation, pixelValue)));
   }
 
   strip.show();
@@ -57,7 +58,7 @@ void rainbowChase() {
   for (long firstPixelHue = 0; firstPixelHue < 5 * 65536; firstPixelHue += 256) {
     for (uint8_t i = 0; i < strip.numPixels() / 2; i++) {
       uint16_t pixelHue = firstPixelHue + (i * 65536L / (strip.numPixels() / 2));
-      stripSetPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+      strip.setPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(pixelHue)));
     }
     strip.show();
 
@@ -80,13 +81,13 @@ void rainbowFade() {
 
 void rainbowTwinkle() {
   for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    stripSetPixelColor(i, getRandomColor());
+    strip.setPixelColor(i, getRandomColor());
     strip.show();
   }
   uint8_t pixelToChange = 0;
   while (true) {
     getNewPixel(pixelToChange);
-    stripSetPixelColor(pixelToChange, getRandomColor());
+    strip.setPixelColor(pixelToChange, getRandomColor());
     strip.show();
 
     if (wait(2, 200)) {
@@ -99,14 +100,14 @@ bool colorTwinkle(uint32_t colors[], uint8_t len_colors, uint32_t timeLengthMill
   unsigned long initialTime = millis();
 
   for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    stripSetPixelColor(i, colors[random(len_colors)]);
+    strip.setPixelColor(i, colors[random(len_colors)]);
     strip.show();
   }
 
   uint8_t pixelToChange = 0;
   while ((millis() - initialTime) < timeLengthMillis) {
     getNewPixel(pixelToChange);
-    stripSetPixelColor(pixelToChange, colors[random(len_colors)]);
+    strip.setPixelColor(pixelToChange, colors[random(len_colors)]);
     strip.show();
 
     if (wait(2, 200)) {
@@ -135,8 +136,8 @@ bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwis
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
       for (uint8_t indx = 0; indx < strip.numPixels(); indx += (width * 2)) {
         int signedStagger = clockwise ? stagger : -stagger;
-        stripFillSegment(color1, indx + signedStagger - (width * 2), width);
-        stripFillSegment(color2, indx + signedStagger - (width * 2) + width, width);
+        strip.fill(color1, indx + signedStagger - (width * 2), width);
+        strip.fill(color2, indx + signedStagger - (width * 2) + width, width);
       }
       strip.show();
 
@@ -164,7 +165,7 @@ void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_wid
   for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
     strip.fill(background_color);
     for (uint8_t j = 0; j < bullet_width; j++) {
-      stripSetPixelColorAllQuadrants(i + j, bullet_color);
+      strip.setPixelColorAllQuadrants(i + j, bullet_color);
     }
     strip.show();
     delayMicroseconds(delayMicros);
@@ -173,7 +174,7 @@ void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_wid
 
 bool fillUp(uint32_t color) {
   for (uint8_t i = 1; i <= NUM_IN_QUADRANT; i++) {
-    stripSetPixelColorAllQuadrants(i, color);
+    strip.setPixelColorAllQuadrants(i, color);
     strip.show();
     if (wait(10, 1000)) {
       return true;
@@ -201,10 +202,10 @@ void fillUpCycle() {
 
 bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    stripSetPixelColorQuadrant(1, i, color1);
-    stripSetPixelColorQuadrant(2, i, color2);
-    stripSetPixelColorQuadrant(3, i, color3);
-    stripSetPixelColorQuadrant(4, i, color4);
+    strip.setPixelColorQuadrant(1, i, color1);
+    strip.setPixelColorQuadrant(2, i, color2);
+    strip.setPixelColorQuadrant(3, i, color3);
+    strip.setPixelColorQuadrant(4, i, color4);
     strip.show();
     if (wait(20, 1000)) {
       return true;
@@ -252,8 +253,8 @@ void fillUpQuadrantsCycle() {
 void rageFlash() {
   static uint32_t prevFlashColor = ORANGE;
 
-  uint8_t prevBrightness = brightness;
-  brightness = brightness < 200 ? 200 : MAX_BRIGHTNESS;
+  uint8_t prevBrightness = brightnessVal;
+  brightnessVal = brightnessVal < 200 ? 200 : MAX_BRIGHTNESS;
 
   uint32_t rageColor = COLORS[random(0, LEN_COLORS)];  // pick random color
   while (rageColor == prevFlashColor) {
@@ -270,7 +271,7 @@ void rageFlash() {
   } while (rageButtonPushed());
 
   prevFlashColor = rageColor;
-  brightness = prevBrightness;
+  brightnessVal = prevBrightness;
 }
 
 void tapFlash() {
@@ -278,9 +279,9 @@ void tapFlash() {
   static uint32_t color2 = ORANGE;
   getTwoNewColors(color1, color2);
 
-  uint8_t prevBrightness = brightness;
-  brightness = brightness < 200 ? 200 : MAX_BRIGHTNESS;
+  uint8_t prevBrightness = brightnessVal;
+  brightnessVal = brightnessVal < 200 ? 200 : MAX_BRIGHTNESS;
 
-  bullet(getColorBrightnessAdjusted(color1, 50), color2, 10, 35);
-  brightness = prevBrightness;
+  bullet(strip.getColorBrightnessAdjusted(color1, 50), color2, 10, 35);
+  brightnessVal = prevBrightness;
 }

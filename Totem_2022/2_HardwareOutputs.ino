@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>  // 1.8.5
 
 #include "1_HardwareInputs.h"
+#include "2_HardwareOutputs.h"
 #include "Totem_2022.h"
 
 // Pins
@@ -11,9 +12,6 @@ const uint8_t NUM_PIXELS = 206;
 const uint8_t NUM_AROUND_EDGE = 76;
 const uint8_t NUM_IN_QUADRANT = 38;  // NUM_AROUND_EDGE / 2
 
-// LED strip
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);
-
 /*
 Side 1 ("Front" - side with stems)
 Middle | 2 - 26
@@ -23,7 +21,7 @@ Right  | 65 - 74
 Bottom | 75 - 102
 
 "Left" inside lights  - 1, 103
-"Right" inside lights - 104
+"Right" inside lights - 0, 104
 
 Side 2 ("Back" - side with yellow flowers)
 Middle | 105 - 129
@@ -32,11 +30,13 @@ Top    | 140 - 167
 Right  | 168 - 177
 Bottom | 178 - 205
 */
-void initStrip() {
+
+MyNeoPixel::MyNeoPixel() : Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800) {
+}
+
+void MyNeoPixel::init() {
   strip.begin();            // initialize
   strip.setBrightness(20);  // max brightness of strip (actual max is 255)
-  strip.show();
-
   /*  72 pixels (2021 totem):
    *  Brightness val |    R   |    G   |    B   |    W    |  Rainbow  <- Amps
                 100  |  0.45  |  0.45  |  0.45  |  1.04   |    0.55
@@ -52,10 +52,41 @@ void initStrip() {
                 120  |  1.02  |  X     |  X     |  X      |    1.22   <- 220 is old totem val
                 150  |  X     |  X     |  X     |  X      |    1.54   <- 220 is old totem val
   */
+
+  strip.fill(0);
+  strip.show();
 }
 
-// https://forums.adafruit.com/viewtopic.php?t=41143
-uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
+void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
+  uint32_t newColor = (*this).getColorBrightnessAdjusted(color, brightnessVal);
+  Adafruit_NeoPixel::setPixelColor(index, newColor);
+}
+
+void MyNeoPixel::show() {
+  // middle
+  Adafruit_NeoPixel::fill(0, 2, 25);
+  Adafruit_NeoPixel::fill(0, 105, 25);
+
+  // always turn off inside lights
+  Adafruit_NeoPixel::setPixelColor(0, 0);
+  Adafruit_NeoPixel::setPixelColor(1, 0);
+  Adafruit_NeoPixel::setPixelColor(103, 0);
+  Adafruit_NeoPixel::setPixelColor(104, 0);
+
+  Adafruit_NeoPixel::show();
+}
+
+void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
+  uint32_t newColor = (*this).getColorBrightnessAdjusted(color, brightnessVal);
+  if (first < 0) {
+    Adafruit_NeoPixel::fill(newColor, 0, count + first);
+  } else {
+    Adafruit_NeoPixel::fill(newColor, (uint16_t)first, count);
+  }
+}
+
+uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
+  // https://forums.adafruit.com/viewtopic.php?t=41143
   uint8_t r = (uint8_t)(color >> 16);
   uint8_t g = (uint8_t)(color >> 8);
   uint8_t b = (uint8_t)(color);
@@ -64,16 +95,10 @@ uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
   uint8_t newG = (g * this_brightness / MAX_BRIGHTNESS);
   uint8_t newB = (b * this_brightness / MAX_BRIGHTNESS);
 
-  return strip.Color(newR, newG, newB);
+  return Adafruit_NeoPixel::Color(newR, newG, newB);
 }
 
-// Set pixel color (taking brightness into account) from 'packed' 32-bit RGB color:
-void stripSetPixelColor(uint16_t index, uint32_t color) {
-  uint32_t newColor = getColorBrightnessAdjusted(color, brightness);
-  strip.setPixelColor(index, newColor);
-}
-
-void stripSetPixelColorBackside(uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorBackside(uint16_t index, uint32_t color) {
   uint16_t otherSide;
   if (2 <= index && index <= 26) {
     // middle
@@ -91,21 +116,21 @@ void stripSetPixelColorBackside(uint16_t index, uint32_t color) {
     // bottom
     otherSide = map(index, 75, 102, 205, 178);
   }
-  // TODO: inside lights (1,103, 104)
-  stripSetPixelColor(otherSide, color);
+  // NOTE: does not account for inside lights (1,103, 104)
+  (*this).setPixelColor(otherSide, color);
 }
 
-void stripSetPixelColorBothSides(uint16_t index, uint32_t color) {
-  stripSetPixelColor(index, color);
-  stripSetPixelColorBackside(index, color);
+void MyNeoPixel::setPixelColorBothSides(uint16_t index, uint32_t color) {
+  (*this).setPixelColor(index, color);
+  (*this).setPixelColorBackside(index, color);
 }
 
-void stripSetPixelColorBothSidesAsym(uint16_t index, uint32_t color) {
-  stripSetPixelColor(index, color);
-  stripSetPixelColor(index + (NUM_PIXELS / 2), color);
+void MyNeoPixel::setPixelColorBothSidesAsym(uint16_t index, uint32_t color) {
+  (*this).setPixelColor(index, color);
+  (*this).setPixelColor(index + (NUM_PIXELS / 2), color);
 }
 
-void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
   uint16_t actualIndex;
   if (quadrant == 1 || quadrant == 4) {
     if (1 <= index && index <= 14) {
@@ -132,23 +157,17 @@ void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color
   }
 
   if (quadrant == 1 || quadrant == 2) {
-    stripSetPixelColor(actualIndex, color);
+    (*this).setPixelColor(actualIndex, color);
   } else {
-    stripSetPixelColorBackside(actualIndex, color);
+    (*this).setPixelColorBackside(actualIndex, color);
   }
 }
 
-void stripSetPixelColorAllQuadrants(uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorAllQuadrants(uint16_t index, uint32_t color) {
   for (uint8_t i = 1; i <= 4; i++) {
-    stripSetPixelColorQuadrant(i, index, color);
+    (*this).setPixelColorQuadrant(i, index, color);
   }
 }
 
-void stripFillSegment(uint32_t color, int first, uint16_t count) {
-  uint32_t newColor = getColorBrightnessAdjusted(color, brightness);
-  if (first < 0) {
-    strip.fill(newColor, 0, count + first);
-  } else {
-    strip.fill(newColor, (uint16_t)first, count);
-  }
-}
+// LED strip
+MyNeoPixel strip = MyNeoPixel();

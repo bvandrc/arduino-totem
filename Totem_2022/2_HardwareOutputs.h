@@ -6,18 +6,25 @@
 extern const uint8_t NUM_AROUND_EDGE;
 extern const uint8_t NUM_IN_QUADRANT;
 
-extern Adafruit_NeoPixel strip;
+class MyNeoPixel : public Adafruit_NeoPixel {
+  public:
+  MyNeoPixel();
 
-extern void initStrip();
+  // overrides
+  void setPixelColor(uint16_t index, uint32_t color);
+  void show();
+  void fill(uint32_t color = 0, int first = 0, uint16_t count = 0);
 
-extern uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness);
+  // new functions
+  void init();
+  uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness);
+  void setPixelColorBackside(uint16_t index, uint32_t color);
+  void setPixelColorBothSides(uint16_t index, uint32_t color);
+  void setPixelColorBothSidesAsym(uint16_t index, uint32_t color);
+  void setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color);
+  void setPixelColorAllQuadrants(uint16_t index, uint32_t color);
+};
 
-extern void stripSetPixelColor(uint16_t index, uint32_t color);
-extern void stripSetPixelColorBackside(uint16_t index, uint32_t color);
-extern void stripSetPixelColorBothSides(uint16_t index, uint32_t color);
-extern void stripSetPixelColorBothSidesAsym(uint16_t index, uint32_t color);
-extern void stripSetPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color);
-extern void stripSetPixelColorAllQuadrants(uint16_t index, uint32_t color);
-extern void stripFillSegment(uint32_t color, int first, uint16_t count);
+extern MyNeoPixel strip;
 
 #endif
