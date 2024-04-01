@@ -64,11 +64,11 @@ void rainbowChase() {
 }
 
 void rainbowFade() {
-  for (uint16_t hue = 0; hue < 65536; hue += 100) {
+  for (uint16_t hue = 0; hue < 65536; hue += 50) {
     strip.fill(strip.ColorHSV((hue)));
     strip.show();
 
-    if (wait(10, 500)) {
+    if (wait(1, 200)) {
       return;
     }
   }
