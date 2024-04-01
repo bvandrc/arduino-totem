@@ -100,23 +100,23 @@ uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_bri
 
 void MyNeoPixel::setPixelColorBackside(uint16_t index, uint32_t color) {
   uint16_t other_side_index;
-  if (1 <= index && index <= 25) {
+  if (2 <= index && index <= 26) {
     // middle
-    other_side_index = map(index, 1, 25, 129, 105);
-  } else if (26 <= index && index <= 35) {
+    other_side_index = map(index, 2, 26, 129, 105);
+  } else if (27 <= index && index <= 36) {
     // left
-    other_side_index = map(index, 26, 35, 177, 168);
-  } else if (36 <= index && index <= 63) {
+    other_side_index = map(index, 27, 36, 177, 168);
+  } else if (37 <= index && index <= 64) {
     // top
-    other_side_index = map(index, 36, 63, 167, 140);
-  } else if (64 <= index && index <= 73) {
+    other_side_index = map(index, 37, 64, 167, 140);
+  } else if (65 <= index && index <= 74) {
     // right
-    other_side_index = map(index, 64, 73, 139, 130);
-  } else if (74 <= index && index <= 101) {
+    other_side_index = map(index, 65, 74, 139, 130);
+  } else if (75 <= index && index <= 102) {
     // bottom
-    other_side_index = map(index, 74, 101, 205, 178);
+    other_side_index = map(index, 75, 102, 205, 178);
   }
-  // NOTE: does not account for inside lights (1,103, 104)
+  // NOTE: does not account for inside lights (0, 1, 103, 104)
   setPixelColor(other_side_index, color);
 }
 
