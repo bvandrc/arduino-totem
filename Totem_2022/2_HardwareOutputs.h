@@ -5,6 +5,7 @@
 
 extern const uint8_t NUM_AROUND_EDGE;
 extern const uint8_t NUM_IN_QUADRANT;
+extern const uint8_t NUM_IN_MIDDLE;
 
 class MyNeoPixel : public Adafruit_NeoPixel {
   public:
@@ -21,6 +22,7 @@ class MyNeoPixel : public Adafruit_NeoPixel {
   void setPixelColorBackside(uint16_t index, uint32_t color);
   void setPixelColorBothSides(uint16_t index, uint32_t color);
   void setPixelColorEdge(uint16_t index, uint32_t color);
+  void setPixelColorMiddle(uint16_t index, uint32_t color);
   void setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color);
   void setPixelColorAllQuadrants(uint16_t index, uint32_t color);
 

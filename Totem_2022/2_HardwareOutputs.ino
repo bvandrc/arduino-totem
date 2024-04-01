@@ -11,6 +11,7 @@ const uint8_t STRIP_PIN = 5;
 const uint8_t NUM_PIXELS = 206;
 const uint8_t NUM_AROUND_EDGE = 76;
 const uint8_t NUM_IN_QUADRANT = 38;  // NUM_AROUND_EDGE / 2
+const uint8_t NUM_IN_MIDDLE = 24;
 
 /*
 Side 1 ("Front" - side with stems)
@@ -64,8 +65,8 @@ void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
 
 void MyNeoPixel::show() {
   // middle
-  fill(0, 2, 25);
-  fill(0, 105, 25);
+  // fill(0, 2, 25);
+  // fill(0, 105, 25);
 
   // always turn off inside lights
   setPixelColor(0, 0);
@@ -144,6 +145,15 @@ void MyNeoPixel::setPixelColorEdge(uint16_t index, uint32_t color) {
     // bottom
     actual_index = map(index, 48, 75, 75, 102);
   }
+
+  setPixelColorBothSides(actual_index, color);
+}
+
+void MyNeoPixel::setPixelColorMiddle(uint16_t index, uint32_t color) {
+  if (index >= NUM_IN_MIDDLE) {
+    return;
+  }
+  uint16_t actual_index = map(index, 0, NUM_IN_MIDDLE - 1, 2, 26);
 
   setPixelColorBothSides(actual_index, color);
 }
