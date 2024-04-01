@@ -18,16 +18,16 @@ bool arrayIsUnique(uint32_t colors[], uint8_t len_colors) {
 }
 
 // apply custom delay range to speed dial, return ms for wait command
-uint32_t getDelay(uint32_t low_time, uint32_t high_time) {
+uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
   if (speed_global < 10) {
-    return 4000000000;  // frozen
+    return 0xFFFFFFFF;  // frozen
   } else {
-    return map(speed_global, DIAL_MAX, 10, low_time, high_time);  // higher speed = lower millis
+    return map(speed_global, DIAL_MAX, 10, low_millis, high_millis);  // higher speed = lower millis
   }
 }
 
 bool wait(uint32_t low_millis, uint32_t high_millis) {
-  uint32_t wait_time_millis = getDelay(low_millis, high_millis);
+  uint32_t wait_time_millis = getDelayMillis(low_millis, high_millis);
   unsigned long initial_time = millis();
   while ((millis() - initial_time) < wait_time_millis) {
     getBrightnessDial();
@@ -36,7 +36,7 @@ bool wait(uint32_t low_millis, uint32_t high_millis) {
       return false;  // want to return so can re-instate normal mode colors after flash, but dont want to change state
                      // (restart mode)
     }
-    wait_time_millis = getDelay(low_millis, high_millis);
+    wait_time_millis = getDelayMillis(low_millis, high_millis);
     if (checkModeChange()) {
       return true;
     }

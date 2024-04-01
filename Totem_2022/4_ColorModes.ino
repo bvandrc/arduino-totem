@@ -32,14 +32,15 @@
 // }
 
 void rainbowChase() {
-  for (long first_pixel_hue = 0; first_pixel_hue < 5 * 65536; first_pixel_hue += 256) {
+  const uint16_t hue_step = 65536 / NUM_AROUND_EDGE;
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += hue_step) {
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536L / NUM_AROUND_EDGE);
+      uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
       strip.setPixelColorEdge(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
     }
     strip.show();
 
-    if (wait(1, 50)) {
+    if (wait(10, 1000)) {
       return;
     }
   }
