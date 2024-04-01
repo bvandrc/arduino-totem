@@ -125,9 +125,27 @@ void MyNeoPixel::setPixelColorBothSides(uint16_t index, uint32_t color) {
   setPixelColorBackside(index, color);
 }
 
-void MyNeoPixel::setPixelColorBothSidesAsym(uint16_t index, uint32_t color) {
-  setPixelColor(index, color);
-  setPixelColor(index + (NUM_PIXELS / 2), color);
+void MyNeoPixel::setPixelColorEdge(uint16_t index, uint32_t color) {
+  if (index > NUM_AROUND_EDGE) {
+    return;
+  }
+  uint16_t actual_index;
+
+  if (1 <= index && index <= 10) {
+    // left
+    actual_index = map(index, 1, 10, 27, 36);
+  } else if (11 <= index && index <= 38) {
+    // top
+    actual_index = map(index, 11, 38, 37, 64);
+  } else if (39 <= index && index <= 48) {
+    // right
+    actual_index = map(index, 39, 48, 65, 74);
+  } else if (49 <= index && index <= 76) {
+    // bottom
+    actual_index = map(index, 49, 76, 75, 102);
+  }
+
+  setPixelColorBothSides(actual_index, color);
 }
 
 void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {

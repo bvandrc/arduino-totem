@@ -33,9 +33,9 @@
 
 void rainbowChase() {
   for (long first_pixel_hue = 0; first_pixel_hue < 5 * 65536; first_pixel_hue += 256) {
-    for (uint8_t i = 0; i < strip.numPixels() / 2; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536L / (strip.numPixels() / 2));
-      strip.setPixelColorBothSidesAsym(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
+    for (uint8_t i = 1; i <= NUM_AROUND_EDGE; i++) {
+      uint16_t this_pixel_hue = first_pixel_hue + ((i - 1) * 65536L / NUM_AROUND_EDGE);
+      strip.setPixelColorEdge(i, strip.gamma32(strip.ColorHSV(this_pixel_hue)));
     }
     strip.show();
 
