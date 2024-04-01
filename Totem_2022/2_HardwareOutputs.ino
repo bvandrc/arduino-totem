@@ -12,6 +12,8 @@ const uint8_t NUM_PIXELS = 206;
 const uint8_t NUM_AROUND_EDGE = 76;
 const uint8_t NUM_IN_QUADRANT = 38;  // NUM_AROUND_EDGE / 2
 const uint8_t NUM_IN_MIDDLE = 24;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = 19;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = 13;
 
 /*
 Side 1 ("Front" - side with stems)
@@ -64,9 +66,11 @@ void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
 }
 
 void MyNeoPixel::show() {
-  // middle
-  // fill(0, 2, 25);
-  // fill(0, 105, 25);
+  // middle (outside of desired sign range)
+  fill(0, 2, 4);
+  fill(0, 25, 2);
+  fill(0, 105, 5);
+  fill(0, 123, 7);
 
   // always turn off inside lights
   setPixelColor(0, 0);
@@ -155,6 +159,24 @@ void MyNeoPixel::setPixelColorMiddle(uint8_t side, uint16_t index, uint32_t colo
 
   uint16_t actual_index = map(index, 0, NUM_IN_MIDDLE - 1, 2, 26);
   setPixelColorSide(side, actual_index, color);
+}
+
+void MyNeoPixel::setPixelColorMiddleSide1(uint16_t index, uint32_t color) {
+  if (index >= NUM_USED_IN_MIDDLE_SIDE_1) {
+    return;
+  }
+
+  uint16_t actual_index = index + ((NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_1) / 2) + 2;
+  setPixelColorMiddle(1, actual_index, color);
+}
+
+void MyNeoPixel::setPixelColorMiddleSide2(uint16_t index, uint32_t color) {
+  if (index >= NUM_USED_IN_MIDDLE_SIDE_2) {
+    return;
+  }
+
+  uint16_t actual_index = index + ((NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_2) / 2) + 2;
+  setPixelColorMiddle(2, actual_index, color);
 }
 
 void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
