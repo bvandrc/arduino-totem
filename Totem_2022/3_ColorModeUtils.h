@@ -3,7 +3,6 @@
 
 extern bool arrayIsUnique(uint32_t colors[], uint8_t len_colors);
 
-extern uint32_t getDelay(uint32_t low_time, uint32_t high_time);
 extern bool wait(uint32_t low_millis, uint32_t high_millis);
 
 extern void getNewColor(uint32_t &color);
