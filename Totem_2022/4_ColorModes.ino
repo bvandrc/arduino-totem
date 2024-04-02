@@ -19,12 +19,12 @@ void rainbowChase() {
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_1);
+      uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
       strip.setPixelColorMiddleSide1(i, strip.ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 / NUM_USED_IN_MIDDLE_SIDE_2);
+      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
       strip.setPixelColorMiddleSide2(i, strip.ColorHSV(this_pixel_hue));
     }
 
