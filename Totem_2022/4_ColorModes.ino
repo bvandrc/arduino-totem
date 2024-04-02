@@ -207,7 +207,7 @@ void rageFlash() {
   static uint32_t prev_flash_color = strip.ORANGE;
 
   uint8_t prev_brightness = brightness_global;
-  brightness_global = brightness_global < 200 ? 200 : MAX_BRIGHTNESS;
+  brightness_global = brightness_global < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
 
   static uint32_t rage_color = strip.ORANGE;
   getNewColor(rage_color);
@@ -231,8 +231,8 @@ void tapFlash() {
   getTwoNewColors(color1, color2);
 
   uint8_t prev_brightness = brightness_global;
-  brightness_global = brightness_global < 200 ? 200 : MAX_BRIGHTNESS;
+  brightness_global = brightness_global < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
 
-  bullet(strip.getColorBrightnessAdjusted(color1, 50), color2, 10, 35);
+  bullet(strip.getColorBrightnessAdjusted(color1, brightness_global * 0.5), color2, 10, 35);
   brightness_global = prev_brightness;
 }
