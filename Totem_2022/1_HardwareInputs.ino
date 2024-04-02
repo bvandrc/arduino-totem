@@ -104,7 +104,7 @@ bool getBrightnessDial() {
 
   uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
   uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
-  strip.brightness_m = new_val;
+  strip.brightness = new_val;
   // TODO: scale this dial logarithmically
 
   bool changed = false;

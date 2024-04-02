@@ -206,8 +206,8 @@ void fillUpQuadrantsCycle() {
 void rageFlash() {
   static uint32_t prev_flash_color = strip.ORANGE;
 
-  uint8_t prev_brightness = strip.brightness_m;
-  strip.brightness_m = strip.brightness_m < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
+  uint8_t prev_brightness = strip.brightness;
+  strip.brightness = strip.brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
 
   static uint32_t rage_color = strip.ORANGE;
   getNewColor(rage_color);
@@ -222,7 +222,7 @@ void rageFlash() {
   } while (rageButtonPushed());
 
   prev_flash_color = rage_color;
-  strip.brightness_m = prev_brightness;
+  strip.brightness = prev_brightness;
 }
 
 void tapFlash() {
@@ -230,9 +230,9 @@ void tapFlash() {
   static uint32_t color2 = strip.ORANGE;
   getTwoNewColors(color1, color2);
 
-  uint8_t prev_brightness = strip.brightness_m;
-  strip.brightness_m = strip.brightness_m < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
+  uint8_t prev_brightness = strip.brightness;
+  strip.brightness = strip.brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
 
-  bullet(strip.getColorBrightnessAdjusted(color1, strip.brightness_m * 0.5), color2, 10, 35);
-  strip.brightness_m = prev_brightness;
+  bullet(strip.getColorBrightnessAdjusted(color1, strip.brightness * 0.5), color2, 10, 35);
+  strip.brightness = prev_brightness;
 }

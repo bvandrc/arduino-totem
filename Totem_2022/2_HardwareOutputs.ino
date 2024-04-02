@@ -54,7 +54,7 @@ void MyNeoPixel::init() {
                 150  |  X     |  X     |  X     |  X      |    1.54   <- 220 is old totem val
   */
 
-  brightness_m = 1;
+  brightness = 1;
   speed = 10;
   begin();            // initialize
   setBrightness(20);  // max brightness of strip (actual max is 255)
@@ -67,12 +67,12 @@ uint32_t MyNeoPixel::ColorHSV(uint16_t hue) {
 }
 
 void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_m);
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness);
   Adafruit_NeoPixel::setPixelColor(index, new_color);
 }
 
 void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_m);
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness);
   if (first < 0) {
     Adafruit_NeoPixel::fill(new_color, 0, count + first);
   } else {
