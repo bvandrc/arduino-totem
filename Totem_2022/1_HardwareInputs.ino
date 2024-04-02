@@ -85,10 +85,24 @@ uint8_t getColorDialPosition() {
   return getSelectorPosition(COLOR_DIAL_PIN);
 }
 
-void getBrightnessDial() {
+bool getBrightnessDial() {
+  static unsigned long last_time_checked = 0;
+  static uint8_t val_last_saved = 0;
+
   uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
-  brightness_global = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
+  uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
+  brightness_global = new_val;
   // TODO: scale this dial logarithmically
+
+  bool changed = false;
+  unsigned long curr_time = millis();
+  if (curr_time - last_time_checked > 100) {
+    changed = abs(new_val - val_last_saved) > 5;
+    val_last_saved = new_val;
+    last_time_checked = curr_time;
+  }
+
+  return changed;
 }
 
 void getSpeedDial() {

@@ -26,22 +26,25 @@ uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
   }
 }
 
-bool wait(uint32_t low_millis, uint32_t high_millis) {
+WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
   uint32_t wait_time_millis = getDelayMillis(low_millis, high_millis);
   unsigned long initial_time = millis();
   while ((millis() - initial_time) < wait_time_millis) {
-    getBrightnessDial();
+    bool brightness_changed = getBrightnessDial();
+    if (brightness_changed) {
+      return WaitReturnCode::BRIGHTNESS_CHANGED;
+    }
     getSpeedDial();
     if (checkRageFlash() || checkTapFlash()) {
-      return false;  // want to return so can re-instate normal mode colors after flash, but dont want to change state
-                     // (restart mode)
+      return WaitReturnCode::NO_CHANGE;  // want to return so can re-instate normal mode colors after flash, but dont
+                                         // want to change state (restart mode)
     }
     wait_time_millis = getDelayMillis(low_millis, high_millis);
     if (checkModeChange()) {
-      return true;
+      return WaitReturnCode::MODE_CHANGED;
     }
   }
-  return false;
+  return WaitReturnCode::NO_CHANGE;
 }
 
 void getNewColor(uint32_t &color) {

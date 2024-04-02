@@ -15,7 +15,7 @@ bool tap_enabled_global = true;
 // TODO: any locks (ie brightness lock?)
 
 void setup() {
-  //  Serial.begin(9600);
+  // Serial.begin(9600);
   setUpPins();
   motionSensor.init();
   strip.init();

@@ -22,7 +22,7 @@ extern bool rageButtonPushed();
 extern uint8_t getModeDialPosition();
 extern uint8_t getColorDialPosition();
 extern uint8_t getSelectorPosition(uint8_t pin);
-extern void getBrightnessDial();
+extern bool getBrightnessDial();
 extern void getSpeedDial();
 
 #endif

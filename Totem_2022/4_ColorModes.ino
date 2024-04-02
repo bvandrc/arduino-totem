@@ -4,44 +4,17 @@
 #include "4_ColorModes.h"
 #include "Totem_2022.h"
 
-// void singleColorTwinkle(uint16_t hue) {
-//   //   hue = 0;  // red
-//   //   hue = 21845;  // green
-//   //   hue = 43690;  // blue
-//   //   hue = 3458;  // orange
-//   //   hue = 52246;  // purple
-//   //   hue = 27306;  // seafoam
-
-//   for (uint8_t i = 0; i < strip.numPixels(); i++) {
-//     if (speed_global < 10) {
-//       strip.fill(strip.ColorHSV(hue));
-//       break;
-//     }
-
-//     uint8_t saturation = random(150, 256);
-//     uint8_t value = random(100, 256);
-
-//     strip.setPixelColor(i, strip.ColorHSV(hue));
-//   }
-
-//   strip.show();
-
-//   if (wait(10, 500)) {
-//     return;
-//   }
-// }
-
 void rainbowChase() {
-  const uint16_t hue_step = 65536 / NUM_AROUND_EDGE;
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += hue_step) {
+  static const uint16_t HUE_STEP = 65536 / NUM_AROUND_EDGE;
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += HUE_STEP) {
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
       // +/- determines chase direction
-      uint16_t this_pixel_hue = first_pixel_hue - (i * hue_step);
+      uint16_t this_pixel_hue = first_pixel_hue - (i * HUE_STEP);
       strip.setPixelColorEdge(1, i, strip.ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
+      uint16_t this_pixel_hue = first_pixel_hue + (i * HUE_STEP);
       strip.setPixelColorEdge(2, i, strip.ColorHSV(this_pixel_hue));
     }
 
@@ -57,19 +30,26 @@ void rainbowChase() {
 
     strip.show();
 
-    if (wait(50, 5000)) {
+    WaitReturnCode return_code = wait(50, 5000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
+      first_pixel_hue -= HUE_STEP;
     }
   }
 }
 
 void rainbowFade() {
-  for (uint16_t hue = 0; hue < 65536; hue += 50) {
+  const uint8_t HUE_STEP = 50;
+  for (uint16_t hue = 0; hue < 65536; hue += HUE_STEP) {
     strip.fill(strip.ColorHSV((hue)));
     strip.show();
 
-    if (wait(1, 200)) {
+    WaitReturnCode return_code = wait(1, 200);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
+      hue -= HUE_STEP;
     }
   }
 }
@@ -85,47 +65,15 @@ void rainbowTwinkle() {
     strip.setPixelColor(pixel_to_change, getRandomColor());
     strip.show();
 
-    if (wait(2, 200)) {
+    WaitReturnCode return_code = wait(2, 200);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
   }
 }
 
-bool colorTwinkle(uint32_t colors[], uint8_t len_colors, uint32_t timeLengthMillis) {
-  unsigned long initial_time = millis();
-
-  for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, colors[random(len_colors)]);
-    strip.show();
-  }
-
-  uint8_t pixel_to_change = 0;
-  while ((millis() - initial_time) < timeLengthMillis) {
-    getNewPixel(pixel_to_change);
-    strip.setPixelColor(pixel_to_change, colors[random(len_colors)]);
-    strip.show();
-
-    if (wait(2, 200)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-void colorTwinkleCycle() {
-  static uint32_t color1 = strip.ORANGE;
-  static uint32_t color2 = strip.ORANGE;
-
-  while (true) {
-    getTwoNewColors(color1, color2);
-    uint32_t colors[] = {color1, color2};
-    if (colorTwinkle(colors, 2, 5000)) {
-      return;
-    };
-  }
-}
-
-bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
+WaitReturnCode theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwise,
+                            uint32_t time_length_millis) {
   unsigned long initial_time = millis();
   while ((millis() - initial_time) < time_length_millis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
@@ -136,12 +84,15 @@ bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwis
       }
       strip.show();
 
-      if (wait(40, 1000)) {
-        return true;
+      WaitReturnCode return_code = wait(40, 1000);
+      if (return_code == WaitReturnCode::MODE_CHANGED) {
+        return WaitReturnCode::MODE_CHANGED;
+      } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
+        stagger--;
       }
     }
   }
-  return false;
+  return WaitReturnCode::NO_CHANGE;
 }
 
 void theaterChaseCycle() {
@@ -150,7 +101,7 @@ void theaterChaseCycle() {
 
   while (true) {
     getTwoNewColors(color1, color2);
-    if (theaterChase(color1, color2, 3, random(2), 10000)) {
+    if (theaterChase(color1, color2, 3, random(2), 10000) == WaitReturnCode::MODE_CHANGED) {
       return;
     };
   }
@@ -167,15 +118,18 @@ void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_wid
   }
 }
 
-bool fillUp(uint32_t color) {
+WaitReturnCode fillUp(uint32_t color) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     strip.setPixelColorAllQuadrants(i, color);
     strip.show();
-    if (wait(10, 1000)) {
-      return true;
+    WaitReturnCode return_code = wait(10, 1000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
+      return WaitReturnCode::MODE_CHANGED;
+    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
+      i--;
     }
   }
-  return false;
+  return WaitReturnCode::NO_CHANGE;
 }
 
 void fillUpCycle() {
@@ -186,27 +140,31 @@ void fillUpCycle() {
 
   while (true) {
     getNewColor(color1);
-    if (fillUp(color1)) {
+    if (fillUp(color1) == WaitReturnCode::MODE_CHANGED) {
       return;
     }
-    if (wait(20, 1000)) {
+    if (wait(20, 1000) == WaitReturnCode::MODE_CHANGED) {
       return;
     }
   }
 }
 
-bool fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
+WaitReturnCode fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     strip.setPixelColorQuadrant(1, i, color1);
     strip.setPixelColorQuadrant(2, i, color2);
     strip.setPixelColorQuadrant(3, i, color3);
     strip.setPixelColorQuadrant(4, i, color4);
     strip.show();
-    if (wait(20, 1000)) {
-      return true;
+
+    WaitReturnCode return_code = wait(20, 1000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
+      return WaitReturnCode::MODE_CHANGED;
+    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
+      i--;
     }
   }
-  return false;
+  return WaitReturnCode::NO_CHANGE;
 }
 
 void fillUpQuadrantsCycle() {
@@ -236,10 +194,10 @@ void fillUpQuadrantsCycle() {
       }
     }
 
-    if (fillUpQuadrants(color1, color2, color3, color4)) {
+    if (fillUpQuadrants(color1, color2, color3, color4) == WaitReturnCode::MODE_CHANGED) {
       return;
     }
-    if (wait(20, 1000)) {
+    if (wait(20, 1000) == WaitReturnCode::MODE_CHANGED) {
       return;
     }
   }

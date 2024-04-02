@@ -4,7 +4,6 @@
 extern void rainbowChase();
 extern void rainbowFade();
 extern void rainbowTwinkle();
-extern void colorTwinkleCycle();
 extern void theaterChaseCycle();
 extern void fillUpCycle();
 extern void fillUpQuadrantsCycle();
