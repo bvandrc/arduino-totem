@@ -1,0 +1,7 @@
+{
+    "board": "arduino:megaavr:nona4809",
+    "sketch": "Totem_2022.ino",
+    "port": "COM3",
+    "programmer": "avrispmkii",
+    "configuration": "mode=off"
+}

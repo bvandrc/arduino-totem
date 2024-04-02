@@ -1,0 +1,39 @@
+
+const uint32_t pink = strip.Color(255, 0, 255);
+const uint32_t purple = strip.Color(130, 0, 230);
+
+void loop() {
+   theaterChase(pink,purple,3);
+}
+
+
+/*
+* if you had theaterChase(pink, purple, 3), the longs strip on my totem would have 3 pink, 3 purple, 3 pink, 3 purple... etc. 
+* Each <waitTime> ms, the entire strip would shift up by 1, making it appear to be chasing.
+* 
+* If you just wanted 2 colors to switch back and forth you could have theaterChase(pink,purple, 1)
+*/
+
+bool theaterChase(uint32_t color1, uint32_t color2, uint8_t width) {
+   while (true) {              // loop forever
+   
+      int waitTime = 100;      // waitTime controls the speed at which they change (milliseconds) -- I had somewhere between 40 and 200
+      
+      /* this loop causes the chase to happen */
+      for (uint8_t q = 0; q < (width * 2); q++) {
+         for (uint16_t i = 0; i < strip.numPixels(); i = i + (width * 2)) {
+            for (uint8_t k = 0; k < width; k++) {
+               strip.setPixelColor(i + q + k, color1);
+            }
+         }
+         strip.show();
+         delay(waitTime);
+
+         for (uint16_t i = 0; i < strip.numPixels(); i = i + (width * 2)) {
+            for (uint8_t k = 0; k < width; k++) {
+               strip.setPixelColor(i + q + k, color2);
+            }
+         }
+      }
+   }
+}
