@@ -1,14 +1,15 @@
 #include <Adafruit_LIS3DH.h>  // 1.2.2
 
 #include "1_HardwareInputs.h"
+#include "2_HardwareOutputs.h"
 #include "Totem_2022.h"
 
 // Pins
 const uint8_t RAGE_BUTTON_PIN = 2;
 const uint8_t SPEED_DIAL_PIN = A2;
 const uint8_t BRIGHTNESS_DIAL_PIN = A3;
-const uint8_t MODE_DIAL_PIN = A1;
-const uint8_t COLOR_DIAL_PIN = A0;
+const uint8_t TOP_DIAL_PIN = A1;
+const uint8_t BOTTOM_DIAL_PIN = A0;
 const uint8_t MIC_PIN = A7;
 const uint8_t MO_SENS_INT_1_PIN = 3;
 
@@ -17,12 +18,16 @@ const uint16_t DIAL_MIN = 0;
 const uint16_t DIAL_MAX = 1023;
 const uint8_t MAX_BRIGHTNESS = 255;  // not actual max brightness-- don't change this.
 
+uint8_t top_dial_position = 1;
+uint8_t bottom_dial_position = 1;
+
 // Motion sensor
 
 MyMotionSensor::MyMotionSensor() : Adafruit_LIS3DH() {
 }
 
 void MyMotionSensor::init() {
+  tap_enabled = true;
   begin(0x18);
   setRange(LIS3DH_RANGE_4_G);  // 2, 4, 8 or 16 G
   // Click threshold. Adjust this number for the sensitivity of the 'click' force
@@ -34,10 +39,6 @@ void MyMotionSensor::init() {
 }
 
 bool MyMotionSensor::checkTapped() {
-  if (!tap_enabled_global) {
-    return false;
-  }
-
   uint8_t tap = getClick();
   if (tap == 0 || !(tap & 0x30)) {
     return false;
@@ -77,12 +78,24 @@ uint8_t getSelectorPosition(uint8_t pin) {
   }
 }
 
-uint8_t getModeDialPosition() {
-  return getSelectorPosition(MODE_DIAL_PIN);
+uint8_t getTopDialPosition() {
+  return getSelectorPosition(TOP_DIAL_PIN);
 }
 
-uint8_t getColorDialPosition() {
-  return getSelectorPosition(COLOR_DIAL_PIN);
+uint8_t getBottomDialPosition() {
+  return getSelectorPosition(BOTTOM_DIAL_PIN);
+}
+
+bool checkSelectorDialsChanged() {
+  uint8_t new_top_tial_position = getTopDialPosition();
+  uint8_t new_bottom_dial_position = getBottomDialPosition();
+  if (new_top_tial_position != top_dial_position || new_bottom_dial_position != bottom_dial_position) {
+    top_dial_position = new_top_tial_position;
+    bottom_dial_position = new_bottom_dial_position;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 bool getBrightnessDial() {
@@ -91,7 +104,7 @@ bool getBrightnessDial() {
 
   uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
   uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
-  brightness_global = new_val;
+  strip.brightness_m = new_val;
   // TODO: scale this dial logarithmically
 
   bool changed = false;
@@ -106,5 +119,5 @@ bool getBrightnessDial() {
 }
 
 void getSpeedDial() {
-  speed_global = analogRead(SPEED_DIAL_PIN);
+  strip.speed = analogRead(SPEED_DIAL_PIN);
 }

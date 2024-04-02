@@ -41,6 +41,10 @@ class MyNeoPixel : public Adafruit_NeoPixel {
   static const uint32_t COLORS[];
   static const uint8_t LEN_COLORS;
 
+  // vars
+  uint8_t brightness_m;  // 0 to 255 NOTE: do NOT name "brightness", conflicts with NeoPixel lib
+  uint16_t speed;        // 0 to 1024
+
   private:
   void setPixelColorSide(uint8_t side, uint16_t index, uint32_t color);
 };

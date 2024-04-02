@@ -19,10 +19,10 @@ bool arrayIsUnique(uint32_t colors[], uint8_t len_colors) {
 
 // apply custom delay range to speed dial, return ms for wait command
 uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
-  if (speed_global < 10) {
+  if (strip.speed < 10) {
     return 0xFFFFFFFF;  // frozen
   } else {
-    return map(speed_global, DIAL_MAX, 10, low_millis, high_millis);  // higher speed = lower millis
+    return map(strip.speed, DIAL_MAX, 10, low_millis, high_millis);  // higher speed = lower millis
   }
 }
 
@@ -40,7 +40,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
                                          // want to change state (restart mode)
     }
     wait_time_millis = getDelayMillis(low_millis, high_millis);
-    if (checkModeChange()) {
+    if (checkSelectorDialsChanged()) {
       return WaitReturnCode::MODE_CHANGED;
     }
   }

@@ -1,3 +1,4 @@
+#include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
 #include "5_Debug.h"
@@ -18,10 +19,10 @@ void debugIndicateSettingChange(bool setting) {
 void debugToggleCurrentSetting() {
   debugIndicate();
 
-  switch (bottom_dial_global) {
+  switch (bottom_dial_position) {
     case 1:
-      tap_enabled_global = !tap_enabled_global;
-      debugIndicateSettingChange(tap_enabled_global);
+      motionSensor.tap_enabled = !motionSensor.tap_enabled;
+      debugIndicateSettingChange(motionSensor.tap_enabled);
       break;
     case 2:
       break;

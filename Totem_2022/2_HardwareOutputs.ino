@@ -39,11 +39,11 @@ MyNeoPixel::MyNeoPixel() : Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NE
 
 void MyNeoPixel::init() {
   /*  72 pixels (2021 totem):
- *  Brightness val |    R   |    G   |    B   |    W    |  Rainbow  <- Amps
-              100  |  0.45  |  0.45  |  0.45  |  1.04   |    0.55
-              150  |  0.62  |  0.60  |  0.60  |  1.54   |    0.75
-              200  |  0.78  |  0.77  |  0.77  |  1.88   |    0.95
-              220  |  0.85  |  0.84  |  0.84  |  1.99   |    1.03   <- 220 is old totem val
+*  Brightness val |    R   |    G   |    B   |    W    |  Rainbow  <- Amps
+            100  |  0.45  |  0.45  |  0.45  |  1.04   |    0.55
+            150  |  0.62  |  0.60  |  0.60  |  1.54   |    0.75
+            200  |  0.78  |  0.77  |  0.77  |  1.88   |    0.95
+            220  |  0.85  |  0.84  |  0.84  |  1.99   |    1.03   <- 220 is old totem val
 */
   /*  156 pixels (2022 totem):
    *  Brightness val |    R   |    G   |    B   |    W    |  Rainbow  <- Amps
@@ -54,6 +54,8 @@ void MyNeoPixel::init() {
                 150  |  X     |  X     |  X     |  X      |    1.54   <- 220 is old totem val
   */
 
+  brightness_m = 1;
+  speed = 10;
   begin();            // initialize
   setBrightness(20);  // max brightness of strip (actual max is 255)
   fill(0);
@@ -65,8 +67,17 @@ uint32_t MyNeoPixel::ColorHSV(uint16_t hue) {
 }
 
 void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_global);
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_m);
   Adafruit_NeoPixel::setPixelColor(index, new_color);
+}
+
+void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
+  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_m);
+  if (first < 0) {
+    Adafruit_NeoPixel::fill(new_color, 0, count + first);
+  } else {
+    Adafruit_NeoPixel::fill(new_color, (uint16_t)first, count);
+  }
 }
 
 void MyNeoPixel::show() {
@@ -83,15 +94,6 @@ void MyNeoPixel::show() {
   setPixelColor(104, 0);
 
   Adafruit_NeoPixel::show();
-}
-
-void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness_global);
-  if (first < 0) {
-    Adafruit_NeoPixel::fill(new_color, 0, count + first);
-  } else {
-    Adafruit_NeoPixel::fill(new_color, (uint16_t)first, count);
-  }
 }
 
 uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
