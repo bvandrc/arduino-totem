@@ -110,7 +110,7 @@ bool getBrightnessDial() {
   bool changed = false;
   unsigned long curr_time = millis();
   if (curr_time - last_time_checked > 100) {
-    changed = abs(new_val - val_last_saved) > 5;
+    changed = abs(new_val - val_last_saved) > 1;
     val_last_saved = new_val;
     last_time_checked = curr_time;
   }

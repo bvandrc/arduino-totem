@@ -8,31 +8,19 @@
 const uint8_t STRIP_PIN = 5;
 
 // Other consts
-const uint8_t NUM_PIXELS = 206;
-const uint8_t NUM_AROUND_EDGE = 76;
-const uint8_t NUM_IN_QUADRANT = 38;  // NUM_AROUND_EDGE / 2
-const uint8_t NUM_IN_MIDDLE = 24;
-const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = 19;
-const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = 13;
+const uint8_t NUM_PIXELS = 202;
+const uint8_t NUM_HORIZONTAL_EDGE = 28;
+const uint8_t NUM_VERTICAL_EDGE = 10;
+const uint8_t NUM_IN_MIDDLE = 25;
+const uint8_t NUM_AROUND_EDGE = (NUM_HORIZONTAL_EDGE * 2) + (NUM_VERTICAL_EDGE * 2);
+const uint8_t NUM_IN_QUADRANT = NUM_AROUND_EDGE / 2;
 
-/*
-Side 1 ("Front" - side with stems)
-Middle | 2 - 26
-Left   | 27 - 36
-Top    | 37 - 64
-Right  | 65 - 74
-Bottom | 75 - 102
-
-"Left" inside lights  - 1, 103
-"Right" inside lights - 0, 104
-
-Side 2 ("Back" - side with yellow flowers)
-Middle | 105 - 129
-Left   | 130 - 139
-Top    | 140 - 167
-Right  | 168 - 177
-Bottom | 178 - 205
-*/
+const uint8_t MIDDLE_CROP_SIDE_1_START = 3;
+const uint8_t MIDDLE_CROP_SIDE_1_END = 22;
+const uint8_t MIDDLE_CROP_SIDE_2_START = 6;
+const uint8_t MIDDLE_CROP_SIDE_2_END = 19;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = MIDDLE_CROP_SIDE_1_END - MIDDLE_CROP_SIDE_1_START;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = MIDDLE_CROP_SIDE_2_END - MIDDLE_CROP_SIDE_2_START;
 
 MyNeoPixel::MyNeoPixel() : Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800) {
 }
@@ -81,18 +69,15 @@ void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
 }
 
 void MyNeoPixel::show() {
-  // middle (outside of desired sign range)
-  fill(0, 2, 4);
-  fill(0, 25, 2);
-  fill(0, 105, 5);
-  fill(0, 123, 7);
-
-  // always turn off inside lights
-  setPixelColor(0, 0);
-  setPixelColor(1, 0);
-  setPixelColor(103, 0);
-  setPixelColor(104, 0);
-
+  // always turn off middle outside of desired range
+  for (uint8_t i = 0; i < NUM_IN_MIDDLE; i++) {
+    if (i < MIDDLE_CROP_SIDE_1_START || i > MIDDLE_CROP_SIDE_1_END) {
+      setPixelColorMiddle(1, i, 0);
+    }
+    if (i < MIDDLE_CROP_SIDE_2_START || i > MIDDLE_CROP_SIDE_2_END) {
+      setPixelColorMiddle(2, i, 0);
+    }
+  }
   Adafruit_NeoPixel::show();
 }
 
@@ -109,116 +94,163 @@ uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_bri
   return Color(new_r, new_g, new_b);
 }
 
-void MyNeoPixel::setPixelColorSide(uint8_t side, uint16_t index, uint32_t color) {
+const uint8_t SIDE1_MIDDLE_START = 0;
+const uint8_t SIDE1_MIDDLE_END = SIDE1_MIDDLE_START + NUM_IN_MIDDLE - 1;
+const uint8_t SIDE1_LEFT_START = SIDE1_MIDDLE_END + 1;
+const uint8_t SIDE1_LEFT_END = SIDE1_LEFT_START + NUM_VERTICAL_EDGE - 1;
+const uint8_t SIDE1_TOP_START = SIDE1_LEFT_END + 1;
+const uint8_t SIDE1_TOP_END = SIDE1_TOP_START + NUM_HORIZONTAL_EDGE - 1;
+const uint8_t SIDE1_RIGHT_START = SIDE1_TOP_END + 1;
+const uint8_t SIDE1_RIGHT_END = SIDE1_RIGHT_START + NUM_VERTICAL_EDGE - 1;
+const uint8_t SIDE1_BOTTOM_START = SIDE1_RIGHT_END + 1;
+const uint8_t SIDE1_BOTTOM_END = SIDE1_BOTTOM_START + NUM_HORIZONTAL_EDGE - 1;
+const uint8_t SIDE2_MIDDLE_START = SIDE1_BOTTOM_END + 1;
+const uint8_t SIDE2_MIDDLE_END = SIDE2_MIDDLE_START + NUM_IN_MIDDLE - 1;
+const uint8_t SIDE2_LEFT_START = SIDE2_MIDDLE_END + 1;
+const uint8_t SIDE2_LEFT_END = SIDE2_LEFT_START + NUM_VERTICAL_EDGE - 1;
+const uint8_t SIDE2_TOP_START = SIDE2_LEFT_END + 1;
+const uint8_t SIDE2_TOP_END = SIDE2_TOP_START + NUM_HORIZONTAL_EDGE - 1;
+const uint8_t SIDE2_RIGHT_START = SIDE2_TOP_END + 1;
+const uint8_t SIDE2_RIGHT_END = SIDE2_RIGHT_START + NUM_VERTICAL_EDGE - 1;
+const uint8_t SIDE2_BOTTOM_START = SIDE2_RIGHT_END + 1;
+const uint8_t SIDE2_BOTTOM_END = SIDE2_BOTTOM_START + NUM_HORIZONTAL_EDGE - 1;
+
+void MyNeoPixel::setPixelColorSide(uint8_t side, uint8_t index, uint32_t color) {
   uint16_t actual_index;
   if (side == 1) {
     actual_index = index;
   } else {
-    if (2 <= index && index <= 26) {
-      // middle
-      actual_index = map(index, 2, 26, 129, 105);
-    } else if (27 <= index && index <= 36) {
-      // left
-      actual_index = map(index, 27, 36, 177, 168);
-    } else if (37 <= index && index <= 64) {
-      // top
-      actual_index = map(index, 37, 64, 167, 140);
-    } else if (65 <= index && index <= 74) {
-      // right
-      actual_index = map(index, 65, 74, 139, 130);
-    } else if (75 <= index && index <= 102) {
-      // bottom
-      actual_index = map(index, 75, 102, 205, 178);
+    if (SIDE1_MIDDLE_START <= index && index <= SIDE1_MIDDLE_END) {
+      actual_index = map(index,
+                         SIDE1_MIDDLE_START,  //
+                         SIDE1_MIDDLE_END,    //
+                         SIDE2_MIDDLE_END,    //
+                         SIDE2_MIDDLE_START);
+    } else if (SIDE1_LEFT_START <= index && index <= SIDE1_LEFT_END) {
+      actual_index = map(index,
+                         SIDE1_LEFT_START,  //
+                         SIDE1_LEFT_END,    //
+                         SIDE2_RIGHT_END,   //
+                         SIDE2_RIGHT_START);
+    } else if (SIDE1_TOP_START <= index && index <= SIDE1_TOP_END) {
+      actual_index = map(index,
+                         SIDE1_TOP_START,  //
+                         SIDE1_TOP_END,    //
+                         SIDE2_TOP_END,    //
+                         SIDE2_TOP_START);
+    } else if (SIDE1_RIGHT_START <= index && index <= SIDE1_RIGHT_END) {
+      actual_index = map(index,
+                         SIDE1_RIGHT_START,  //
+                         SIDE1_RIGHT_END,    //
+                         SIDE2_LEFT_END,     //
+                         SIDE2_LEFT_START);
+    } else if (SIDE1_BOTTOM_START <= index && index <= SIDE1_BOTTOM_END) {
+      actual_index = map(index,
+                         SIDE1_BOTTOM_START,  //
+                         SIDE1_BOTTOM_END,    //
+                         SIDE2_BOTTOM_END,    //
+                         SIDE2_BOTTOM_START);
     }
   }
-  // NOTE: does not account for inside lights (0, 1, 103, 104)
   setPixelColor(actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorEdge(uint8_t side, uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorEdge(uint8_t side, uint8_t index, uint32_t color) {
   if (index >= NUM_AROUND_EDGE) {
     return;
   }
-  uint16_t actual_index;
-
-  if (0 <= index && index <= 9) {
-    // left
-    actual_index = map(index, 0, 9, 27, 36);
-  } else if (10 <= index && index <= 37) {
-    // top
-    actual_index = map(index, 10, 37, 37, 64);
-  } else if (38 <= index && index <= 47) {
-    // right
-    actual_index = map(index, 38, 47, 65, 74);
-  } else if (48 <= index && index <= 75) {
-    // bottom
-    actual_index = map(index, 48, 75, 75, 102);
-  }
-
+  uint8_t actual_index = index + SIDE1_LEFT_START;
   setPixelColorSide(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorMiddle(uint8_t side, uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorMiddle(uint8_t side, uint8_t index, uint32_t color) {
   if (index >= NUM_IN_MIDDLE) {
     return;
   }
 
-  uint16_t actual_index = map(index, 0, NUM_IN_MIDDLE - 1, 2, 26);
+  uint8_t actual_index;
+  if (side == 1) {
+    actual_index = index;
+  } else {
+    // setPixelColorSide sets mirror of side, but for the middle we want to go left to right on either side
+    actual_index = map(index, 0, NUM_IN_MIDDLE - 1, NUM_IN_MIDDLE - 1, 0);
+  }
+
   setPixelColorSide(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorMiddleSide1(uint16_t index, uint32_t color) {
-  if (index >= NUM_USED_IN_MIDDLE_SIDE_1) {
+void MyNeoPixel::setPixelColorMiddleCropped(uint8_t side, uint8_t index, uint32_t color) {
+  if (index >= (side == 1 ? NUM_USED_IN_MIDDLE_SIDE_1  //
+                          : NUM_USED_IN_MIDDLE_SIDE_2)) {
     return;
   }
 
-  uint16_t actual_index = index + ((NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_1) / 2) + 2;
-  setPixelColorMiddle(1, actual_index, color);
+  uint8_t actual_index = index + (side == 1 ? MIDDLE_CROP_SIDE_1_START  //
+                                            : MIDDLE_CROP_SIDE_2_START);
+  setPixelColorMiddle(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorMiddleSide2(uint16_t index, uint32_t color) {
-  if (index >= NUM_USED_IN_MIDDLE_SIDE_2) {
-    return;
-  }
-
-  uint16_t actual_index = index + ((NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_2) / 2) + 2;
-  setPixelColorMiddle(2, actual_index, color);
-}
-
-void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint8_t index, uint32_t color) {
   if (index >= NUM_IN_QUADRANT) {
     return;
   }
 
-  uint16_t actual_index;
-  if (quadrant == 1 || quadrant == 4) {
-    if (0 <= index && index <= 13) {
-      // bottom
-      actual_index = map(index, 0, 13, 89, 102);
-    } else if (14 <= index && index <= 23) {
-      // left
-      actual_index = map(index, 14, 23, 27, 36);
-    } else if (24 <= index && index <= 37) {
-      // top
-      actual_index = map(index, 24, 37, 37, 50);
-    }
-  } else if (quadrant == 2 || quadrant == 3) {
-    if (0 <= index && index <= 13) {
-      // bottom
-      actual_index = map(index, 0, 13, 88, 75);
-    } else if (14 <= index && index <= 23) {
-      // right
-      actual_index = map(index, 14, 23, 74, 65);
-    } else if (24 <= index && index <= 37) {
-      // top
-      actual_index = map(index, 24, 37, 64, 51);
-    }
+  static const uint8_t Q_SIDE_LENGTH = (NUM_HORIZONTAL_EDGE) / 2;
+
+  static const uint8_t Q_INDEX_BOTTOM_START = 0;
+  static const uint8_t Q_INDEX_BOTTOM_END = Q_SIDE_LENGTH - 1;
+  static const uint8_t Q_INDEX_SIDE_START = Q_INDEX_BOTTOM_END + 1;
+  static const uint8_t Q_INDEX_SIDE_END = Q_INDEX_SIDE_START + NUM_VERTICAL_EDGE - 1;
+  static const uint8_t Q_INDEX_TOP_START = Q_INDEX_SIDE_END + 1;
+  static const uint8_t Q_INDEX_TOP_END = Q_INDEX_TOP_START + Q_SIDE_LENGTH - 1;
+
+  static const uint8_t Q1_ACTUAL_BOTTOM_START = NUM_AROUND_EDGE - Q_SIDE_LENGTH;
+  static const uint8_t Q1_ACTUAL_BOTTOM_END = Q1_ACTUAL_BOTTOM_START + Q_SIDE_LENGTH - 1;
+  static const uint8_t Q1_ACTUAL_SIDE_START = 0;
+  static const uint8_t Q1_ACTUAL_SIDE_END = Q1_ACTUAL_SIDE_START + NUM_VERTICAL_EDGE - 1;
+  static const uint8_t Q1_ACTUAL_TOP_START = Q1_ACTUAL_SIDE_END + 1;
+  static const uint8_t Q1_ACTUAL_TOP_END = Q1_ACTUAL_TOP_START + Q_SIDE_LENGTH - 1;
+
+  static const uint8_t Q2_ACTUAL_BOTTOM_START = Q1_ACTUAL_BOTTOM_START - 1;
+  static const uint8_t Q2_ACTUAL_BOTTOM_END = Q2_ACTUAL_BOTTOM_START - Q_SIDE_LENGTH + 1;
+  static const uint8_t Q2_ACTUAL_SIDE_START = Q2_ACTUAL_BOTTOM_END - 1;
+  static const uint8_t Q2_ACTUAL_SIDE_END = Q2_ACTUAL_SIDE_START - NUM_VERTICAL_EDGE + 1;
+  static const uint8_t Q2_ACTUAL_TOP_START = Q2_ACTUAL_SIDE_END - 1;
+  static const uint8_t Q2_ACTUAL_TOP_END = Q2_ACTUAL_TOP_START - Q_SIDE_LENGTH + 1;
+
+  const boolean left_q = quadrant == 1 || quadrant == 4;
+  const uint8_t Q_ACTUAL_BOTTOM_START = left_q ? Q1_ACTUAL_BOTTOM_START : Q2_ACTUAL_BOTTOM_START;
+  const uint8_t Q_ACTUAL_BOTTOM_END = left_q ? Q1_ACTUAL_BOTTOM_END : Q2_ACTUAL_BOTTOM_END;
+  const uint8_t Q_ACTUAL_SIDE_START = left_q ? Q1_ACTUAL_SIDE_START : Q2_ACTUAL_SIDE_START;
+  const uint8_t Q_ACTUAL_SIDE_END = left_q ? Q1_ACTUAL_SIDE_END : Q2_ACTUAL_SIDE_END;
+  const uint8_t Q_ACTUAL_TOP_START = left_q ? Q1_ACTUAL_TOP_START : Q2_ACTUAL_TOP_START;
+  const uint8_t Q_ACTUAL_TOP_END = left_q ? Q1_ACTUAL_TOP_END : Q2_ACTUAL_TOP_END;
+
+  uint16_t edge_index;
+  if (Q_INDEX_BOTTOM_START <= index && index <= Q_INDEX_BOTTOM_END) {
+    edge_index = map(index,                  //
+                     Q_INDEX_BOTTOM_START,   //
+                     Q_INDEX_BOTTOM_END,     //
+                     Q_ACTUAL_BOTTOM_START,  //
+                     Q_ACTUAL_BOTTOM_END);
+  } else if (Q_INDEX_SIDE_START <= index && index <= Q_INDEX_SIDE_END) {
+    edge_index = map(index,                //
+                     Q_INDEX_SIDE_START,   //
+                     Q_INDEX_SIDE_END,     //
+                     Q_ACTUAL_SIDE_START,  //
+                     Q_ACTUAL_SIDE_END);
+  } else if (Q_INDEX_TOP_START <= index && index <= Q_INDEX_TOP_END) {
+    edge_index = map(index,               //
+                     Q_INDEX_TOP_START,   //
+                     Q_INDEX_TOP_END,     //
+                     Q_ACTUAL_TOP_START,  //
+                     Q_ACTUAL_TOP_END);
   }
 
-  setPixelColorSide(quadrant == 1 || quadrant == 2 ? 1 : 2, actual_index, color);
+  setPixelColorEdge(quadrant == 1 || quadrant == 2 ? 1 : 2, edge_index, color);
 }
 
-void MyNeoPixel::setPixelColorAllQuadrants(uint16_t index, uint32_t color) {
+void MyNeoPixel::setPixelColorAllQuadrants(uint8_t index, uint32_t color) {
   if (index >= NUM_IN_QUADRANT) {
     return;
   }
