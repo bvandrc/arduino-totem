@@ -22,12 +22,10 @@ class MyNeoPixel : public Adafruit_NeoPixel {
   // new functions
   void init();
   uint32_t getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness);
-  void setPixelColorEdge(uint8_t side, uint16_t index, uint32_t color);
-  void setPixelColorMiddle(uint8_t side, uint16_t index, uint32_t color);
-  void setPixelColorMiddleSide1(uint16_t index, uint32_t color);
-  void setPixelColorMiddleSide2(uint16_t index, uint32_t color);
-  void setPixelColorQuadrant(uint8_t quadrant, uint16_t index, uint32_t color);
-  void setPixelColorAllQuadrants(uint16_t index, uint32_t color);
+  void setPixelColorEdge(uint8_t side, uint8_t index, uint32_t color);
+  void setPixelColorMiddleCropped(uint8_t side, uint8_t index, uint32_t color);
+  void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, uint32_t color);
+  void setPixelColorAllQuadrants(uint8_t index, uint32_t color);
 
   // constants
   static const uint32_t RED;
@@ -46,7 +44,8 @@ class MyNeoPixel : public Adafruit_NeoPixel {
   uint16_t speed;      // 0 to 1024
 
   private:
-  void setPixelColorSide(uint8_t side, uint16_t index, uint32_t color);
+  void setPixelColorSide(uint8_t side, uint8_t index, uint32_t color);
+  void setPixelColorMiddle(uint8_t side, uint8_t index, uint32_t color);
 };
 
 extern MyNeoPixel strip;
