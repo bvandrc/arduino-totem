@@ -96,12 +96,12 @@ WaitReturnCode theaterChase(uint32_t color1, uint32_t color2, uint8_t width, boo
 }
 
 void theaterChaseCycle() {
-  static uint32_t color1 = strip.ORANGE;
-  static uint32_t color2 = strip.ORANGE;
+  static const uint8_t len_colors = 2;
+  static uint32_t colors[len_colors];
 
   while (true) {
-    getTwoNewColors(color1, color2);
-    WaitReturnCode return_code = theaterChase(color1, color2, 3, random(2), 10000);
+    getNewColors(colors, len_colors);
+    WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     };
@@ -169,33 +169,16 @@ WaitReturnCode fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3
 }
 
 void fillUpQuadrantsCycle() {
-  static uint32_t color1 = strip.ORANGE;
-  static uint32_t color2 = strip.ORANGE;
-  static uint32_t color3 = strip.ORANGE;
-  static uint32_t color4 = strip.ORANGE;
+  static const uint8_t len_colors = 4;
+  static uint32_t colors[len_colors];
 
   strip.clear();
   strip.show();
 
   while (true) {
-    uint32_t og_color1 = color1;
-    uint32_t og_color2 = color2;
-    uint32_t og_color3 = color3;
-    uint32_t og_color4 = color4;
+    getNewColors(colors, len_colors);
 
-    while (true) {
-      getNewColor(color1);
-      getNewColor(color2);
-      getNewColor(color3);
-      getNewColor(color4);
-      uint32_t colors[] = {color1, color2, color3, color4};
-      if (arrayIsUnique(colors, 4) && color1 != og_color1 && color2 != og_color2 && color3 != og_color3 &&
-          color4 != og_color4) {
-        break;
-      }
-    }
-
-    WaitReturnCode return_code = fillUpQuadrants(color1, color2, color3, color4);
+    WaitReturnCode return_code = fillUpQuadrants(colors[0], colors[1], colors[2], colors[3]);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -229,13 +212,13 @@ void rageFlash() {
 }
 
 void tapFlash() {
-  static uint32_t color1 = strip.ORANGE;
-  static uint32_t color2 = strip.ORANGE;
-  getTwoNewColors(color1, color2);
+  static const uint8_t len_colors = 2;
+  static uint32_t colors[len_colors];
+  getNewColors(colors, len_colors);
 
   uint8_t prev_brightness = strip.brightness;
   strip.brightness = strip.brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
 
-  bullet(strip.getColorBrightnessAdjusted(color1, strip.brightness * 0.5), color2, 10, 35);
+  bullet(strip.getColorBrightnessAdjusted(colors[0], strip.brightness * 0.5), colors[1], 10, 35);
   strip.brightness = prev_brightness;
 }
