@@ -101,7 +101,8 @@ void theaterChaseCycle() {
 
   while (true) {
     getTwoNewColors(color1, color2);
-    if (theaterChase(color1, color2, 3, random(2), 10000) == WaitReturnCode::MODE_CHANGED) {
+    WaitReturnCode return_code = theaterChase(color1, color2, 3, random(2), 10000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     };
   }
@@ -194,10 +195,12 @@ void fillUpQuadrantsCycle() {
       }
     }
 
-    if (fillUpQuadrants(color1, color2, color3, color4) == WaitReturnCode::MODE_CHANGED) {
+    WaitReturnCode return_code = fillUpQuadrants(color1, color2, color3, color4);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
-    if (wait(20, 1000) == WaitReturnCode::MODE_CHANGED) {
+    return_code = wait(20, 1000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
   }

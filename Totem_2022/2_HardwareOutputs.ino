@@ -61,7 +61,9 @@ void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
 
 void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
   uint32_t new_color = getColorBrightnessAdjusted(color, brightness);
-  if (first < 0) {
+  if (first > NUM_PIXELS) {
+    return;
+  } else if (first < 0) {
     Adafruit_NeoPixel::fill(new_color, 0, count + first);
   } else {
     Adafruit_NeoPixel::fill(new_color, (uint16_t)first, count);
