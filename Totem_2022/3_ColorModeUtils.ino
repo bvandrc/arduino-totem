@@ -39,6 +39,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
       return WaitReturnCode::NO_CHANGE;  // want to return so can re-instate normal mode colors after flash, but dont
                                          // want to change state (restart mode)
     }
+
     wait_time_millis = getDelayMillis(low_millis, high_millis);
     if (checkSelectorDialsChanged()) {
       return WaitReturnCode::MODE_CHANGED;
@@ -55,19 +56,27 @@ void getNewColor(uint32_t &color) {
   color = new_color;
 }
 
-void getTwoNewColors(uint32_t &color1, uint32_t &color2) {
-  uint32_t new_color1;
-  uint32_t new_color2;
-  do {
-    new_color1 = strip.COLORS[random(strip.LEN_COLORS)];
-    new_color2 = strip.COLORS[random(strip.LEN_COLORS)];
-  } while (new_color1 == color1 || new_color2 == color2 || new_color1 == new_color2);
-  color1 = new_color1;
-  color2 = new_color2;
+bool isAlreadyInArray(uint32_t color, uint32_t *colors, uint8_t len_colors) {
+  for (uint8_t i = 0; i < len_colors; i++) {
+    if (color == colors[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void getNewColors(uint32_t *colors, uint8_t len_colors) {
+  for (uint8_t i = 0; i < len_colors; i++) {
+    uint32_t new_color;
+    do {
+      new_color = strip.COLORS[random(strip.LEN_COLORS)];
+    } while (isAlreadyInArray(new_color, colors, len_colors));
+    colors[i] = new_color;
+  }
 }
 
 void getNewPixel(uint8_t &pixel) {
-  uint32_t new_pixel;
+  uint8_t new_pixel;
   do {
     new_pixel = random(strip.numPixels());
   } while (new_pixel == pixel || abs(new_pixel - pixel) < 5);
