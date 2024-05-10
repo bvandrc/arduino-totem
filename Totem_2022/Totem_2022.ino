@@ -11,7 +11,7 @@ void setup() {
   // Serial.begin(9600);
   setUpPins();
   motionSensor.init();
-  strip.init();
+  initStrip();
 }
 
 void loop() {

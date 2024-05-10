@@ -5,14 +5,14 @@
 #include "Totem_2022.h"
 
 void debugIndicate() {
-  strip.fill(strip.BLUE);
-  strip.show();
+  fillStrip(CRGB::Blue);
+  showStrip();
   delay(5000);
 }
 
 void debugIndicateSettingChange(bool setting) {
-  strip.fill(setting ? strip.GREEN : strip.RED);
-  strip.show();
+  fillStrip(setting ? CRGB::Green : CRGB::Red);
+  showStrip();
   delay(5000);
 }
 

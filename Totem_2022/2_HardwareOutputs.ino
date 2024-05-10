@@ -1,4 +1,4 @@
-#include <Adafruit_NeoPixel.h>  // 1.8.5
+#include <FastLED.h>
 
 #include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
@@ -22,10 +22,9 @@ const uint8_t MIDDLE_CROP_SIDE_2_END = 19;
 const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = MIDDLE_CROP_SIDE_1_END - MIDDLE_CROP_SIDE_1_START;
 const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = MIDDLE_CROP_SIDE_2_END - MIDDLE_CROP_SIDE_2_START;
 
-MyNeoPixel::MyNeoPixel() : Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800) {
-}
+CRGB leds[NUM_PIXELS];
 
-void MyNeoPixel::init() {
+void initStrip() {
   /*  72 pixels (2021 totem):
 *  Brightness val |    R   |    G   |    B   |    W    |  Rainbow  <- Amps
             100  |  0.45  |  0.45  |  0.45  |  1.04   |    0.55
@@ -42,35 +41,32 @@ void MyNeoPixel::init() {
                 150  |  X     |  X     |  X     |  X      |    1.54   <- 220 is old totem val
   */
 
-  brightness = 1;
-  speed = 10;
-  begin();            // initialize
-  setBrightness(20);  // max brightness of strip (actual max is 255)
-  fill(0);
-  show();
+  FastLED.addLeds<WS2812, STRIP_PIN, GRB>(leds, NUM_PIXELS);
+  // FastLED.setCorrection(TypicalLEDStrip);
+  FastLED.clear();
+  FastLED.setDither(BINARY_DITHER);
+  FastLED.setMaxRefreshRate(200);
 }
 
-uint32_t MyNeoPixel::ColorHSV(uint16_t hue) {
-  return gamma32(Adafruit_NeoPixel::ColorHSV(hue));
+void setPixelColor(uint16_t index, CRGB color) {
+  leds[index] = color;
 }
 
-void MyNeoPixel::setPixelColor(uint16_t index, uint32_t color) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness);
-  Adafruit_NeoPixel::setPixelColor(index, new_color);
-}
-
-void MyNeoPixel::fill(uint32_t color = 0, int first = 0, uint16_t count = 0) {
-  uint32_t new_color = getColorBrightnessAdjusted(color, brightness);
-  if (first > NUM_PIXELS) {
+void fillStrip(int first, uint16_t count, CRGB color) {
+  if (first >= FastLED.size()) {
     return;
   } else if (first < 0) {
-    Adafruit_NeoPixel::fill(new_color, 0, count + first);
+    fill_solid(leds, count + first, color);
   } else {
-    Adafruit_NeoPixel::fill(new_color, (uint16_t)first, count);
+    fill_solid(leds + (uint16_t)first, count, color);
   }
 }
 
-void MyNeoPixel::show() {
+void fillStrip(CRGB color) {
+  fill_solid(leds, FastLED.size(), color);
+}
+
+void showStrip() {
   // always turn off middle outside of desired range
   for (uint8_t i = 0; i < NUM_IN_MIDDLE; i++) {
     if (i < MIDDLE_CROP_SIDE_1_START || i > MIDDLE_CROP_SIDE_1_END) {
@@ -80,20 +76,8 @@ void MyNeoPixel::show() {
       setPixelColorMiddle(2, i, 0);
     }
   }
-  Adafruit_NeoPixel::show();
-}
 
-uint32_t MyNeoPixel::getColorBrightnessAdjusted(uint32_t color, uint8_t this_brightness) {
-  // https://forums.adafruit.com/viewtopic.php?t=41143
-  uint8_t r = (uint8_t)(color >> 16);
-  uint8_t g = (uint8_t)(color >> 8);
-  uint8_t b = (uint8_t)(color);
-
-  uint8_t new_r = (r * this_brightness) >> 8;
-  uint8_t new_g = (g * this_brightness) >> 8;
-  uint8_t new_b = (b * this_brightness) >> 8;
-
-  return Color(new_r, new_g, new_b);
+  FastLED.show();
 }
 
 const uint8_t SIDE1_MIDDLE_START = 0;
@@ -117,7 +101,7 @@ const uint8_t SIDE2_RIGHT_END = SIDE2_RIGHT_START + NUM_VERTICAL_EDGE - 1;
 const uint8_t SIDE2_BOTTOM_START = SIDE2_RIGHT_END + 1;
 const uint8_t SIDE2_BOTTOM_END = SIDE2_BOTTOM_START + NUM_HORIZONTAL_EDGE - 1;
 
-void MyNeoPixel::setPixelColorSide(uint8_t side, uint8_t index, uint32_t color) {
+void setPixelColorSide(uint8_t side, uint8_t index, CRGB color) {
   uint16_t actual_index;
   if (side == 1) {
     actual_index = index;
@@ -157,7 +141,7 @@ void MyNeoPixel::setPixelColorSide(uint8_t side, uint8_t index, uint32_t color) 
   setPixelColor(actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorEdge(uint8_t side, uint8_t index, uint32_t color) {
+void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color) {
   if (index >= NUM_AROUND_EDGE) {
     return;
   }
@@ -165,7 +149,7 @@ void MyNeoPixel::setPixelColorEdge(uint8_t side, uint8_t index, uint32_t color) 
   setPixelColorSide(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorMiddle(uint8_t side, uint8_t index, uint32_t color) {
+void setPixelColorMiddle(uint8_t side, uint8_t index, CRGB color) {
   if (index >= NUM_IN_MIDDLE) {
     return;
   }
@@ -181,7 +165,7 @@ void MyNeoPixel::setPixelColorMiddle(uint8_t side, uint8_t index, uint32_t color
   setPixelColorSide(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorMiddleCropped(uint8_t side, uint8_t index, uint32_t color) {
+void setPixelColorMiddleCropped(uint8_t side, uint8_t index, CRGB color) {
   if (index >= (side == 1 ? NUM_USED_IN_MIDDLE_SIDE_1  //
                           : NUM_USED_IN_MIDDLE_SIDE_2)) {
     return;
@@ -192,7 +176,7 @@ void MyNeoPixel::setPixelColorMiddleCropped(uint8_t side, uint8_t index, uint32_
   setPixelColorMiddle(side, actual_index, color);
 }
 
-void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint8_t index, uint32_t color) {
+void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
   if (index >= NUM_IN_QUADRANT) {
     return;
   }
@@ -252,7 +236,7 @@ void MyNeoPixel::setPixelColorQuadrant(uint8_t quadrant, uint8_t index, uint32_t
   setPixelColorEdge(quadrant == 1 || quadrant == 2 ? 1 : 2, edge_index, color);
 }
 
-void MyNeoPixel::setPixelColorAllQuadrants(uint8_t index, uint32_t color) {
+void setPixelColorAllQuadrants(uint8_t index, CRGB color) {
   if (index >= NUM_IN_QUADRANT) {
     return;
   }
@@ -261,18 +245,3 @@ void MyNeoPixel::setPixelColorAllQuadrants(uint8_t index, uint32_t color) {
     setPixelColorQuadrant(quadrant, index, color);
   }
 }
-
-// colors - visually tested
-const uint32_t MyNeoPixel::RED = Color(255, 0, 0);
-const uint32_t MyNeoPixel::ORANGE = Color(255, 30, 0);
-const uint32_t MyNeoPixel::YELLOW = Color(255, 255, 0);
-const uint32_t MyNeoPixel::GREEN = Color(0, 255, 0);
-const uint32_t MyNeoPixel::SEAFOAM = Color(0, 255, 130);
-const uint32_t MyNeoPixel::BLUE = Color(0, 0, 255);
-const uint32_t MyNeoPixel::PURPLE = Color(200, 0, 255);
-
-const uint32_t MyNeoPixel::COLORS[] = {RED, ORANGE, YELLOW, GREEN, SEAFOAM, BLUE, PURPLE};
-const uint8_t MyNeoPixel::LEN_COLORS = 7;  // better to hardcode array lengths
-
-// LED strip
-MyNeoPixel strip = MyNeoPixel();
