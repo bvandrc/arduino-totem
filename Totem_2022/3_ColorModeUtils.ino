@@ -76,7 +76,7 @@ void getNewColors(uint32_t *colors, uint8_t len_colors) {
 }
 
 void getNewPixel(uint8_t &pixel) {
-  uint32_t new_pixel;
+  uint8_t new_pixel;
   do {
     new_pixel = random(strip.numPixels());
   } while (new_pixel == pixel || abs(new_pixel - pixel) < 5);
