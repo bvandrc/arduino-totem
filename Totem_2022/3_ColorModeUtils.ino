@@ -39,6 +39,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
       return WaitReturnCode::NO_CHANGE;  // want to return so can re-instate normal mode colors after flash, but dont
                                          // want to change state (restart mode)
     }
+
     wait_time_millis = getDelayMillis(low_millis, high_millis);
     if (checkSelectorDialsChanged()) {
       return WaitReturnCode::MODE_CHANGED;
