@@ -99,13 +99,13 @@ bool checkSelectorDialsChanged() {
 }
 
 bool getBrightnessDial() {
+  // TODO: scale this dial logarithmically?
   static unsigned long last_time_checked = 0;
   static uint8_t val_last_saved = 0;
 
   uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
   uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
   strip.brightness = new_val;
-  // TODO: scale this dial logarithmically
 
   bool changed = false;
   unsigned long curr_time = millis();
