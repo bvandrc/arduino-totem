@@ -16,10 +16,11 @@ const uint8_t MO_SENS_INT_1_PIN = 3;
 // Other consts
 const uint16_t DIAL_MIN = 0;
 const uint16_t DIAL_MAX = 1023;
-const uint8_t MAX_BRIGHTNESS = 255;  // not actual max brightness-- don't change this.
+const uint8_t MAX_BRIGHTNESS = 20;
 
 uint8_t top_dial_position = 1;
 uint8_t bottom_dial_position = 1;
+uint16_t speed = 10;
 
 // Motion sensor
 
@@ -98,26 +99,13 @@ bool checkSelectorDialsChanged() {
   }
 }
 
-bool getBrightnessDial() {
+void getBrightnessDial() {
   // TODO: scale this dial logarithmically?
-  static unsigned long last_time_checked = 0;
-  static uint8_t val_last_saved = 0;
-
   uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
   uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
-  strip.brightness = new_val;
-
-  bool changed = false;
-  unsigned long curr_time = millis();
-  if (curr_time - last_time_checked > 100) {
-    changed = abs(new_val - val_last_saved) > 1;
-    val_last_saved = new_val;
-    last_time_checked = curr_time;
-  }
-
-  return changed;
+  FastLED.setBrightness(new_val);
 }
 
 void getSpeedDial() {
-  strip.speed = analogRead(SPEED_DIAL_PIN);
+  speed = analogRead(SPEED_DIAL_PIN);
 }

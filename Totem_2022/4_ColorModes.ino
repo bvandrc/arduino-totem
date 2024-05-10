@@ -1,3 +1,5 @@
+#include <FastLED.h>
+
 #include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
@@ -10,31 +12,49 @@ void rainbowChase() {
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
       // +/- determines chase direction
       uint16_t this_pixel_hue = first_pixel_hue - (i * HUE_STEP);
-      strip.setPixelColorEdge(1, i, strip.ColorHSV(this_pixel_hue));
+      setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * HUE_STEP);
-      strip.setPixelColorEdge(2, i, strip.ColorHSV(this_pixel_hue));
+      setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
       uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
-      strip.setPixelColorMiddleCropped(1, i, strip.ColorHSV(this_pixel_hue));
+      setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
     }
 
     for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
       uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
-      strip.setPixelColorMiddleCropped(2, i, strip.ColorHSV(this_pixel_hue));
+      setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
     }
 
-    strip.show();
+    // static const uint8_t NUM_MIDDLE_REPEATS = 2;
+    // static const uint8_t NUM_MIDDLE_SIDE1_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_1 / NUM_MIDDLE_REPEATS;
+    // static const uint8_t NUM_MIDDLE_SIDE2_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_2 / NUM_MIDDLE_REPEATS;
+
+    // fill_rainbow_circular(leds + SIDE1_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
+
+    // fill_rainbow_circular(leds + SIDE2_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
+
+    // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START,  //
+    //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
+
+    // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START + NUM_MIDDLE_SIDE1_SEGMENT,  //
+    //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
+
+    // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START,  //
+    //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
+
+    // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START + NUM_MIDDLE_SIDE2_SEGMENT,  //
+    //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
+
+    showStrip();
 
     WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
-    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
-      first_pixel_hue -= HUE_STEP;
     }
   }
 }
@@ -42,28 +62,26 @@ void rainbowChase() {
 void rainbowFade() {
   const uint8_t HUE_STEP = 50;
   for (uint16_t hue = 0; hue < 65536; hue += HUE_STEP) {
-    strip.fill(strip.ColorHSV((hue)));
-    strip.show();
+    fillStrip(ColorHSV((hue)));
+    showStrip();
 
-    WaitReturnCode return_code = wait(1, 200);
+    WaitReturnCode return_code = wait(5, 100);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
-    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
-      hue -= HUE_STEP;
     }
   }
 }
 
 void rainbowTwinkle() {
-  for (uint8_t i = 0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, getRandomColor());
-    strip.show();
+  for (uint8_t i = 0; i < FastLED.size(); i++) {
+    setPixelColor(i, getRandomColor());
+    showStrip();
   }
   uint8_t pixel_to_change = 0;
   while (true) {
     getNewPixel(pixel_to_change);
-    strip.setPixelColor(pixel_to_change, getRandomColor());
-    strip.show();
+    setPixelColor(pixel_to_change, getRandomColor());
+    showStrip();
 
     WaitReturnCode return_code = wait(2, 200);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
@@ -72,23 +90,20 @@ void rainbowTwinkle() {
   }
 }
 
-WaitReturnCode theaterChase(uint32_t color1, uint32_t color2, uint8_t width, bool clockwise,
-                            uint32_t time_length_millis) {
+WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
   unsigned long initial_time = millis();
   while ((millis() - initial_time) < time_length_millis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
-      for (uint8_t i = 0; i < strip.numPixels(); i += (width * 2)) {
+      for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
         int signed_stagger = clockwise ? stagger : -stagger;
-        strip.fill(color1, i + signed_stagger - (width * 2), width);
-        strip.fill(color2, i + signed_stagger - (width * 2) + width, width);
+        fillStrip(i + signed_stagger - (width * 2), width, color1);
+        fillStrip(i + signed_stagger - (width * 2) + width, width, color2);
       }
-      strip.show();
+      showStrip();
 
       WaitReturnCode return_code = wait(40, 1000);
       if (return_code == WaitReturnCode::MODE_CHANGED) {
         return WaitReturnCode::MODE_CHANGED;
-      } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
-        stagger--;
       }
     }
   }
@@ -96,11 +111,11 @@ WaitReturnCode theaterChase(uint32_t color1, uint32_t color2, uint8_t width, boo
 }
 
 void theaterChaseCycle() {
-  static const uint8_t len_colors = 2;
-  static uint32_t colors[len_colors];
+  static const uint8_t LEN_COLORS = 2;
+  static CRGB colors[LEN_COLORS];
 
   while (true) {
-    getNewColors(colors, len_colors);
+    getNewColors(colors, LEN_COLORS);
     WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
@@ -108,36 +123,34 @@ void theaterChaseCycle() {
   }
 }
 
-void bullet(uint32_t background_color, uint32_t bullet_color, uint8_t bullet_width, uint16_t delay_micros) {
+void bullet(CRGB background_color, CRGB bullet_color, uint8_t bullet_width, uint16_t delay_micros) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT + bullet_width; i++) {
-    strip.fill(background_color);
+    fillStrip(background_color);
+    showStrip();
     for (uint8_t j = 0; j < bullet_width; j++) {
-      strip.setPixelColorAllQuadrants(i + j, bullet_color);
+      setPixelColorAllQuadrants(i + j, bullet_color);
     }
-    strip.show();
+    showStrip();
     delayMicroseconds(delay_micros);
   }
 }
 
-WaitReturnCode fillUp(uint32_t color) {
+WaitReturnCode fillUp(CRGB color) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    strip.setPixelColorAllQuadrants(i, color);
-    strip.show();
+    setPixelColorAllQuadrants(i, color);
+    showStrip();
     WaitReturnCode return_code = wait(10, 1000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return WaitReturnCode::MODE_CHANGED;
-    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
-      i--;
     }
   }
   return WaitReturnCode::NO_CHANGE;
 }
 
 void fillUpCycle() {
-  static uint32_t color1 = strip.ORANGE;
+  static CRGB color1;
 
-  strip.clear();
-  strip.show();
+  FastLED.showColor(0);
 
   while (true) {
     getNewColor(color1);
@@ -150,35 +163,32 @@ void fillUpCycle() {
   }
 }
 
-WaitReturnCode fillUpQuadrants(uint32_t color1, uint32_t color2, uint32_t color3, uint32_t color4) {
+WaitReturnCode fillUpQuadrants(CRGB color1, CRGB color2, CRGB color3, CRGB color4) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    strip.setPixelColorQuadrant(1, i, color1);
-    strip.setPixelColorQuadrant(2, i, color2);
-    strip.setPixelColorQuadrant(3, i, color3);
-    strip.setPixelColorQuadrant(4, i, color4);
-    strip.show();
+    setPixelColorQuadrant(1, i, color1);
+    setPixelColorQuadrant(2, i, color2);
+    setPixelColorQuadrant(3, i, color3);
+    setPixelColorQuadrant(4, i, color4);
+    showStrip();
 
     WaitReturnCode return_code = wait(20, 1000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return WaitReturnCode::MODE_CHANGED;
-    } else if (return_code == WaitReturnCode::BRIGHTNESS_CHANGED) {
-      i--;
     }
   }
   return WaitReturnCode::NO_CHANGE;
 }
 
 void fillUpQuadrantsCycle() {
-  static const uint8_t len_colors = 4;
-  static uint32_t colors[len_colors];
+  static const uint8_t LEN_COLORS = 2;
+  static CRGB colors[LEN_COLORS];
 
-  strip.clear();
-  strip.show();
+  FastLED.showColor(0);
 
   while (true) {
-    getNewColors(colors, len_colors);
+    getNewColors(colors, LEN_COLORS);
 
-    WaitReturnCode return_code = fillUpQuadrants(colors[0], colors[1], colors[2], colors[3]);
+    WaitReturnCode return_code = fillUpQuadrants(colors[0], colors[1], colors[0], colors[1]);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -190,35 +200,31 @@ void fillUpQuadrantsCycle() {
 }
 
 void rageFlash() {
-  static uint32_t prev_flash_color = strip.ORANGE;
+  uint8_t prev_brightness = FastLED.getBrightness();
+  FastLED.setBrightness(prev_brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS);
 
-  uint8_t prev_brightness = strip.brightness;
-  strip.brightness = strip.brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
-
-  static uint32_t rage_color = strip.ORANGE;
+  static CRGB rage_color;
   getNewColor(rage_color);
 
   do {
-    strip.fill(rage_color);
-    strip.show();
+    fillStrip(rage_color);
+    showStrip();
     delay(50);
-    strip.clear();
-    strip.show();
+    FastLED.showColor(0);
     delay(50);
   } while (rageButtonPushed());
 
-  prev_flash_color = rage_color;
-  strip.brightness = prev_brightness;
+  FastLED.setBrightness(prev_brightness);
 }
 
 void tapFlash() {
-  static const uint8_t len_colors = 2;
-  static uint32_t colors[len_colors];
-  getNewColors(colors, len_colors);
+  static const uint8_t LEN_COLORS = 2;
+  static CRGB colors[LEN_COLORS];
+  getNewColors(colors, LEN_COLORS);
 
-  uint8_t prev_brightness = strip.brightness;
-  strip.brightness = strip.brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS;
+  uint8_t prev_brightness = FastLED.getBrightness();
+  FastLED.setBrightness(prev_brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS);
 
-  bullet(strip.getColorBrightnessAdjusted(colors[0], strip.brightness * 0.5), colors[1], 10, 35);
-  strip.brightness = prev_brightness;
+  bullet(colors[0].subtractFromRGB(20), colors[1], 10, 35);
+  FastLED.setBrightness(prev_brightness);
 }
