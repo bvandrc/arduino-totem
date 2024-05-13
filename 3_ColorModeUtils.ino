@@ -1,7 +1,7 @@
 #include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
-#include "Totem_2022.h"
+#include "Totem.h"
 
 // OLD colors - visually tested
 // const uint32_t RED = Color(255, 0, 0);
