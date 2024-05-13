@@ -6,50 +6,48 @@
 #include "4_ColorModes.h"
 #include "Totem.h"
 
+void rainbow(uint16_t first_pixel_hue, uint16_t hue_step) {
+  // NOTE: +/- determines chase direction
+
+  for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
+    uint16_t this_pixel_hue = first_pixel_hue - (i * hue_step);
+    setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
+  }
+
+  for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
+    uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
+    setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
+  }
+
+  for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
+    uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
+    setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
+  }
+
+  for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
+    uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
+    setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
+  }
+
+  // static const uint8_t NUM_MIDDLE_REPEATS = 2;
+  // static const uint8_t NUM_MIDDLE_SIDE1_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_1 / NUM_MIDDLE_REPEATS;
+  // static const uint8_t NUM_MIDDLE_SIDE2_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_2 / NUM_MIDDLE_REPEATS;
+  // fill_rainbow_circular(leds + SIDE1_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
+  // fill_rainbow_circular(leds + SIDE2_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
+  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START,  //
+  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
+  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START + NUM_MIDDLE_SIDE1_SEGMENT,  //
+  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
+  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START,  //
+  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
+  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START + NUM_MIDDLE_SIDE2_SEGMENT,  //
+  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
+}
+
 void rainbowChase() {
   static const uint16_t HUE_STEP = 65536 / NUM_AROUND_EDGE;
   for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += HUE_STEP) {
-    for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-      // +/- determines chase direction
-      uint16_t this_pixel_hue = first_pixel_hue - (i * HUE_STEP);
-      setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
-    }
-
-    for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * HUE_STEP);
-      setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
-    }
-
-    for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
-      setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
-    }
-
-    for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
-      uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
-      setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
-    }
-
-    // static const uint8_t NUM_MIDDLE_REPEATS = 2;
-    // static const uint8_t NUM_MIDDLE_SIDE1_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_1 / NUM_MIDDLE_REPEATS;
-    // static const uint8_t NUM_MIDDLE_SIDE2_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_2 / NUM_MIDDLE_REPEATS;
-
-    // fill_rainbow_circular(leds + SIDE1_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-
-    // fill_rainbow_circular(leds + SIDE2_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-
-    // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START,  //
-    //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-
-    // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START + NUM_MIDDLE_SIDE1_SEGMENT,  //
-    //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-
-    // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START,  //
-    //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
-
-    // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START + NUM_MIDDLE_SIDE2_SEGMENT,  //
-    //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
-
+    rainbow(first_pixel_hue, HUE_STEP);
     showStrip();
 
     WaitReturnCode return_code = wait(50, 5000);

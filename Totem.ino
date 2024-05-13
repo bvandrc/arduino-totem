@@ -7,14 +7,36 @@
 
 // TODO: any locks (ie brightness lock?)
 
+boolean is_in_failure_mode = false;
+
 void setup() {
   // Serial.begin(9600);
   setUpPins();
   motionSensor.init();
   initStrip();
+
+  // initial debug
+  unsigned long start_millis = millis();
+  while (rageButtonPushed()) {
+    if (millis() - start_millis > 5000) {
+      is_in_failure_mode = true;
+      FastLED.setDither(DISABLE_DITHER);
+      FastLED.setBrightness(2);
+      checkSelectorDialsChanged();
+      if (top_dial_position < 3) {
+        rainbow(0, 65536 / NUM_AROUND_EDGE);
+      } else {
+        fill_solid(FastLED.leds(), FastLED.size(), CRGB::Lime);
+      }
+      FastLED.show();
+      break;
+    }
+  }
 }
 
 void loop() {
+  if (is_in_failure_mode)
+    return;
   getBrightnessDial();
   getSpeedDial();
   checkSelectorDialsChanged();
