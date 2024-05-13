@@ -229,11 +229,13 @@ void fillUpQuadrantsCycle() {
 }
 
 uint8_t rageOrBumpBrightness(uint8_t prev_brightness) {
+  if (prev_brightness < 5) {
+    return prev_brightness + 1;
+  }
+
   uint8_t new_brightness = prev_brightness * 1.5;
   if (new_brightness > MAX_BRIGHTNESS) {
     new_brightness = MAX_BRIGHTNESS;
-  } else if (new_brightness < 5) {
-    new_brightness = 5;
   }
   return new_brightness;
 }
