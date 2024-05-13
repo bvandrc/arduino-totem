@@ -123,15 +123,44 @@ void theaterChaseCycle() {
   }
 }
 
-void bullet(CRGB background_color, CRGB bullet_color, uint8_t bullet_width, uint16_t delay_micros) {
-  for (uint8_t i = 0; i < NUM_IN_QUADRANT + bullet_width; i++) {
-    fillStrip(background_color);
-    showStrip();
-    for (uint8_t j = 0; j < bullet_width; j++) {
-      setPixelColorAllQuadrants(i + j, bullet_color);
+void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
+  static const uint8_t NUM_QUADRANTS = 4;
+  struct OldLedInfo {
+    CRGB color;
+    uint8_t actual_index;
+  };
+  OldLedInfo old_led_info[NUM_QUADRANTS][len_bullet];
+  CRGB* leds = FastLED.leds();
+
+  for (int bullet_start = 0 - len_bullet; bullet_start < NUM_IN_QUADRANT; bullet_start++) {
+    for (uint8_t bullet_index = 0; bullet_index < len_bullet; bullet_index++) {
+      uint8_t quadrant_index = bullet_start + bullet_index;
+      if (quadrant_index >= 0 && quadrant_index < NUM_IN_QUADRANT) {
+        for (uint8_t quadrant = 1; quadrant <= NUM_QUADRANTS; quadrant++) {
+          uint8_t actual_index = quadrantIndexToActualIndex(quadrant, quadrant_index);
+          OldLedInfo this_old_led_info;
+          this_old_led_info.actual_index = actual_index;
+          this_old_led_info.color = leds[actual_index];
+          old_led_info[quadrant - 1][bullet_index] = this_old_led_info;
+
+          leds[actual_index] = bullet[bullet_index];
+        }
+      }
     }
-    showStrip();
-    delayMicroseconds(delay_micros);
+
+    FastLED.show();
+
+    for (uint8_t bullet_index = 0; bullet_index < len_bullet; bullet_index++) {
+      uint8_t quadrant_index = bullet_start + bullet_index;
+      if (quadrant_index >= 0 && quadrant_index < NUM_IN_QUADRANT) {
+        for (uint8_t quadrant = 1; quadrant <= NUM_QUADRANTS; quadrant++) {
+          OldLedInfo this_old_led_info = old_led_info[quadrant - 1][bullet_index];
+          leds[this_old_led_info.actual_index] = this_old_led_info.color;
+        }
+      }
+    }
+
+    delay(delay_millis);
   }
 }
 
@@ -199,9 +228,20 @@ void fillUpQuadrantsCycle() {
   }
 }
 
+uint8_t rageOrBumpBrightness(uint8_t prev_brightness) {
+  uint8_t new_brightness = prev_brightness * 1.5;
+  if (new_brightness > MAX_BRIGHTNESS) {
+    new_brightness = MAX_BRIGHTNESS;
+  } else if (new_brightness < 5) {
+    new_brightness = 5;
+  }
+  return new_brightness;
+}
+
 void rageFlash() {
   uint8_t prev_brightness = FastLED.getBrightness();
-  FastLED.setBrightness(prev_brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS);
+  uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
+  FastLED.setBrightness(new_brightness);
 
   static CRGB rage_color;
   getNewColor(rage_color);
@@ -223,8 +263,17 @@ void tapFlash() {
   getNewColors(colors, LEN_COLORS);
 
   uint8_t prev_brightness = FastLED.getBrightness();
-  FastLED.setBrightness(prev_brightness < MAX_BRIGHTNESS * 0.75 ? MAX_BRIGHTNESS * 0.75 : MAX_BRIGHTNESS);
+  uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
+  FastLED.setBrightness(new_brightness);
 
-  bullet(colors[0].subtractFromRGB(20), colors[1], 10, 35);
+  // set background
+  fillStrip(colors[0]);
+
+  // set bullet
+  static const uint8_t LEN_BULLET = 12;
+  CRGB bullet_colors[LEN_BULLET];
+  fill_solid(bullet_colors, LEN_BULLET, colors[1]);
+  bullet(bullet_colors, LEN_BULLET, 2);
+
   FastLED.setBrightness(prev_brightness);
 }

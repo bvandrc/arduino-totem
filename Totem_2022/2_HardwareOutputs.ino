@@ -101,8 +101,8 @@ const uint8_t SIDE2_RIGHT_END = SIDE2_RIGHT_START + NUM_VERTICAL_EDGE - 1;
 const uint8_t SIDE2_BOTTOM_START = SIDE2_RIGHT_END + 1;
 const uint8_t SIDE2_BOTTOM_END = SIDE2_BOTTOM_START + NUM_HORIZONTAL_EDGE - 1;
 
-void setPixelColorSide(uint8_t side, uint8_t index, CRGB color) {
-  uint16_t actual_index;
+uint8_t sideIndexToActualIndex(uint8_t side, uint8_t index) {
+  uint8_t actual_index;
   if (side == 1) {
     actual_index = index;
   } else {
@@ -138,14 +138,31 @@ void setPixelColorSide(uint8_t side, uint8_t index, CRGB color) {
                          SIDE2_BOTTOM_START);
     }
   }
+  return actual_index;
+}
+
+void setPixelColorSide(uint8_t side, uint8_t index, CRGB color) {
+  uint8_t actual_index = sideIndexToActualIndex(side, index);
   setPixelColor(actual_index, color);
 }
 
-void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color) {
+uint8_t edgeIndexToSideIndex(uint8_t index) {
   if (index >= NUM_AROUND_EDGE) {
     return;
   }
-  uint8_t actual_index = index + SIDE1_LEFT_START;
+
+  uint8_t side_index = index + SIDE1_LEFT_START;
+  return side_index;
+}
+
+uint8_t edgeIndexToActualIndex(uint8_t side, uint8_t index) {
+  const uint8_t side_index = edgeIndexToSideIndex(index);
+  const uint8_t actual_index = sideIndexToActualIndex(side, side_index);
+  return actual_index;
+}
+
+void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color) {
+  uint8_t actual_index = edgeIndexToSideIndex(index);
   setPixelColorSide(side, actual_index, color);
 }
 
@@ -176,7 +193,16 @@ void setPixelColorMiddleCropped(uint8_t side, uint8_t index, CRGB color) {
   setPixelColorMiddle(side, actual_index, color);
 }
 
-void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
+uint8_t quadrantToSide(uint8_t quadrant) {
+  const uint8_t side = quadrant <= 2 ? 1 : 2;
+  return side;
+}
+
+boolean quadrantIsLeftSide(uint8_t quadrant) {
+  return quadrant == 1 || quadrant == 4;
+}
+
+uint8_t quadrantIndexToEdgeIndex(uint8_t quadrant, uint8_t index) {
   if (index >= NUM_IN_QUADRANT) {
     return;
   }
@@ -204,7 +230,7 @@ void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
   static const uint8_t Q2_ACTUAL_TOP_START = Q2_ACTUAL_SIDE_END - 1;
   static const uint8_t Q2_ACTUAL_TOP_END = Q2_ACTUAL_TOP_START - Q_SIDE_LENGTH + 1;
 
-  const boolean left_q = quadrant == 1 || quadrant == 4;
+  const boolean left_q = quadrantIsLeftSide(quadrant);
   const uint8_t Q_ACTUAL_BOTTOM_START = left_q ? Q1_ACTUAL_BOTTOM_START : Q2_ACTUAL_BOTTOM_START;
   const uint8_t Q_ACTUAL_BOTTOM_END = left_q ? Q1_ACTUAL_BOTTOM_END : Q2_ACTUAL_BOTTOM_END;
   const uint8_t Q_ACTUAL_SIDE_START = left_q ? Q1_ACTUAL_SIDE_START : Q2_ACTUAL_SIDE_START;
@@ -212,7 +238,7 @@ void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
   const uint8_t Q_ACTUAL_TOP_START = left_q ? Q1_ACTUAL_TOP_START : Q2_ACTUAL_TOP_START;
   const uint8_t Q_ACTUAL_TOP_END = left_q ? Q1_ACTUAL_TOP_END : Q2_ACTUAL_TOP_END;
 
-  uint16_t edge_index;
+  uint8_t edge_index;
   if (Q_INDEX_BOTTOM_START <= index && index <= Q_INDEX_BOTTOM_END) {
     edge_index = map(index,                  //
                      Q_INDEX_BOTTOM_START,   //
@@ -232,15 +258,23 @@ void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
                      Q_ACTUAL_TOP_START,  //
                      Q_ACTUAL_TOP_END);
   }
+  return edge_index;
+}
 
-  setPixelColorEdge(quadrant == 1 || quadrant == 2 ? 1 : 2, edge_index, color);
+uint8_t quadrantIndexToActualIndex(uint8_t quadrant, uint8_t index) {
+  const uint8_t side = quadrantToSide(quadrant);
+  const uint8_t edge_index = quadrantIndexToEdgeIndex(quadrant, index);
+  const uint8_t actual_index = edgeIndexToActualIndex(side, edge_index);
+  return actual_index;
+}
+
+void setPixelColorQuadrant(uint8_t quadrant, uint8_t index, CRGB color) {
+  const uint8_t side = quadrantToSide(quadrant);
+  const uint8_t edge_index = quadrantIndexToEdgeIndex(quadrant, index);
+  setPixelColorEdge(side, edge_index, color);
 }
 
 void setPixelColorAllQuadrants(uint8_t index, CRGB color) {
-  if (index >= NUM_IN_QUADRANT) {
-    return;
-  }
-
   for (uint8_t quadrant = 1; quadrant <= 4; quadrant++) {
     setPixelColorQuadrant(quadrant, index, color);
   }
