@@ -2,7 +2,7 @@
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
 #include "5_Debug.h"
-#include "Totem_2022.h"
+#include "Totem.h"
 
 void debugIndicate() {
   fillStrip(CRGB::Blue);

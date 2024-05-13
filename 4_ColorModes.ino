@@ -4,7 +4,7 @@
 #include "2_HardwareOutputs.h"
 #include "3_ColorModeUtils.h"
 #include "4_ColorModes.h"
-#include "Totem_2022.h"
+#include "Totem.h"
 
 void rainbowChase() {
   static const uint16_t HUE_STEP = 65536 / NUM_AROUND_EDGE;

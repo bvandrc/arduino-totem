@@ -2,7 +2,7 @@
 
 #include "1_HardwareInputs.h"
 #include "2_HardwareOutputs.h"
-#include "Totem_2022.h"
+#include "Totem.h"
 
 // Pins
 const uint8_t STRIP_PIN = 5;

@@ -3,7 +3,7 @@
 #include "3_ColorModeUtils.h"
 #include "4_ColorModes.h"
 #include "5_Debug.h"
-#include "Totem_2022.h"
+#include "Totem.h"
 
 // TODO: any locks (ie brightness lock?)
 
