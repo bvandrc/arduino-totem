@@ -6,52 +6,39 @@
 #include "4_ColorModes.h"
 #include "Totem.h"
 
-const uint16_t RAINBOW_FILL_EDGE_HUE_STEP = 65536 / NUM_AROUND_EDGE;
+const uint32_t MAX_HUE = 65536;
+const uint16_t RAINBOW_FILL_EDGE_HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;
 
 void fillRainbow(uint16_t first_pixel_hue) {
   // NOTE: +/- determines chase direction
 
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue - (i * RAINBOW_FILL_EDGE_HUE_STEP);
+    const uint16_t this_pixel_hue = first_pixel_hue - (i * RAINBOW_FILL_EDGE_HUE_STEP);
     setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
   }
 
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue + (i * RAINBOW_FILL_EDGE_HUE_STEP);
+    const uint16_t this_pixel_hue = first_pixel_hue + (i * RAINBOW_FILL_EDGE_HUE_STEP);
     setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
   }
 
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue - (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
+    const uint16_t this_pixel_hue = first_pixel_hue - (i * MAX_HUE * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
     setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
   }
 
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue + (i * 65536 * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
+    const uint16_t this_pixel_hue = first_pixel_hue + (i * MAX_HUE * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
     setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
   }
-
-  // static const uint8_t NUM_MIDDLE_REPEATS = 2;
-  // static const uint8_t NUM_MIDDLE_SIDE1_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_1 / NUM_MIDDLE_REPEATS;
-  // static const uint8_t NUM_MIDDLE_SIDE2_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_2 / NUM_MIDDLE_REPEATS;
-  // fill_rainbow_circular(leds + SIDE1_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START,  //
-  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START + NUM_MIDDLE_SIDE1_SEGMENT,  //
-  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START,  //
-  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START + NUM_MIDDLE_SIDE2_SEGMENT,  //
-  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
 }
 
 void rainbowChase() {
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += RAINBOW_FILL_EDGE_HUE_STEP) {
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += RAINBOW_FILL_EDGE_HUE_STEP) {
     fillRainbow(first_pixel_hue);
     showStrip();
 
-    WaitReturnCode return_code = wait(50, 5000);
+    const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -60,11 +47,11 @@ void rainbowChase() {
 
 void rainbowFade() {
   const uint8_t HUE_STEP = 50;
-  for (uint16_t hue = 0; hue < 65536; hue += HUE_STEP) {
+  for (uint16_t hue = 0; hue < MAX_HUE; hue += HUE_STEP) {
     fillStrip(ColorHSV((hue)));
     showStrip();
 
-    WaitReturnCode return_code = wait(5, 100);
+    const WaitReturnCode return_code = wait(5, 100);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -82,7 +69,7 @@ void rainbowTwinkle() {
     setPixelColor(pixel_to_change, getRandomColor());
     showStrip();
 
-    WaitReturnCode return_code = wait(2, 200);
+    const WaitReturnCode return_code = wait(2, 200);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -90,17 +77,17 @@ void rainbowTwinkle() {
 }
 
 WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
-  unsigned long initial_time = millis();
+  const unsigned long initial_time = millis();
   while ((millis() - initial_time) < time_length_millis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
       for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
-        int signed_stagger = clockwise ? stagger : -stagger;
+        const int signed_stagger = clockwise ? stagger : -stagger;
         fillStrip(i + signed_stagger - (width * 2), width, color1);
         fillStrip(i + signed_stagger - (width * 2) + width, width, color2);
       }
       showStrip();
 
-      WaitReturnCode return_code = wait(40, 1000);
+      const WaitReturnCode return_code = wait(40, 1000);
       if (return_code == WaitReturnCode::MODE_CHANGED) {
         return WaitReturnCode::MODE_CHANGED;
       }
@@ -115,7 +102,7 @@ void theaterChaseCycle() {
 
   while (true) {
     getNewColors(colors, LEN_COLORS);
-    WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
+    const WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     };
@@ -167,7 +154,7 @@ WaitReturnCode fillUp(CRGB color) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     setPixelColorAllQuadrants(i, color);
     showStrip();
-    WaitReturnCode return_code = wait(10, 1000);
+    const WaitReturnCode return_code = wait(10, 1000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return WaitReturnCode::MODE_CHANGED;
     }
@@ -199,7 +186,7 @@ WaitReturnCode fillUpQuadrants(CRGB color1, CRGB color2, CRGB color3, CRGB color
     setPixelColorQuadrant(4, i, color4);
     showStrip();
 
-    WaitReturnCode return_code = wait(20, 1000);
+    const WaitReturnCode return_code = wait(20, 1000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return WaitReturnCode::MODE_CHANGED;
     }
@@ -240,8 +227,8 @@ uint8_t rageOrBumpBrightness(uint8_t prev_brightness) {
 }
 
 void rageFlash() {
-  uint8_t prev_brightness = FastLED.getBrightness();
-  uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
+  const uint8_t prev_brightness = FastLED.getBrightness();
+  const uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
   FastLED.setBrightness(new_brightness);
 
   static CRGB rage_color;
@@ -263,8 +250,8 @@ void tapFlash() {
   static CRGB colors[LEN_COLORS];
   getNewColors(colors, LEN_COLORS);
 
-  uint8_t prev_brightness = FastLED.getBrightness();
-  uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
+  const uint8_t prev_brightness = FastLED.getBrightness();
+  const uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
   FastLED.setBrightness(new_brightness);
 
   // set background

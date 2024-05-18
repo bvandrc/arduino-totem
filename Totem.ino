@@ -15,7 +15,7 @@ void setup() {
   initStrip();
 
   // initial debug
-  unsigned long start_millis = millis();
+  const unsigned long start_millis = millis();
   while (rageButtonPushed() && (millis() - start_millis < 10000)) {
     if (millis() - start_millis > 5000) {
       checkSelectorDialsChanged();

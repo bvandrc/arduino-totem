@@ -142,7 +142,7 @@ uint8_t sideIndexToActualIndex(uint8_t side, uint8_t index) {
 }
 
 void setPixelColorSide(uint8_t side, uint8_t index, CRGB color) {
-  uint8_t actual_index = sideIndexToActualIndex(side, index);
+  const uint8_t actual_index = sideIndexToActualIndex(side, index);
   setPixelColor(actual_index, color);
 }
 
@@ -151,7 +151,7 @@ uint8_t edgeIndexToSideIndex(uint8_t index) {
     return;
   }
 
-  uint8_t side_index = index + SIDE1_LEFT_START;
+  const uint8_t side_index = index + SIDE1_LEFT_START;
   return side_index;
 }
 
@@ -162,7 +162,7 @@ uint8_t edgeIndexToActualIndex(uint8_t side, uint8_t index) {
 }
 
 void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color) {
-  uint8_t actual_index = edgeIndexToSideIndex(index);
+  const uint8_t actual_index = edgeIndexToSideIndex(index);
   setPixelColorSide(side, actual_index, color);
 }
 
