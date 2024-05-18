@@ -1,6 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-void debugToggleCurrentSetting();
+void debugMode();
 
 #endif

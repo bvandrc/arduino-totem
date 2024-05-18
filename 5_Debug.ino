@@ -4,27 +4,25 @@
 #include "5_Debug.h"
 #include "Totem.h"
 
-void debugIndicate() {
+void indicateSettingChange(bool on_or_off) {
+  fillStrip(on_or_off ? CRGB::Green : CRGB::Red);
+  showStrip();
+  delay(5000);
+}
+
+void debugMode() {
+  // inidicate is in debug mode
   fillStrip(CRGB::Blue);
   showStrip();
   delay(5000);
-}
-
-void debugIndicateSettingChange(bool setting) {
-  fillStrip(setting ? CRGB::Green : CRGB::Red);
-  showStrip();
-  delay(5000);
-}
-
-void debugToggleCurrentSetting() {
-  debugIndicate();
 
   switch (bottom_dial_position) {
     case 1:
-      motionSensor.tap_enabled = !motionSensor.tap_enabled;
-      debugIndicateSettingChange(motionSensor.tap_enabled);
+      // no change
       break;
     case 2:
+      motionSensor.tap_enabled = !motionSensor.tap_enabled;
+      indicateSettingChange(motionSensor.tap_enabled);
       break;
     case 3:
       break;

@@ -6,16 +6,18 @@
 #include "4_ColorModes.h"
 #include "Totem.h"
 
-void rainbow(uint16_t first_pixel_hue, uint16_t hue_step) {
+const uint16_t RAINBOW_FILL_EDGE_HUE_STEP = 65536 / NUM_AROUND_EDGE;
+
+void fillRainbow(uint16_t first_pixel_hue) {
   // NOTE: +/- determines chase direction
 
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue - (i * hue_step);
+    uint16_t this_pixel_hue = first_pixel_hue - (i * RAINBOW_FILL_EDGE_HUE_STEP);
     setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
   }
 
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    uint16_t this_pixel_hue = first_pixel_hue + (i * hue_step);
+    uint16_t this_pixel_hue = first_pixel_hue + (i * RAINBOW_FILL_EDGE_HUE_STEP);
     setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
   }
 
@@ -45,9 +47,8 @@ void rainbow(uint16_t first_pixel_hue, uint16_t hue_step) {
 }
 
 void rainbowChase() {
-  static const uint16_t HUE_STEP = 65536 / NUM_AROUND_EDGE;
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += HUE_STEP) {
-    rainbow(first_pixel_hue, HUE_STEP);
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < 65536; first_pixel_hue += RAINBOW_FILL_EDGE_HUE_STEP) {
+    fillRainbow(first_pixel_hue);
     showStrip();
 
     WaitReturnCode return_code = wait(50, 5000);
