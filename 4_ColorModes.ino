@@ -180,34 +180,6 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
   }
 }
 
-WaitReturnCode fillUp(CRGB color) {
-  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    setPixelColorAllQuadrants(i, color);
-    showStrip();
-    const WaitReturnCode return_code = wait(10, 1000);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return WaitReturnCode::MODE_CHANGED;
-    }
-  }
-  return WaitReturnCode::NO_CHANGE;
-}
-
-void fillUpCycle() {
-  static CRGB color1;
-
-  FastLED.showColor(0);
-
-  while (true) {
-    getNewColor(color1);
-    if (fillUp(color1) == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-    if (wait(20, 1000) == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-  }
-}
-
 WaitReturnCode fillUpQuadrants(CRGB color1, CRGB color2, CRGB color3, CRGB color4) {
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     setPixelColorQuadrant(1, i, color1);
@@ -216,7 +188,7 @@ WaitReturnCode fillUpQuadrants(CRGB color1, CRGB color2, CRGB color3, CRGB color
     setPixelColorQuadrant(4, i, color4);
     showStrip();
 
-    const WaitReturnCode return_code = wait(20, 1000);
+    const WaitReturnCode return_code = wait(10, 1000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return WaitReturnCode::MODE_CHANGED;
     }

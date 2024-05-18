@@ -8,7 +8,6 @@ extern void rainbowChaseQuadrants();
 extern void rainbowFade();
 extern void rainbowTwinkle();
 extern void theaterChaseCycle();
-extern void fillUpCycle();
 extern void fillUpQuadrantsCycle();
 extern void rageFlash();
 extern void tapFlash();

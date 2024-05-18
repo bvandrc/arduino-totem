@@ -107,13 +107,8 @@ void doTheLightingMode() {
       rainbowTwinkle();
       break;
     case 5:
-      if (bottom_dial_position < 3) {
-        fillUpQuadrantsCycle();
-        break;
-      } else {
-        fillUpCycle();
-        break;
-      }
+      fillUpQuadrantsCycle();
+      break;
     case 6:
       rainbowFade();
       break;
