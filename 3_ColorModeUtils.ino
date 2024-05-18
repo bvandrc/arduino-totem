@@ -35,7 +35,7 @@ uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
 
 WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
   uint32_t wait_time_millis = getDelayMillis(low_millis, high_millis);
-  unsigned long initial_time = millis();
+  const unsigned long initial_time = millis();
   do {
     getBrightnessDial();
     getSpeedDial();
@@ -62,7 +62,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
 }
 
 boolean hueIsInRange(uint8_t hue_1, uint8_t hue_2, uint8_t min_difference) {
-  int difference = abs((uint16_t)hue_1 - (uint16_t)hue_2);
+  const int difference = abs((uint16_t)hue_1 - (uint16_t)hue_2);
   return difference < min_difference || difference > 255 - min_difference;
 }
 
@@ -123,13 +123,9 @@ static const uint8_t PROGMEM _NeoPixelGammaTable[256] = {
     132, 134, 136, 137, 139, 141, 143, 145, 146, 148, 150, 152, 154, 156, 158, 160, 162, 164, 166, 168, 170, 172,
     174, 176, 178, 180, 182, 184, 186, 188, 191, 193, 195, 197, 199, 202, 204, 206, 209, 211, 213, 215, 218, 220,
     223, 225, 227, 230, 232, 235, 237, 240, 242, 245, 247, 250, 252, 255};
-
-// from Aadfruit Neopixel library
 uint8_t gamma8(uint8_t x) {
   return pgm_read_byte(&_NeoPixelGammaTable[x]);
 }
-
-// from Aadfruit Neopixel library
 uint32_t gamma32(uint32_t color) {
   uint8_t *y = (uint8_t *)&color;
   for (uint8_t i = 0; i < 4; i++)
@@ -139,8 +135,6 @@ uint32_t gamma32(uint32_t color) {
 CRGB gamma32(CRGB color) {
   return CRGB((gamma32(CHSVtoColorCode(color))));
 }
-
-// from Aadfruit Neopixel library
 CRGB ColorHSV(uint16_t hue, uint8_t sat = 255, uint8_t val = 255) {
   uint8_t r, g, b;
 

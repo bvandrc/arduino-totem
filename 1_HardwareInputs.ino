@@ -42,7 +42,7 @@ void MyMotionSensor::init() {
 }
 
 bool MyMotionSensor::checkTapped() {
-  uint8_t tap = getClick();
+  const uint8_t tap = getClick();
   return (tap == 0 || !(tap & 0x30)) ? false : true;
 }
 
@@ -61,7 +61,7 @@ bool rageButtonPushed() {
 }
 
 uint8_t getSelectorPosition(uint8_t pin) {
-  uint16_t read_val = analogRead(pin);
+  const uint16_t read_val = analogRead(pin);
   if (read_val < (DIAL_MAX * 1.0 / 10.0)) {
     return 6;
   } else if (read_val < (DIAL_MAX * 3.0 / 10.0)) {
@@ -86,8 +86,8 @@ uint8_t getBottomDialPosition() {
 }
 
 bool checkSelectorDialsChanged() {
-  uint8_t new_top_tial_position = getTopDialPosition();
-  uint8_t new_bottom_dial_position = getBottomDialPosition();
+  const uint8_t new_top_tial_position = getTopDialPosition();
+  const uint8_t new_bottom_dial_position = getBottomDialPosition();
   if (new_top_tial_position != top_dial_position || new_bottom_dial_position != bottom_dial_position) {
     top_dial_position = new_top_tial_position;
     bottom_dial_position = new_bottom_dial_position;
@@ -99,8 +99,8 @@ bool checkSelectorDialsChanged() {
 
 void getBrightnessDial() {
   // TODO: scale this dial logarithmically?
-  uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
-  uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
+  const uint16_t read_val = analogRead(BRIGHTNESS_DIAL_PIN);
+  const uint8_t new_val = map(read_val, DIAL_MIN, DIAL_MAX, 0, MAX_BRIGHTNESS);
   FastLED.setBrightness(new_val);
 }
 
