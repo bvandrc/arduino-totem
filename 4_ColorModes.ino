@@ -8,9 +8,8 @@
 
 const uint32_t MAX_HUE = 65536;
 
-void fillRainbowEdges(uint16_t first_pixel_hue) {
-  static const uint8_t NUM_CYCLES = 1;
-  static const uint16_t hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_AROUND_EDGE;
+void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
+  const uint16_t hue_offset_multiplier = MAX_HUE * num_cycles / NUM_AROUND_EDGE;
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
     const uint16_t hue_offset = (i * hue_offset_multiplier);
     // NOTE: +/- determines chase direction
@@ -23,34 +22,32 @@ void fillRainbowEdges(uint16_t first_pixel_hue) {
   }
 }
 
-void fillRainbowQuadrants(uint16_t first_pixel_hue) {
-  static const uint8_t NUM_CYCLES = 1;
-  static const uint16_t hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_IN_QUADRANT;
+void fillRainbowQuadrants(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
+  const uint16_t hue_offset_multiplier = MAX_HUE * num_cycles / NUM_IN_QUADRANT;
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     const uint16_t this_pixel_hue = first_pixel_hue + (i * hue_offset_multiplier);
     setPixelColorAllQuadrants(i, ColorHSV(this_pixel_hue));
   }
 }
 
-void fillRainbowMiddles(uint16_t first_pixel_hue) {
-  static const uint8_t NUM_CYCLES = 2;
-  static const uint16_t side_1_hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_USED_IN_MIDDLE_SIDE_1;
+void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2) {
+  const uint16_t side_1_hue_offset_multiplier = MAX_HUE * num_cycles / NUM_USED_IN_MIDDLE_SIDE_1;
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
     const uint16_t this_pixel_hue = first_pixel_hue - (i * side_1_hue_offset_multiplier);
     setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
   }
 
-  static const uint16_t side_2_hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_USED_IN_MIDDLE_SIDE_2;
+  const uint16_t side_2_hue_offset_multiplier = MAX_HUE * num_cycles / NUM_USED_IN_MIDDLE_SIDE_2;
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
     const uint16_t this_pixel_hue = first_pixel_hue + (i * side_2_hue_offset_multiplier);
     setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
   }
 }
 
-void rainbowChaseEdges() {
+void rainbowChaseEdges(uint8_t num_cycles) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
   for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
-    fillRainbowEdges(first_pixel_hue);
+    fillRainbowEdges(first_pixel_hue, num_cycles);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
 
@@ -61,10 +58,10 @@ void rainbowChaseEdges() {
   }
 }
 
-void rainbowChaseQuadrants() {
+void rainbowChaseQuadrants(uint8_t num_cycles) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
-    fillRainbowQuadrants(first_pixel_hue);
+    fillRainbowQuadrants(first_pixel_hue, num_cycles);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
 
@@ -82,24 +79,6 @@ void rainbowFade() {
     showStrip();
 
     const WaitReturnCode return_code = wait(5, 100);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-  }
-}
-
-void rainbowTwinkle() {
-  for (uint8_t i = 0; i < FastLED.size(); i++) {
-    setPixelColor(i, getRandomColor());
-    showStrip();
-  }
-  uint8_t pixel_to_change = 0;
-  while (true) {
-    getNewPixel(pixel_to_change);
-    setPixelColor(pixel_to_change, getRandomColor());
-    showStrip();
-
-    const WaitReturnCode return_code = wait(2, 200);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }
@@ -177,42 +156,6 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
     }
 
     delay(delay_millis);
-  }
-}
-
-WaitReturnCode fillUpQuadrants(CRGB color1, CRGB color2, CRGB color3, CRGB color4) {
-  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    setPixelColorQuadrant(1, i, color1);
-    setPixelColorQuadrant(2, i, color2);
-    setPixelColorQuadrant(3, i, color3);
-    setPixelColorQuadrant(4, i, color4);
-    showStrip();
-
-    const WaitReturnCode return_code = wait(10, 1000);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return WaitReturnCode::MODE_CHANGED;
-    }
-  }
-  return WaitReturnCode::NO_CHANGE;
-}
-
-void fillUpQuadrantsCycle() {
-  static const uint8_t LEN_COLORS = 2;
-  static CRGB colors[LEN_COLORS];
-
-  FastLED.showColor(0);
-
-  while (true) {
-    getNewColors(colors, LEN_COLORS);
-
-    WaitReturnCode return_code = fillUpQuadrants(colors[0], colors[1], colors[0], colors[1]);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-    return_code = wait(20, 1000);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
   }
 }
 

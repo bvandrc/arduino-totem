@@ -1,14 +1,12 @@
 #ifndef COLOR_MODES_H
 #define COLOR_MODES_H
 
-extern void fillRainbowEdges(uint16_t first_pixel_hue);
-extern void fillRainbowMiddles(uint16_t first_pixel_hue);
-extern void rainbowChaseEdges();
-extern void rainbowChaseQuadrants();
+extern void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1);
+extern void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2);
+extern void rainbowChaseEdges(uint8_t num_cycles);
+extern void rainbowChaseQuadrants(uint8_t num_cycles);
 extern void rainbowFade();
-extern void rainbowTwinkle();
 extern void theaterChaseCycle();
-extern void fillUpQuadrantsCycle();
 extern void rageFlash();
 extern void tapFlash();
 

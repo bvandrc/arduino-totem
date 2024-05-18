@@ -15,7 +15,5 @@ extern CRGB gamma32(CRGB color);
 extern CRGB ColorHSV(uint16_t hue, uint8_t sat = 255, uint8_t val = 255);
 extern void getNewColor(CRGB &color);
 extern void getNewColors(CRGB *colors, uint8_t len_colors);
-extern void getNewPixel(uint8_t &pixel);
-extern CRGB getRandomColor();
 
 #endif

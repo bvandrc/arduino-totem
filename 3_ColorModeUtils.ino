@@ -97,14 +97,6 @@ void getNewColors(CRGB *colors, uint8_t len_colors) {
   }
 }
 
-void getNewPixel(uint8_t &pixel) {
-  uint8_t new_pixel;
-  do {
-    new_pixel = random8(FastLED.size());
-  } while (new_pixel == pixel || abs(new_pixel - pixel) < 5);
-  pixel = new_pixel;
-}
-
 uint32_t CHSVtoColorCode(CRGB c) {
   return c.r << 16 | c.g << 8 | c.b;
 }

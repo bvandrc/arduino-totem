@@ -95,25 +95,25 @@ bool checkTapFlash() {
 void doTheLightingMode() {
   switch (top_dial_position) {
     case 1:
-      rainbowChaseEdges();
+      rainbowChaseEdges(1);
       break;
     case 2:
-      rainbowChaseQuadrants();
+      rainbowChaseEdges(2);
       break;
     case 3:
-      theaterChaseCycle();
+      rainbowChaseEdges(4);
       break;
     case 4:
-      rainbowTwinkle();
+      rainbowChaseQuadrants(1);
       break;
     case 5:
-      fillUpQuadrantsCycle();
+      theaterChaseCycle();
       break;
     case 6:
       rainbowFade();
       break;
     default:
-      rainbowChaseEdges();
+      rainbowChaseEdges(1);
       break;
   }
 }
