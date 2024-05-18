@@ -7,35 +7,48 @@
 
 // TODO: any locks (ie brightness lock?)
 
-boolean is_in_failure_mode = false;
+boolean no_do_lighting_mode = false;
 
 void setup() {
   // Serial.begin(9600);
   setUpPins();
-  motionSensor.init();
   initStrip();
 
   // initial debug
   unsigned long start_millis = millis();
-  while (rageButtonPushed()) {
+  while (rageButtonPushed() && (millis() - start_millis < 10000)) {
     if (millis() - start_millis > 5000) {
-      is_in_failure_mode = true;
-      FastLED.setDither(DISABLE_DITHER);
-      FastLED.setBrightness(2);
       checkSelectorDialsChanged();
-      if (top_dial_position < 3) {
-        rainbow(0, 65536 / NUM_AROUND_EDGE);
-      } else {
-        fill_solid(FastLED.leds(), FastLED.size(), CRGB::Lime);
+
+      // top dial = outputs
+      if (top_dial_position == 2 || top_dial_position == 3) {
+        no_do_lighting_mode = true;
+        FastLED.setDither(DISABLE_DITHER);
+        FastLED.setBrightness(2);
+        if (top_dial_position == 2) {
+          fillRainbow(0);
+        } else if (top_dial_position == 3) {
+          fillStrip(CRGB::Lime);
+        }
+        showStrip();
       }
-      FastLED.show();
+
+      // botttom dial = outputs
+      if (bottom_dial_position == 2) {
+        motionSensor.tap_enabled = false;
+      }
+
       break;
     }
+  }
+
+  if (motionSensor.tap_enabled) {
+    motionSensor.init();
   }
 }
 
 void loop() {
-  if (is_in_failure_mode)
+  if (no_do_lighting_mode)
     return;
   getBrightnessDial();
   getSpeedDial();
@@ -57,7 +70,7 @@ bool checkRageFlash() {
     }
 
     if (count == 5) {
-      debugToggleCurrentSetting();
+      debugMode();
       count = 0;
     }
 
