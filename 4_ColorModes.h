@@ -1,8 +1,10 @@
 #ifndef COLOR_MODES_H
 #define COLOR_MODES_H
 
-extern void fillRainbow(uint16_t first_pixel_hue);
-extern void rainbowChase();
+extern void fillRainbowEdges(uint16_t first_pixel_hue);
+extern void fillRainbowMiddles(uint16_t first_pixel_hue);
+extern void rainbowChaseEdges();
+extern void rainbowChaseQuadrants();
 extern void rainbowFade();
 extern void rainbowTwinkle();
 extern void theaterChaseCycle();

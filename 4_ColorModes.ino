@@ -7,35 +7,65 @@
 #include "Totem.h"
 
 const uint32_t MAX_HUE = 65536;
-const uint16_t RAINBOW_FILL_EDGE_HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;
 
-void fillRainbow(uint16_t first_pixel_hue) {
-  // NOTE: +/- determines chase direction
-
+void fillRainbowEdges(uint16_t first_pixel_hue) {
+  static const uint8_t NUM_CYCLES = 1;
+  static const uint16_t hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_AROUND_EDGE;
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue - (i * RAINBOW_FILL_EDGE_HUE_STEP);
-    setPixelColorEdge(1, i, ColorHSV(this_pixel_hue));
-  }
+    const uint16_t hue_offset = (i * hue_offset_multiplier);
+    // NOTE: +/- determines chase direction
 
-  for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue + (i * RAINBOW_FILL_EDGE_HUE_STEP);
-    setPixelColorEdge(2, i, ColorHSV(this_pixel_hue));
-  }
+    const uint16_t side_1_pixel_hue = first_pixel_hue - hue_offset;
+    setPixelColorEdge(1, i, ColorHSV(side_1_pixel_hue));
 
+    const uint16_t side_2_pixel_hue = first_pixel_hue + hue_offset;
+    setPixelColorEdge(2, i, ColorHSV(side_2_pixel_hue));
+  }
+}
+
+void fillRainbowQuadrants(uint16_t first_pixel_hue) {
+  static const uint8_t NUM_CYCLES = 1;
+  static const uint16_t hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_IN_QUADRANT;
+  for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
+    const uint16_t this_pixel_hue = first_pixel_hue + (i * hue_offset_multiplier);
+    setPixelColorAllQuadrants(i, ColorHSV(this_pixel_hue));
+  }
+}
+
+void fillRainbowMiddles(uint16_t first_pixel_hue) {
+  static const uint8_t NUM_CYCLES = 2;
+  static const uint16_t side_1_hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_USED_IN_MIDDLE_SIDE_1;
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_1; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue - (i * MAX_HUE * 2 / NUM_USED_IN_MIDDLE_SIDE_1);
+    const uint16_t this_pixel_hue = first_pixel_hue - (i * side_1_hue_offset_multiplier);
     setPixelColorMiddleCropped(1, i, ColorHSV(this_pixel_hue));
   }
 
+  static const uint16_t side_2_hue_offset_multiplier = MAX_HUE * NUM_CYCLES / NUM_USED_IN_MIDDLE_SIDE_2;
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue + (i * MAX_HUE * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
+    const uint16_t this_pixel_hue = first_pixel_hue + (i * side_2_hue_offset_multiplier);
     setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
   }
 }
 
-void rainbowChase() {
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += RAINBOW_FILL_EDGE_HUE_STEP) {
-    fillRainbow(first_pixel_hue);
+void rainbowChaseEdges() {
+  static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
+    fillRainbowEdges(first_pixel_hue);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+
+    const WaitReturnCode return_code = wait(50, 5000);
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
+      return;
+    }
+  }
+}
+
+void rainbowChaseQuadrants() {
+  static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
+  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
+    fillRainbowQuadrants(first_pixel_hue);
+    fillRainbowMiddles(first_pixel_hue);
     showStrip();
 
     const WaitReturnCode return_code = wait(50, 5000);
@@ -46,7 +76,7 @@ void rainbowChase() {
 }
 
 void rainbowFade() {
-  const uint8_t HUE_STEP = 50;
+  static const uint16_t HUE_STEP = 50;  // can't just set to 1 or else is super slow
   for (uint16_t hue = 0; hue < MAX_HUE; hue += HUE_STEP) {
     fillStrip(ColorHSV((hue)));
     showStrip();
