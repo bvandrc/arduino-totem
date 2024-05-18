@@ -26,7 +26,8 @@ void setup() {
         FastLED.setDither(DISABLE_DITHER);
         FastLED.setBrightness(2);
         if (top_dial_position == 2) {
-          fillRainbow(0);
+          fillRainbowEdges(0);
+          fillRainbowMiddles(0);
         } else if (top_dial_position == 3) {
           fillStrip(CRGB::Lime);
         }
@@ -94,29 +95,25 @@ bool checkTapFlash() {
 void doTheLightingMode() {
   switch (top_dial_position) {
     case 1:
-    case 2:
-      rainbowChase();
+      rainbowChaseEdges(1);
       break;
+    case 2:
+      rainbowChaseEdges(2);
       break;
     case 3:
-      theaterChaseCycle();
+      rainbowChaseEdges(4);
       break;
     case 4:
-      rainbowTwinkle();
+      rainbowChaseQuadrants(1);
       break;
     case 5:
-      if (bottom_dial_position < 3) {
-        fillUpQuadrantsCycle();
-        break;
-      } else {
-        fillUpCycle();
-        break;
-      }
+      theaterChaseCycle();
+      break;
     case 6:
       rainbowFade();
       break;
     default:
-      rainbowChase();
+      rainbowChaseEdges(1);
       break;
   }
 }
