@@ -31,20 +31,6 @@ void fillRainbow(uint16_t first_pixel_hue) {
     const uint16_t this_pixel_hue = first_pixel_hue + (i * MAX_HUE * 2 / NUM_USED_IN_MIDDLE_SIDE_2);
     setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
   }
-
-  // static const uint8_t NUM_MIDDLE_REPEATS = 2;
-  // static const uint8_t NUM_MIDDLE_SIDE1_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_1 / NUM_MIDDLE_REPEATS;
-  // static const uint8_t NUM_MIDDLE_SIDE2_SEGMENT = NUM_USED_IN_MIDDLE_SIDE_2 / NUM_MIDDLE_REPEATS;
-  // fill_rainbow_circular(leds + SIDE1_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_LEFT_START, NUM_AROUND_EDGE, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START,  //
-  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE1_MIDDLE_START + MIDDLE_CROP_SIDE_1_START + NUM_MIDDLE_SIDE1_SEGMENT,  //
-  //                       NUM_MIDDLE_SIDE1_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START,  //
-  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
-  // fill_rainbow_circular(leds + SIDE2_MIDDLE_START + MIDDLE_CROP_SIDE_2_START + NUM_MIDDLE_SIDE2_SEGMENT,  //
-  //                       NUM_MIDDLE_SIDE2_SEGMENT, initial_hue, true);
 }
 
 void rainbowChase() {
