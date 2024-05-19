@@ -1,9 +1,9 @@
 #ifndef COLOR_MODES_H
 #define COLOR_MODES_H
 
-enum QuadrantChaseDirection : uint8_t {
-  UP,
-  DOWN,
+enum ChaseDirection : uint8_t {
+  FORWARD,
+  BACKWARD,
 };
 
 extern void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1);
