@@ -11,7 +11,7 @@ extern const uint8_t NUM_USED_IN_MIDDLE_SIDE_2;
 extern void initStrip();
 extern void showStrip();
 extern void setPixelColor(uint16_t index, CRGB color);
-extern void fillStrip(int first, uint16_t count, CRGB color);
+extern void fillStrip(int16_t first, uint16_t count, CRGB color);
 extern void fillStrip(CRGB color);
 extern void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color);
 extern void setPixelColorMiddleCropped(uint8_t side, uint8_t index, CRGB color);

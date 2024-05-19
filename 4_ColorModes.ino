@@ -90,9 +90,9 @@ WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockw
   while ((millis() - initial_time) < time_length_millis) {
     for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
       for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
-        const int signed_stagger = clockwise ? stagger : -stagger;
-        fillStrip(i + signed_stagger - (width * 2), width, color1);
-        fillStrip(i + signed_stagger - (width * 2) + width, width, color2);
+        const int16_t start_of_stripe = i + ((clockwise ? 1 : -1) * stagger) - (width * 2);
+        fillStrip(start_of_stripe, width, color1);
+        fillStrip(start_of_stripe + width, width, color2);
       }
       showStrip();
 
@@ -127,7 +127,7 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
   OldLedInfo old_led_info[NUM_QUADRANTS][len_bullet];
   CRGB* leds = FastLED.leds();
 
-  for (int bullet_start = 0 - len_bullet; bullet_start < NUM_IN_QUADRANT; bullet_start++) {
+  for (int16_t bullet_start = 0 - len_bullet; bullet_start < NUM_IN_QUADRANT; bullet_start++) {
     for (uint8_t bullet_index = 0; bullet_index < len_bullet; bullet_index++) {
       uint8_t quadrant_index = bullet_start + bullet_index;
       if (quadrant_index >= 0 && quadrant_index < NUM_IN_QUADRANT) {
