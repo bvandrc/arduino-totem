@@ -26,11 +26,11 @@ const CRGB COLORS[LEN_COLORS] = {
 
 // apply custom delay range to speed dial, return ms for wait command
 uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
-  static const uint8_t SPEED_THRESHOLD_STOP = 10;
-  if (speed < SPEED_THRESHOLD_STOP) {
+  static const uint8_t SPEED_DIAL_FROZEN_THRESHOLD = 10;
+  if (speed < SPEED_DIAL_FROZEN_THRESHOLD) {
     return 0xFFFFFFFF;  // frozen
   } else {
-    return map(speed, DIAL_MAX, SPEED_THRESHOLD_STOP, low_millis, high_millis);  // higher speed = lower millis
+    return map(speed, DIAL_MAX, SPEED_DIAL_FROZEN_THRESHOLD, low_millis, high_millis);  // higher speed = lower millis
   }
 }
 
