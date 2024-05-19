@@ -23,9 +23,9 @@ void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
 }
 
 void fillRainbowQuadrants(uint16_t first_pixel_hue, uint8_t num_cycles = 1,
-                          QuadrantChaseDirection direction = QuadrantChaseDirection::UP) {
+                          ChaseDirection direction = ChaseDirection::FORWARD) {
   const uint16_t hue_offset_multiplier = MAX_HUE * num_cycles / NUM_IN_QUADRANT;
-  const int8_t direction_multiplier = direction == QuadrantChaseDirection::UP ? -1 : 1;
+  const int8_t direction_multiplier = direction == ChaseDirection::FORWARD ? -1 : 1;
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
     const uint16_t this_pixel_hue = first_pixel_hue + (direction_multiplier * i * hue_offset_multiplier);
     setPixelColorAllQuadrants(i, ColorHSV(this_pixel_hue));
@@ -48,10 +48,12 @@ void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2) {
 
 void rainbowChaseEdges(uint8_t num_cycles) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
+  static uint16_t first_pixel_hue = 0;
+  while (true) {
     fillRainbowEdges(first_pixel_hue, num_cycles);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
+    first_pixel_hue += HUE_STEP;  // wraps around to 0 and beyond, sweet!
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
@@ -62,11 +64,13 @@ void rainbowChaseEdges(uint8_t num_cycles) {
 
 void rainbowChaseQuadrants(uint8_t num_cycles) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
-  for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
+  static uint16_t first_pixel_hue = 0;
+  while (true) {
     fillRainbowQuadrants(first_pixel_hue, num_cycles,
-                         num_times_rage_pushed % 2 == 0 ? QuadrantChaseDirection::UP : QuadrantChaseDirection::DOWN);
+                         num_times_rage_pushed % 2 == 0 ? ChaseDirection::FORWARD : ChaseDirection::BACKWARD);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
+    first_pixel_hue += HUE_STEP;
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
@@ -77,11 +81,13 @@ void rainbowChaseQuadrants(uint8_t num_cycles) {
 
 void rainbowFade() {
   static const uint16_t HUE_STEP = 50;  // can't just set to 1 or else is super slow
-  for (uint16_t hue = 0; hue < MAX_HUE; hue += HUE_STEP) {
+  static uint16_t hue = 0;
+  while (true) {
     fillStrip(ColorHSV((hue)));
     showStrip();
+    hue += HUE_STEP;
 
-    const WaitReturnCode return_code = wait(5, 100);
+    const WaitReturnCode return_code = wait(2, 100);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     }

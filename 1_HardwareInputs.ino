@@ -62,15 +62,15 @@ bool rageButtonPushed() {
 
 uint8_t getSelectorPosition(uint8_t pin) {
   const uint16_t read_val = analogRead(pin);
-  if (read_val < (DIAL_MAX * 1.0 / 10.0)) {
+  if (read_val < (DIAL_MAX * 0.1)) {
     return 6;
-  } else if (read_val < (DIAL_MAX * 3.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 0.3)) {
     return 5;
-  } else if (read_val < (DIAL_MAX * 5.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 0.5)) {
     return 4;
-  } else if (read_val < (DIAL_MAX * 7.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 0.7)) {
     return 3;
-  } else if (read_val < (DIAL_MAX * 9.0 / 10.0)) {
+  } else if (read_val < (DIAL_MAX * 0.9)) {
     return 2;
   } else {
     return 1;

@@ -207,7 +207,7 @@ uint8_t quadrantIndexToEdgeIndex(uint8_t quadrant, uint8_t index) {
     return;
   }
 
-  static const uint8_t Q_SIDE_LENGTH = (NUM_HORIZONTAL_EDGE) / 2;
+  static const uint8_t Q_SIDE_LENGTH = NUM_HORIZONTAL_EDGE / 2;
 
   static const uint8_t Q_INDEX_BOTTOM_START = 0;
   static const uint8_t Q_INDEX_BOTTOM_END = Q_SIDE_LENGTH - 1;
