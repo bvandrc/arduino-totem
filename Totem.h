@@ -4,4 +4,6 @@
 extern bool checkRageFlash();
 extern bool checkTapFlash();
 
+extern uint8_t num_times_rage_pushed;
+
 #endif
