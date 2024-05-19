@@ -59,20 +59,20 @@ void loop() {
 
 bool checkRageFlash() {
   static uint8_t last_pressed_mode = 0;
-  static uint8_t count = 0;
+  static uint8_t debug_mode_count = 0;
 
   if (rageButtonPushed()) {
     rageFlash();
 
     if ((last_pressed_mode == 6 && top_dial_position == 1) || (last_pressed_mode == 1 && top_dial_position == 6)) {
-      count++;
-    } else {
-      count = 0;
-    }
+      debug_mode_count++;
 
-    if (count == 5) {
-      debugMode();
-      count = 0;
+      if (debug_mode_count == 5) {
+        debugMode();
+        debug_mode_count = 0;
+      }
+    } else {
+      debug_mode_count = 0;
     }
 
     last_pressed_mode = top_dial_position;
