@@ -62,7 +62,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
 }
 
 boolean hueIsInRange(uint8_t hue_1, uint8_t hue_2, uint8_t min_difference) {
-  const int difference = abs((uint16_t)hue_1 - (uint16_t)hue_2);
+  const int16_t difference = abs((uint16_t)hue_1 - (uint16_t)hue_2);
   return difference < min_difference || difference > 255 - min_difference;
 }
 

@@ -3,7 +3,7 @@
 
 #include <FastLED.h>
 
-enum WaitReturnCode {
+enum WaitReturnCode : uint8_t {
   NO_CHANGE,
   MODE_CHANGED,
 };

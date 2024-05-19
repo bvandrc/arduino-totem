@@ -52,7 +52,7 @@ void setPixelColor(uint16_t index, CRGB color) {
   leds[index] = color;
 }
 
-void fillStrip(int first, uint16_t count, CRGB color) {
+void fillStrip(int16_t first, uint16_t count, CRGB color) {
   if (first >= FastLED.size()) {
     return;
   } else if (first < 0) {
