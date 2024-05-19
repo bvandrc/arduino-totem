@@ -22,10 +22,12 @@ void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
   }
 }
 
-void fillRainbowQuadrants(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
+void fillRainbowQuadrants(uint16_t first_pixel_hue, uint8_t num_cycles = 1,
+                          QuadrantChaseDirection direction = QuadrantChaseDirection::UP) {
   const uint16_t hue_offset_multiplier = MAX_HUE * num_cycles / NUM_IN_QUADRANT;
+  const int8_t direction_multiplier = direction == QuadrantChaseDirection::UP ? -1 : 1;
   for (uint8_t i = 0; i < NUM_IN_QUADRANT; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue + (i * hue_offset_multiplier);
+    const uint16_t this_pixel_hue = first_pixel_hue + (direction_multiplier * i * hue_offset_multiplier);
     setPixelColorAllQuadrants(i, ColorHSV(this_pixel_hue));
   }
 }
@@ -61,7 +63,8 @@ void rainbowChaseEdges(uint8_t num_cycles) {
 void rainbowChaseQuadrants(uint8_t num_cycles) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   for (uint16_t first_pixel_hue = 0; first_pixel_hue < MAX_HUE; first_pixel_hue += HUE_STEP) {
-    fillRainbowQuadrants(first_pixel_hue, num_cycles);
+    fillRainbowQuadrants(first_pixel_hue, num_cycles,
+                         num_times_rage_pushed % 2 == 0 ? QuadrantChaseDirection::UP : QuadrantChaseDirection::DOWN);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
 

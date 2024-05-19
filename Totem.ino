@@ -57,12 +57,16 @@ void loop() {
   doTheLightingMode();
 }
 
+uint8_t num_times_rage_pushed = 0;
+
 bool checkRageFlash() {
   static uint8_t last_pressed_mode = 0;
   static uint8_t debug_mode_count = 0;
 
   if (rageButtonPushed()) {
     rageFlash();
+
+    num_times_rage_pushed++;
 
     if ((last_pressed_mode == 6 && top_dial_position == 1) || (last_pressed_mode == 1 && top_dial_position == 6)) {
       debug_mode_count++;
