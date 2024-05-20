@@ -90,12 +90,8 @@ void rainbowFade() {
     fillStrip(ColorHSV((hue)));
     showStrip();
 
-    getBrightnessDial();
-    getSpeedDial();
-    checkRageFlash();
-    checkTapFlash();
-
-    if (checkSelectorDialsChanged()) {
+    WaitReturnCode returnCode = readAllInputs();
+    if (returnCode == WaitReturnCode::MODE_CHANGED) {
       return;
     }
 
@@ -118,7 +114,7 @@ WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockw
 
       const WaitReturnCode return_code = wait(40, 1000);
       if (return_code == WaitReturnCode::MODE_CHANGED) {
-        return WaitReturnCode::MODE_CHANGED;
+        return return_code;
       }
     }
   }
