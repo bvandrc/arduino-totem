@@ -59,25 +59,22 @@ void loop() {
 void doTheLightingMode() {
   switch (getTopDialPosition()) {
     case 1:
-      rainbowChaseEdges(1);
+      rainbowChaseEdges(1, 1600);
       break;
     case 2:
-      rainbowChaseEdges(2);
+      rainbowChaseEdges(2, 1800);
       break;
     case 3:
-      rainbowChaseEdges(4);
+      rainbowChaseEdges(4, 2300);
       break;
     case 4:
-      rainbowChaseQuadrants(1);
+      rainbowChaseQuadrants(1, 2500);
       break;
     case 5:
       theaterChaseCycle();
       break;
     case 6:
       rainbowFade();
-      break;
-    default:
-      rainbowChaseEdges(1);
       break;
   }
 }
@@ -89,8 +86,6 @@ bool checkRageFlash() {
   static uint8_t debug_mode_count = 0;
 
   if (rageButtonPushed()) {
-    rageFlash();
-
     num_times_rage_pushed++;
 
     const uint8_t top_dial_position = getTopDialPosition();
@@ -125,8 +120,11 @@ bool checkTapFlash() {
 WaitReturnCode readAllInputs() {
   getBrightnessDial();
   getSpeedDial();
-  if (checkRageFlash() || checkTapFlash()) {
-    return WaitReturnCode::FLASHED_OR_TAPPED;  // return so can re-instate normal mode colors after flash
+  if (checkRageFlash()) {
+    return WaitReturnCode::RAGE_PRESSED;
+  }
+  if (checkTapFlash()) {
+    return WaitReturnCode::TAPPED;
   }
   if (checkModeDialChanged()) {
     return WaitReturnCode::MODE_CHANGED;

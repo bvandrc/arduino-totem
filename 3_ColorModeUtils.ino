@@ -30,9 +30,9 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
   uint32_t wait_time_millis;
   const unsigned long initial_time = millis();
   do {
-    WaitReturnCode returnCode = readAllInputs();
-    if (returnCode != WaitReturnCode::NO_CHANGE) {
-      return returnCode;
+    WaitReturnCode return_code = readAllInputs();
+    if (return_code != WaitReturnCode::NO_CHANGE) {
+      return return_code;  // return so can re-instate normal mode colors after flash
     }
 
     frozen = speed < SPEED_DIAL_FROZEN_THRESHOLD;

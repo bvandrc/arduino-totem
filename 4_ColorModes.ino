@@ -46,36 +46,75 @@ void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2) {
   }
 }
 
-void rainbowChaseEdges(uint8_t num_cycles) {
+void rainbowChaseEdges(uint8_t num_cycles, uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
     fillRainbowEdges(first_pixel_hue, num_cycles);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
-    first_pixel_hue += HUE_STEP;  // wraps around to 0 and beyond, sweet!
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          while (rageButtonPushed()) {
+            fillRainbowEdges(first_pixel_hue, num_cycles);
+            fillRainbowMiddles(first_pixel_hue);
+            showStrip();
+            first_pixel_hue += rage_hue_step;
+          }
+          break;
+        case 6:
+          rageFlash();
+          break;
+      }
     }
+
+    first_pixel_hue += HUE_STEP;
   }
 }
 
-void rainbowChaseQuadrants(uint8_t num_cycles) {
+void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
-    fillRainbowQuadrants(first_pixel_hue, num_cycles,
-                         num_times_rage_pushed % 2 == 0 ? ChaseDirection::FORWARD : ChaseDirection::BACKWARD);
+    ChaseDirection chase_direction =
+        num_times_rage_pushed % 2 == 0 ? ChaseDirection::FORWARD : ChaseDirection::BACKWARD;
+    fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
-    first_pixel_hue += HUE_STEP;
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          while (rageButtonPushed()) {
+            fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
+            fillRainbowMiddles(first_pixel_hue);
+            showStrip();
+            first_pixel_hue += rage_hue_step;
+          }
+          break;
+        case 6:
+          rageFlash();
+          break;
+      }
     }
+
+    first_pixel_hue += HUE_STEP;
   }
 }
 
@@ -90,47 +129,82 @@ void rainbowFade() {
     fillStrip(ColorHSV((hue)));
     showStrip();
 
-    WaitReturnCode returnCode = readAllInputs();
-    if (returnCode == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-
+    WaitReturnCode return_code = readAllInputs();
     hue_step = pow(speed, 2) / HUE_DIV;
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
+      return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+          hue_step = 2000;
+          break;
+        case 6:
+          rageFlash();
+          break;
+      }
+    }
     hue += hue_step;
     delay(1);
   }
 }
 
-WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
-  const unsigned long initial_time = millis();
-  while ((millis() - initial_time) < time_length_millis) {
-    for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
-      for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
-        const int16_t start_of_stripe = i + ((clockwise ? 1 : -1) * stagger) - (width * 2);
-        fillStrip(start_of_stripe, width, color1);
-        fillStrip(start_of_stripe + width, width, color2);
-      }
-      showStrip();
-
-      const WaitReturnCode return_code = wait(40, 1000);
-      if (return_code == WaitReturnCode::MODE_CHANGED) {
-        return return_code;
-      }
-    }
+void theaterChasePaint(CRGB color1, CRGB color2, uint8_t width, uint8_t stagger, bool clockwise) {
+  for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
+    const int16_t start_of_stripe = i + ((clockwise ? 1 : -1) * stagger) - (width * 2);
+    fillStrip(start_of_stripe, width, color1);
+    fillStrip(start_of_stripe + width, width, color2);
   }
-  return WaitReturnCode::NO_CHANGE;
+  showStrip();
 }
 
 void theaterChaseCycle() {
+  static const uint8_t WIDTH = 3;
+  static const uint32_t COLOR_CHANGE_TIME_MILLIS = 10000;
+  static const uint8_t MAX_STAGGER = WIDTH * 2;
   static const uint8_t LEN_COLORS = 2;
-  static CRGB colors[LEN_COLORS];
+  CRGB colors[LEN_COLORS];
+  getNewColors(colors, LEN_COLORS);
+
+  unsigned long last_changed_time = millis();
 
   while (true) {
-    getNewColors(colors, LEN_COLORS);
-    const WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return;
-    };
+    for (uint8_t stagger = 0; stagger < MAX_STAGGER; stagger++) {
+      unsigned long curr_millis = millis();
+      if (curr_millis - last_changed_time > COLOR_CHANGE_TIME_MILLIS) {
+        getNewColors(colors, LEN_COLORS);
+        last_changed_time = curr_millis;
+      }
+
+      theaterChasePaint(colors[0], colors[1], WIDTH, stagger, true);
+
+      const WaitReturnCode return_code = wait(40, 1000);
+      if (return_code == WaitReturnCode::MODE_CHANGED) {
+        return;
+      } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+        switch (getBottomDialPosition()) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            while (rageButtonPushed()) {
+              for (uint8_t stagger_rage = 0; stagger_rage < MAX_STAGGER; stagger_rage++) {
+                theaterChasePaint(colors[0], colors[1], WIDTH, stagger_rage, true);
+                delay(20);
+              }
+            }
+            getNewColors(colors, LEN_COLORS);
+            break;
+          case 6:
+            rageFlash();
+            break;
+        }
+      }
+    }
   }
 }
 
