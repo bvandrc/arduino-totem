@@ -41,7 +41,7 @@ void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2) {
 
   const uint16_t side_2_hue_offset_multiplier = MAX_HUE * num_cycles / NUM_USED_IN_MIDDLE_SIDE_2;
   for (uint8_t i = 0; i < NUM_USED_IN_MIDDLE_SIDE_2; i++) {
-    const uint16_t this_pixel_hue = first_pixel_hue + (i * side_2_hue_offset_multiplier);
+    const uint16_t this_pixel_hue = first_pixel_hue - (i * side_2_hue_offset_multiplier);
     setPixelColorMiddleCropped(2, i, ColorHSV(this_pixel_hue));
   }
 }

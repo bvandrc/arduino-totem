@@ -19,8 +19,8 @@ const uint8_t MIDDLE_CROP_SIDE_1_START = 3;
 const uint8_t MIDDLE_CROP_SIDE_1_END = 22;
 const uint8_t MIDDLE_CROP_SIDE_2_START = 6;
 const uint8_t MIDDLE_CROP_SIDE_2_END = 19;
-const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = MIDDLE_CROP_SIDE_1_END - MIDDLE_CROP_SIDE_1_START;
-const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = MIDDLE_CROP_SIDE_2_END - MIDDLE_CROP_SIDE_2_START;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_1 = MIDDLE_CROP_SIDE_1_END - MIDDLE_CROP_SIDE_1_START + 1;
+const uint8_t NUM_USED_IN_MIDDLE_SIDE_2 = MIDDLE_CROP_SIDE_2_END - MIDDLE_CROP_SIDE_2_START + 1;
 
 CRGB leds[NUM_PIXELS];
 
@@ -66,15 +66,32 @@ void fillStrip(CRGB color) {
   fill_solid(leds, FastLED.size(), color);
 }
 
+uint8_t* initializeMiddleOffIndicesArray(uint8_t size, uint8_t side, uint8_t crop_start, uint8_t crop_end) {
+  uint8_t* array = new uint8_t[size];
+  uint8_t off_index = 0;
+  for (uint8_t i = 0; i < NUM_IN_MIDDLE; i++) {
+    if (i < crop_start || i > crop_end) {
+      array[off_index] = middleIndexToActualIndex(side, i);
+      off_index++;
+    }
+  }
+  return array;
+}
+
 void showStrip() {
   // always turn off middle outside of desired range
-  for (uint8_t i = 0; i < NUM_IN_MIDDLE; i++) {
-    if (i < MIDDLE_CROP_SIDE_1_START || i > MIDDLE_CROP_SIDE_1_END) {
-      setPixelColorMiddle(1, i, 0);
-    }
-    if (i < MIDDLE_CROP_SIDE_2_START || i > MIDDLE_CROP_SIDE_2_END) {
-      setPixelColorMiddle(2, i, 0);
-    }
+  static const uint8_t NUM_OFF_IN_MIDDLE_SIDE_1 = NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_1;
+  static const uint8_t NUM_OFF_IN_MIDDLE_SIDE_2 = NUM_IN_MIDDLE - NUM_USED_IN_MIDDLE_SIDE_2;
+  static const uint8_t* SIDE_1_MIDDLE_OFF_INDICES =
+      initializeMiddleOffIndicesArray(NUM_OFF_IN_MIDDLE_SIDE_1, 1, MIDDLE_CROP_SIDE_1_START, MIDDLE_CROP_SIDE_1_END);
+  static const uint8_t* SIDE_2_MIDDLE_OFF_INDICES =
+      initializeMiddleOffIndicesArray(NUM_OFF_IN_MIDDLE_SIDE_2, 2, MIDDLE_CROP_SIDE_2_START, MIDDLE_CROP_SIDE_2_END);
+
+  for (uint8_t i = 0; i < NUM_OFF_IN_MIDDLE_SIDE_1; i++) {
+    leds[SIDE_1_MIDDLE_OFF_INDICES[i]] = 0;
+  }
+  for (uint8_t i = 0; i < NUM_OFF_IN_MIDDLE_SIDE_2; i++) {
+    leds[SIDE_2_MIDDLE_OFF_INDICES[i]] = 0;
   }
 
   FastLED.show();
@@ -166,20 +183,29 @@ void setPixelColorEdge(uint8_t side, uint8_t index, CRGB color) {
   setPixelColorSide(side, actual_index, color);
 }
 
+uint8_t middleIndexToSideIndex(uint8_t side, uint8_t index) {
+  uint8_t side_index;
+  if (side == 1) {
+    side_index = index;
+  } else {
+    // setPixelColorSide sets mirror of side, but for the middle we want to go left to right on either side
+    side_index = map(index, 0, NUM_IN_MIDDLE - 1, NUM_IN_MIDDLE - 1, 0);
+  }
+  return side_index;
+}
+
+uint8_t middleIndexToActualIndex(uint8_t side, uint8_t index) {
+  const uint8_t side_index = middleIndexToSideIndex(side, index);
+  return sideIndexToActualIndex(side, side_index);
+}
+
 void setPixelColorMiddle(uint8_t side, uint8_t index, CRGB color) {
   if (index >= NUM_IN_MIDDLE) {
     return;
   }
 
-  uint8_t actual_index;
-  if (side == 1) {
-    actual_index = index;
-  } else {
-    // setPixelColorSide sets mirror of side, but for the middle we want to go left to right on either side
-    actual_index = map(index, 0, NUM_IN_MIDDLE - 1, NUM_IN_MIDDLE - 1, 0);
-  }
-
-  setPixelColorSide(side, actual_index, color);
+  const uint8_t side_index = middleIndexToSideIndex(side, index);
+  setPixelColorSide(side, side_index, color);
 }
 
 void setPixelColorMiddleCropped(uint8_t side, uint8_t index, CRGB color) {
