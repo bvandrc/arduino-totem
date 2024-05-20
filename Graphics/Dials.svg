@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="2.5in"
+   height="3.75in"
+   viewBox="0 0 63.500001 95.249999"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="Dials.svg"
+   inkscape:export-filename="Dials.pdf"
+   inkscape:export-xdpi="800"
+   inkscape:export-ydpi="800"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.0686842"
+     inkscape:cx="108.76479"
+     inkscape:cy="160.73019"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="bend_path"
+       id="path-effect2"
+       is_visible="true"
+       lpeversion="1"
+       bendpath="m 36.756178,26.902858 c 4.8076,4.88934 12.247418,5.118814 18.984298,0.361754"
+       prop_scale="1"
+       scale_y_rel="false"
+       vertical="false"
+       hide_knot="false"
+       bendpath-nodetypes="cc" />
+    <inkscape:path-effect
+       effect="bend_path"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       bendpath="m 6.1299182,-14.068691 c 6.7399468,-6.909276 14.5719598,-6.550326 22.3755268,0.361754"
+       prop_scale="1"
+       scale_y_rel="false"
+       vertical="false"
+       hide_knot="false"
+       bendpath-nodetypes="cc" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="rect1"
+       width="63.5"
+       height="95.25"
+       x="4.0635635e-07"
+       y="4.0635635e-07"
+       inkscape:label="background"
+       sodipodi:insensitive="true" />
+    <ellipse
+       style="fill:#71007e;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1"
+       cx="20.637501"
+       cy="19.049999"
+       rx="6.3499994"
+       ry="6.3499985"
+       inkscape:label="brightness circle"
+       sodipodi:insensitive="true" />
+    <ellipse
+       style="fill:#71007e;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1-0"
+       cx="46.050201"
+       cy="19.049999"
+       rx="6.3499994"
+       ry="6.3499985"
+       inkscape:label="speed circle"
+       sodipodi:insensitive="true" />
+    <circle
+       style="fill:#71007e;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1-05"
+       cx="20.637499"
+       cy="79.375"
+       r="12.699999"
+       inkscape:label="bottom dial circle"
+       sodipodi:insensitive="true" />
+    <circle
+       style="fill:#71007e;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1-05-3"
+       cx="20.637499"
+       cy="50.799999"
+       r="12.699999"
+       inkscape:label="top dial circle"
+       sodipodi:insensitive="true" />
+    <g
+       id="g3"
+       inkscape:label="button effect text"
+       transform="translate(0.12789934,-5.7554702)">
+      <rect
+         style="fill:#ff0606;fill-opacity:1;stroke:#ff0606;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect2"
+         width="20.655743"
+         height="13.941029"
+         x="38.369801"
+         y="73.542122"
+         inkscape:label="button effect background" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#ff0606;stroke-width:5;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         x="48.182831"
+         y="77.650391"
+         id="text1-1"
+         inkscape:label="button effect"><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:#ff0606;stroke-width:5;stroke-dasharray:none;stroke-opacity:1"
+           x="48.182831"
+           y="77.650391"
+           id="tspan3">Button</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:#ff0606;stroke-width:5;stroke-dasharray:none;stroke-opacity:1"
+           x="48.182831"
+           y="86.117058"
+           id="tspan4">Effect</tspan></text>
+    </g>
+    <g
+       id="g4"
+       inkscape:label="main effect text"
+       transform="translate(0,-4.6043766)">
+      <ellipse
+         style="fill:#00ff9f;fill-opacity:1;stroke:#00ff9f;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="path2"
+         cx="52.214905"
+         cy="44.445023"
+         rx="2.7818105"
+         ry="2.7498357"
+         inkscape:label="main effect background" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:#00ff9f;stroke-width:5;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         x="48.74477"
+         y="49.296017"
+         id="text1-15"
+         inkscape:label="main effect"><tspan
+           sodipodi:role="line"
+           id="tspan1-9"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:#00ff9f;stroke-width:5;stroke-dasharray:none;stroke-opacity:1"
+           x="48.74477"
+           y="49.296017">Main</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:1;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:#00ff9f;stroke-width:5;stroke-dasharray:none;stroke-opacity:1"
+           x="48.74477"
+           y="57.762688"
+           id="tspan2">Effect</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;line-height:0.9;font-family:'Gill Sans MT Ext Condensed Bold';-inkscape-font-specification:'Gill Sans MT Ext Condensed Bold, ';text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;stroke:#fffb00;stroke-width:4;stroke-linejoin:round;paint-order:stroke fill markers;stroke-dasharray:none;fill-opacity:1;stroke-opacity:1"
+       id="text2"
+       transform="translate(0.89529536,1.6626914)"
+       inkscape:label="brightness"><textPath
+         xlink:href="#path1-8"
+         startOffset="50%"
+         id="textPath2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'Gill Sans MT Ext Condensed Bold';-inkscape-font-specification:'Gill Sans MT Ext Condensed Bold, ';letter-spacing:0px;stroke-width:4;stroke-dasharray:none;fill:#000000;fill-opacity:1;stroke:#fffb00;stroke-opacity:1"><tspan
+           id="tspan1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'Gill Sans MT Ext Condensed Bold';-inkscape-font-specification:'Gill Sans MT Ext Condensed Bold, ';letter-spacing:0px;stroke-width:4;stroke-dasharray:none;fill:#000000;fill-opacity:1;stroke:#fffb00;stroke-opacity:1"
+           rotate="0 0 0 0 0 0"
+           dx="0">BRIGHTNESS</tspan></textPath></text>
+    <ellipse
+       style="display:none;fill:#71007e;fill-opacity:0.12;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1-8"
+       cx="21.928368"
+       cy="-15.670973"
+       rx="9.9967537"
+       ry="9.9970884"
+       transform="matrix(0.20589986,0.97857307,-0.97857877,0.20587276,0,0)"
+       inkscape:label="brightness hidden circle" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;line-height:0.9;font-family:'Gill Sans MT Ext Condensed Bold';-inkscape-font-specification:'Gill Sans MT Ext Condensed Bold, ';text-align:center;letter-spacing:0px;text-anchor:middle;fill:#000000;stroke:#0ee300;stroke-width:4;stroke-linejoin:round;paint-order:stroke fill markers;stroke-dasharray:none;fill-opacity:1"
+       id="text2-6"
+       transform="translate(0.895295,1.6626914)"
+       inkscape:label="brightness"><textPath
+         xlink:href="#path1-8-9"
+         startOffset="50%"
+         id="textPath2-8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.87778px;font-family:'Gill Sans MT Ext Condensed Bold';-inkscape-font-specification:'Gill Sans MT Ext Condensed Bold, ';letter-spacing:0px;stroke-width:4;stroke-dasharray:none;fill:#000000;fill-opacity:1">SPEED</textPath></text>
+    <ellipse
+       style="display:none;fill:#71007e;fill-opacity:0.12;stroke:#000000;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       id="path1-8-9"
+       cx="1.3629819"
+       cy="-49.863594"
+       rx="9.9967537"
+       ry="9.9970884"
+       transform="matrix(-0.35065701,0.93650396,-0.93649425,-0.35068294,0,0)"
+       inkscape:label="brightness hidden circle" />
+  </g>
+</svg>
