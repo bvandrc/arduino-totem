@@ -24,31 +24,24 @@ const CRGB COLORS[LEN_COLORS] = {
                         // CRGB::Magenta, // Pink
 };
 
-// apply custom delay range to speed dial, return ms for wait command
-uint32_t getDelayMillis(uint32_t low_millis, uint32_t high_millis) {
-  static const uint8_t SPEED_DIAL_FROZEN_THRESHOLD = 10;
-  if (speed < SPEED_DIAL_FROZEN_THRESHOLD) {
-    return 0xFFFFFFFF;  // frozen
-  } else {
-    return map(speed, DIAL_MAX, SPEED_DIAL_FROZEN_THRESHOLD, low_millis, high_millis);  // higher speed = lower millis
-  }
-}
-
 WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
-  uint32_t wait_time_millis = getDelayMillis(low_millis, high_millis);
+  static const uint8_t SPEED_DIAL_FROZEN_THRESHOLD = 10;
+  bool frozen = false;
+  uint32_t wait_time_millis;
   const unsigned long initial_time = millis();
   do {
     getBrightnessDial();
     getSpeedDial();
     if (checkRageFlash() || checkTapFlash()) {
-      return WaitReturnCode::NO_CHANGE;  // want to return so can re-instate normal mode colors after flash, but dont
-                                         // want to change state (restart mode)
+      return WaitReturnCode::NO_CHANGE;  // return so can re-instate normal mode colors after flash
     }
-
-    wait_time_millis = getDelayMillis(low_millis, high_millis);
     if (checkSelectorDialsChanged()) {
       return WaitReturnCode::MODE_CHANGED;
     }
+
+    frozen = speed < SPEED_DIAL_FROZEN_THRESHOLD;
+    wait_time_millis =
+        map(speed, SPEED_DIAL_FROZEN_THRESHOLD, DIAL_MAX, high_millis, low_millis);  // higher speed = lower millis
 
 // from FASTLed.delay()
 #ifndef FASTLED_ACCURATE_CLOCK
@@ -58,7 +51,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
     FastLED.show();
     yield();
 
-  } while ((millis() - initial_time) < wait_time_millis);
+  } while (frozen || ((millis() - initial_time) < wait_time_millis));
   return WaitReturnCode::NO_CHANGE;
 }
 
