@@ -80,17 +80,28 @@ void rainbowChaseQuadrants(uint8_t num_cycles) {
 }
 
 void rainbowFade() {
-  static const uint16_t HUE_STEP = 50;  // can't just set to 1 or else is super slow
+  static const uint16_t MAX_HUE_STEP = 150;  // greater the step, faster the speed
+  static const uint16_t HUE_DIV = pow(DIAL_MAX, 2) / MAX_HUE_STEP;
+
   static uint16_t hue = 0;
+  uint16_t hue_step;
+
   while (true) {
     fillStrip(ColorHSV((hue)));
     showStrip();
-    hue += HUE_STEP;
 
-    const WaitReturnCode return_code = wait(2, 100);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
+    getBrightnessDial();
+    getSpeedDial();
+    checkRageFlash();
+    checkTapFlash();
+
+    if (checkSelectorDialsChanged()) {
       return;
     }
+
+    hue_step = pow(speed, 2) / HUE_DIV;
+    hue += hue_step;
+    delay(1);
   }
 }
 
