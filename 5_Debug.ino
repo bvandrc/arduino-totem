@@ -16,7 +16,7 @@ void debugMode() {
   showStrip();
   delay(5000);
 
-  switch (bottom_dial_position) {
+  switch (getBottomDialPosition()) {
     case 1:
       // no change
       break;

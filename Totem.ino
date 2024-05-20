@@ -16,9 +16,10 @@ void setup() {
 
   // initial debug
   const unsigned long start_millis = millis();
-  while (rageButtonPushed() && (millis() - start_millis < 10000)) {
+  while (rageButtonPushed()) {
     if (millis() - start_millis > 5000) {
-      checkSelectorDialsChanged();
+      static const uint8_t top_dial_position = getTopDialPosition();
+      static const uint8_t bottom_dial_position = getBottomDialPosition();
 
       // top dial = outputs
       if (top_dial_position == 2 || top_dial_position == 3) {
@@ -56,7 +57,7 @@ void loop() {
 }
 
 void doTheLightingMode() {
-  switch (top_dial_position) {
+  switch (getTopDialPosition()) {
     case 1:
       rainbowChaseEdges(1);
       break;
@@ -92,6 +93,7 @@ bool checkRageFlash() {
 
     num_times_rage_pushed++;
 
+    const uint8_t top_dial_position = getTopDialPosition();
     if ((last_pressed_mode == 6 && top_dial_position == 1) || (last_pressed_mode == 1 && top_dial_position == 6)) {
       debug_mode_count++;
 
@@ -126,7 +128,7 @@ WaitReturnCode readAllInputs() {
   if (checkRageFlash() || checkTapFlash()) {
     return WaitReturnCode::FLASHED_OR_TAPPED;  // return so can re-instate normal mode colors after flash
   }
-  if (checkSelectorDialsChanged()) {
+  if (checkModeDialChanged()) {
     return WaitReturnCode::MODE_CHANGED;
   }
   return WaitReturnCode::NO_CHANGE;

@@ -19,15 +19,13 @@ class MyMotionSensor : public Adafruit_LIS3DH {
 
 extern MyMotionSensor motionSensor;
 
-extern uint8_t top_dial_position;     // 1 to 6
-extern uint8_t bottom_dial_position;  // 1 to 6
-extern uint16_t speed;                // 0 to 1024
+extern uint16_t speed;  // 0 to 1024
 
 extern void setUpPins();
 extern bool rageButtonPushed();
 extern uint8_t getTopDialPosition();
 extern uint8_t getBottomDialPosition();
-extern bool checkSelectorDialsChanged();
+extern bool checkModeDialChanged();
 extern void getBrightnessDial();
 extern void getSpeedDial();
 

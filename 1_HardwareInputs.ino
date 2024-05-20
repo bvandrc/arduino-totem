@@ -18,8 +18,6 @@ const uint16_t DIAL_MIN = 0;
 const uint16_t DIAL_MAX = 1023;
 const uint8_t MAX_BRIGHTNESS = 20;
 
-uint8_t top_dial_position = 1;
-uint8_t bottom_dial_position = 1;
 uint16_t speed = 10;
 
 // Motion sensor
@@ -85,12 +83,11 @@ uint8_t getBottomDialPosition() {
   return getSelectorPosition(BOTTOM_DIAL_PIN);
 }
 
-bool checkSelectorDialsChanged() {
+bool checkModeDialChanged() {
+  static uint8_t top_dial_position = 1;
   const uint8_t new_top_tial_position = getTopDialPosition();
-  const uint8_t new_bottom_dial_position = getBottomDialPosition();
-  if (new_top_tial_position != top_dial_position || new_bottom_dial_position != bottom_dial_position) {
+  if (new_top_tial_position != top_dial_position) {
     top_dial_position = new_top_tial_position;
-    bottom_dial_position = new_bottom_dial_position;
     return true;
   } else {
     return false;
