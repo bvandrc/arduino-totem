@@ -8,11 +8,10 @@ enum ChaseDirection : uint8_t {
 
 extern void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1);
 extern void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2);
-extern void rainbowChaseEdges(uint8_t num_cycles);
-extern void rainbowChaseQuadrants(uint8_t num_cycles);
+extern void rainbowChaseEdges(uint8_t num_cycles, uint16_t rage_hue_step);
+extern void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t rage_hue_step);
 extern void rainbowFade();
 extern void theaterChaseCycle();
-extern void rageFlash();
 extern void tapFlash();
 
 #endif

@@ -46,37 +46,182 @@ void fillRainbowMiddles(uint16_t first_pixel_hue, uint8_t num_cycles = 2) {
   }
 }
 
-void rainbowChaseEdges(uint8_t num_cycles) {
+void rainbowEdgeChaseAccelerate(uint16_t& first_pixel_hue, uint8_t num_cycles) {
+  int32_t hue_step = 100;
+  while (rageButtonPushed()) {
+    fillRainbowEdges(first_pixel_hue, num_cycles);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    delay(1);
+    first_pixel_hue += hue_step;
+    if (hue_step < 4000) {
+      hue_step += 5;
+    }
+  }
+
+  const uint8_t prev_brightness = FastLED.getBrightness();
+  unsigned long last_changed_millis = millis();
+  bool on_off = true;
+
+  while (hue_step > 20) {
+    const unsigned long curr_millis = millis();
+    if (curr_millis - last_changed_millis > 100) {
+      FastLED.setBrightness((on_off || (hue_step < 1000)) ? prev_brightness : (prev_brightness * 0.6));
+      last_changed_millis = curr_millis;
+      on_off = !on_off;
+    }
+    fillRainbowEdges(first_pixel_hue, num_cycles);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    delay(1);
+    first_pixel_hue += hue_step;
+    hue_step -= 10;
+  }
+  FastLED.setBrightness(prev_brightness);
+}
+
+void rainbowChaseEdges(uint8_t num_cycles, uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
     fillRainbowEdges(first_pixel_hue, num_cycles);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
-    first_pixel_hue += HUE_STEP;  // wraps around to 0 and beyond, sweet!
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+          rainbowEdgeChaseAccelerate(first_pixel_hue, num_cycles);
+          break;
+        case 2:
+        case 3:
+        case 4:
+          while (rageButtonPushed()) {
+            fillRainbowEdges(first_pixel_hue, num_cycles);
+            fillRainbowMiddles(first_pixel_hue);
+            showStrip();
+            first_pixel_hue += rage_hue_step;
+          }
+          break;
+        case 5:
+          rageFlashOnCurrent();
+          break;
+        case 6:
+          rageFlashRandomColor();
+          break;
+      }
     }
+
+    first_pixel_hue += HUE_STEP;
   }
 }
 
-void rainbowChaseQuadrants(uint8_t num_cycles) {
+void rainbowQuadrantChaseAccelerate(uint16_t& first_pixel_hue, uint8_t num_cycles, ChaseDirection chase_direction) {
+  int32_t hue_step = 100;
+  while (rageButtonPushed()) {
+    fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    delay(1);
+    first_pixel_hue += hue_step;
+    if (hue_step < 5000) {
+      hue_step += 5;
+    }
+  }
+
+  const uint8_t prev_brightness = FastLED.getBrightness();
+  unsigned long last_changed_millis = millis();
+  bool on_off = true;
+
+  while (hue_step > 20) {
+    const unsigned long curr_millis = millis();
+    if (curr_millis - last_changed_millis > 100) {
+      FastLED.setBrightness((on_off || (hue_step < 500)) ? prev_brightness : (prev_brightness * 0.6));
+      last_changed_millis = curr_millis;
+      on_off = !on_off;
+    }
+    fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    delay(1);
+    first_pixel_hue += hue_step;
+    hue_step -= 20;
+  }
+  FastLED.setBrightness(prev_brightness);
+}
+
+void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
-    fillRainbowQuadrants(first_pixel_hue, num_cycles,
-                         num_times_rage_pushed % 2 == 0 ? ChaseDirection::FORWARD : ChaseDirection::BACKWARD);
+    ChaseDirection chase_direction =
+        num_times_rage_pushed % 2 == 0 ? ChaseDirection::FORWARD : ChaseDirection::BACKWARD;
+    fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
-    first_pixel_hue += HUE_STEP;
 
     const WaitReturnCode return_code = wait(50, 5000);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+          rainbowQuadrantChaseAccelerate(first_pixel_hue, num_cycles, chase_direction);
+          break;
+        case 2:
+        case 3:
+        case 4:
+          while (rageButtonPushed()) {
+            fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
+            fillRainbowMiddles(first_pixel_hue);
+            showStrip();
+            first_pixel_hue += rage_hue_step;
+          }
+          break;
+        case 5:
+          rageFlashOnCurrent();
+          break;
+        case 6:
+          rageFlashRandomColor();
+          break;
+      }
+    }
+
+    first_pixel_hue += HUE_STEP;
+  }
+}
+
+void rainbowFadeAccelerate(uint16_t& hue) {
+  int32_t hue_step = 100;
+  while (rageButtonPushed()) {
+    fillStrip(ColorHSV((hue)));
+    showStrip();
+    hue += hue_step;
+    if (hue_step < 3000) {
+      hue_step += 3;
     }
   }
+
+  const uint8_t prev_brightness = FastLED.getBrightness();
+  unsigned long last_changed_millis = millis();
+  bool on_off = true;
+
+  while (hue_step > 20) {
+    const unsigned long curr_millis = millis();
+    if (curr_millis - last_changed_millis > 100) {
+      FastLED.setBrightness((on_off || (hue_step < 500)) ? prev_brightness : (prev_brightness * 0.6));
+      last_changed_millis = curr_millis;
+      on_off = !on_off;
+    }
+    fillStrip(ColorHSV((hue)));
+    showStrip();
+    hue += hue_step;
+    hue_step -= 5;
+  }
+  FastLED.setBrightness(prev_brightness);
 }
 
 void rainbowFade() {
@@ -90,47 +235,89 @@ void rainbowFade() {
     fillStrip(ColorHSV((hue)));
     showStrip();
 
-    WaitReturnCode returnCode = readAllInputs();
-    if (returnCode == WaitReturnCode::MODE_CHANGED) {
-      return;
-    }
-
+    WaitReturnCode return_code = readAllInputs();
     hue_step = pow(speed, 2) / HUE_DIV;
+    if (return_code == WaitReturnCode::MODE_CHANGED) {
+      return;
+    } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+      switch (getBottomDialPosition()) {
+        case 1:
+          rainbowFadeAccelerate(hue);
+          break;
+        case 2:
+        case 3:
+        case 4:
+          hue_step = 2000;
+          break;
+        case 5:
+          rageFlashOnCurrent();
+          break;
+        case 6:
+          rageFlashRandomColor();
+          break;
+      }
+    }
     hue += hue_step;
     delay(1);
   }
 }
 
-WaitReturnCode theaterChase(CRGB color1, CRGB color2, uint8_t width, bool clockwise, uint32_t time_length_millis) {
-  const unsigned long initial_time = millis();
-  while ((millis() - initial_time) < time_length_millis) {
-    for (uint8_t stagger = 0; stagger < width * 2; stagger++) {
-      for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
-        const int16_t start_of_stripe = i + ((clockwise ? 1 : -1) * stagger) - (width * 2);
-        fillStrip(start_of_stripe, width, color1);
-        fillStrip(start_of_stripe + width, width, color2);
-      }
-      showStrip();
-
-      const WaitReturnCode return_code = wait(40, 1000);
-      if (return_code == WaitReturnCode::MODE_CHANGED) {
-        return return_code;
-      }
-    }
+void theaterChasePaint(CRGB color1, CRGB color2, uint8_t width, uint8_t stagger, bool clockwise) {
+  for (uint8_t i = 0; i < FastLED.size() + ((2 * stagger) + 1); i += (width * 2)) {
+    const int16_t start_of_stripe = i + ((clockwise ? 1 : -1) * stagger) - (width * 2);
+    fillStrip(start_of_stripe, width, color1);
+    fillStrip(start_of_stripe + width, width, color2);
   }
-  return WaitReturnCode::NO_CHANGE;
+  showStrip();
 }
 
 void theaterChaseCycle() {
+  static const uint8_t WIDTH = 3;
+  static const uint32_t COLOR_CHANGE_TIME_MILLIS = 10000;
+  static const uint8_t MAX_STAGGER = WIDTH * 2;
   static const uint8_t LEN_COLORS = 2;
-  static CRGB colors[LEN_COLORS];
+  CRGB colors[LEN_COLORS];
+  getNewColors(colors, LEN_COLORS);
+
+  unsigned long last_changed_time = millis();
 
   while (true) {
-    getNewColors(colors, LEN_COLORS);
-    const WaitReturnCode return_code = theaterChase(colors[0], colors[1], 3, random(2), 10000);
-    if (return_code == WaitReturnCode::MODE_CHANGED) {
-      return;
-    };
+    for (uint8_t stagger = 0; stagger < MAX_STAGGER; stagger++) {
+      unsigned long curr_millis = millis();
+      if (curr_millis - last_changed_time > COLOR_CHANGE_TIME_MILLIS) {
+        getNewColors(colors, LEN_COLORS);
+        last_changed_time = curr_millis;
+      }
+
+      theaterChasePaint(colors[0], colors[1], WIDTH, stagger, true);
+
+      const WaitReturnCode return_code = wait(40, 1000);
+      if (return_code == WaitReturnCode::MODE_CHANGED) {
+        return;
+      } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
+        switch (getBottomDialPosition()) {
+          case 1:
+          // TODO: acceleration mode
+          case 2:
+          case 3:
+          case 4:
+            while (rageButtonPushed()) {
+              for (uint8_t stagger_rage = 0; stagger_rage < MAX_STAGGER; stagger_rage++) {
+                theaterChasePaint(colors[0], colors[1], WIDTH, stagger_rage, true);
+                delay(20);
+              }
+            }
+            getNewColors(colors, LEN_COLORS);
+            break;
+          case 5:
+            rageFlashOnCurrent();
+            break;
+          case 6:
+            rageFlashRandomColor();
+            break;
+        }
+      }
+    }
   }
 }
 
@@ -187,7 +374,7 @@ uint8_t rageOrBumpBrightness(uint8_t prev_brightness) {
   return new_brightness;
 }
 
-void rageFlash() {
+void rageFlashRandomColor() {
   const uint8_t prev_brightness = FastLED.getBrightness();
   const uint8_t new_brightness = rageOrBumpBrightness(prev_brightness);
   FastLED.setBrightness(new_brightness);
@@ -201,6 +388,21 @@ void rageFlash() {
     delay(50);
     FastLED.showColor(0);
     delay(50);
+  } while (rageButtonPushed());
+
+  FastLED.setBrightness(prev_brightness);
+}
+
+void rageFlashOnCurrent() {
+  const uint8_t prev_brightness = FastLED.getBrightness();
+
+  do {
+    FastLED.setBrightness(prev_brightness * 0.5);
+    showStrip();
+    delay(70);
+    FastLED.setBrightness(prev_brightness);
+    showStrip();
+    delay(70);
   } while (rageButtonPushed());
 
   FastLED.setBrightness(prev_brightness);
