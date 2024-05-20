@@ -30,13 +30,9 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
   uint32_t wait_time_millis;
   const unsigned long initial_time = millis();
   do {
-    getBrightnessDial();
-    getSpeedDial();
-    if (checkRageFlash() || checkTapFlash()) {
-      return WaitReturnCode::NO_CHANGE;  // return so can re-instate normal mode colors after flash
-    }
-    if (checkSelectorDialsChanged()) {
-      return WaitReturnCode::MODE_CHANGED;
+    WaitReturnCode returnCode = readAllInputs();
+    if (returnCode != WaitReturnCode::NO_CHANGE) {
+      return returnCode;
     }
 
     frozen = speed < SPEED_DIAL_FROZEN_THRESHOLD;

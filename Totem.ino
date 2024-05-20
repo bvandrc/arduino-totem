@@ -51,10 +51,34 @@ void setup() {
 void loop() {
   if (no_do_lighting_mode)
     return;
-  getBrightnessDial();
-  getSpeedDial();
-  checkSelectorDialsChanged();
+  readAllInputs();
   doTheLightingMode();
+}
+
+void doTheLightingMode() {
+  switch (top_dial_position) {
+    case 1:
+      rainbowChaseEdges(1);
+      break;
+    case 2:
+      rainbowChaseEdges(2);
+      break;
+    case 3:
+      rainbowChaseEdges(4);
+      break;
+    case 4:
+      rainbowChaseQuadrants(1);
+      break;
+    case 5:
+      theaterChaseCycle();
+      break;
+    case 6:
+      rainbowFade();
+      break;
+    default:
+      rainbowChaseEdges(1);
+      break;
+  }
 }
 
 uint8_t num_times_rage_pushed = 0;
@@ -96,28 +120,14 @@ bool checkTapFlash() {
   }
 }
 
-void doTheLightingMode() {
-  switch (top_dial_position) {
-    case 1:
-      rainbowChaseEdges(1);
-      break;
-    case 2:
-      rainbowChaseEdges(2);
-      break;
-    case 3:
-      rainbowChaseEdges(4);
-      break;
-    case 4:
-      rainbowChaseQuadrants(1);
-      break;
-    case 5:
-      theaterChaseCycle();
-      break;
-    case 6:
-      rainbowFade();
-      break;
-    default:
-      rainbowChaseEdges(1);
-      break;
+WaitReturnCode readAllInputs() {
+  getBrightnessDial();
+  getSpeedDial();
+  if (checkRageFlash() || checkTapFlash()) {
+    return WaitReturnCode::FLASHED_OR_TAPPED;  // return so can re-instate normal mode colors after flash
   }
+  if (checkSelectorDialsChanged()) {
+    return WaitReturnCode::MODE_CHANGED;
+  }
+  return WaitReturnCode::NO_CHANGE;
 }

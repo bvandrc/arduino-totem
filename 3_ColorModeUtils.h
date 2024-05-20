@@ -3,10 +3,7 @@
 
 #include <FastLED.h>
 
-enum WaitReturnCode : uint8_t {
-  NO_CHANGE,
-  MODE_CHANGED,
-};
+#include "Totem.h"
 
 extern WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis);
 
