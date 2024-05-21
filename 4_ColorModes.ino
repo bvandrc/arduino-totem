@@ -109,6 +109,8 @@ void rainbowEdgeChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, uint
     first_pixel_hue += rage_hue_step;
   }
 }
+
+void rainbowChaseEdges(uint8_t num_cycles, uint16_t min_wait_millis, uint16_t max_wait_millis, uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
@@ -116,7 +118,7 @@ void rainbowEdgeChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, uint
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
 
-    const WaitReturnCode return_code = wait(50, 5000);
+    const WaitReturnCode return_code = wait(min_wait_millis, max_wait_millis);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
@@ -179,6 +181,9 @@ void rainbowQuadrantChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, 
     first_pixel_hue += rage_hue_step;
   }
 }
+
+void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t min_wait_millis, uint16_t max_wait_millis,
+                           uint16_t rage_hue_step) {
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
@@ -188,7 +193,7 @@ void rainbowQuadrantChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, 
     fillRainbowMiddles(first_pixel_hue);
     showStrip();
 
-    const WaitReturnCode return_code = wait(50, 5000);
+    const WaitReturnCode return_code = wait(min_wait_millis, max_wait_millis);
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     } else if (return_code == WaitReturnCode::RAGE_PRESSED) {

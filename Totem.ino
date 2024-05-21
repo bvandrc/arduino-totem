@@ -59,16 +59,16 @@ void loop() {
 void doTheLightingMode() {
   switch (getTopDialPosition()) {
     case 1:
-      rainbowChaseEdges(1, 1600);
+      rainbowChaseEdges(1, 20, 3000, 1600);
       break;
     case 2:
-      rainbowChaseEdges(2, 1800);
+      rainbowChaseEdges(2, 10, 2000, 1800);
       break;
     case 3:
-      rainbowChaseEdges(4, 2300);
+      rainbowChaseEdges(4, 2, 2000, 2300);
       break;
     case 4:
-      rainbowChaseQuadrants(1, 2500);
+      rainbowChaseQuadrants(1, 40, 3000, 2500);
       break;
     case 5:
       theaterChaseCycle();

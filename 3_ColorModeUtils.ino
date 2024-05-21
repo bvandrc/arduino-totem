@@ -36,6 +36,7 @@ WaitReturnCode wait(uint32_t low_millis, uint32_t high_millis) {
     }
 
     frozen = speed < SPEED_DIAL_FROZEN_THRESHOLD;
+    // TODO: find better curve
     wait_time_millis =
         map(speed, SPEED_DIAL_FROZEN_THRESHOLD, DIAL_MAX, high_millis, low_millis);  // higher speed = lower millis
 
