@@ -321,7 +321,7 @@ void theaterChaseCycle() {
   }
 }
 
-void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
+void bullet(CRGB* bullet_colors, uint8_t len_bullet, uint16_t num_move_each_frame, uint16_t delay_millis) {
   static const uint8_t NUM_QUADRANTS = 4;
   struct OldLedInfo {
     CRGB color;
@@ -330,7 +330,7 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
   OldLedInfo old_led_info[NUM_QUADRANTS][len_bullet];
   CRGB* leds = FastLED.leds();
 
-  for (int16_t bullet_start = 0 - len_bullet; bullet_start < NUM_IN_QUADRANT; bullet_start++) {
+  for (int16_t bullet_start = 0 - len_bullet; bullet_start < NUM_IN_QUADRANT; bullet_start += num_move_each_frame) {
     for (uint8_t bullet_index = 0; bullet_index < len_bullet; bullet_index++) {
       uint8_t quadrant_index = bullet_start + bullet_index;
       if (quadrant_index >= 0 && quadrant_index < NUM_IN_QUADRANT) {
@@ -341,7 +341,7 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
           this_old_led_info.color = leds[actual_index];
           old_led_info[quadrant - 1][bullet_index] = this_old_led_info;
 
-          leds[actual_index] = bullet[bullet_index];
+          leds[actual_index] = bullet_colors[bullet_index];
         }
       }
     }
@@ -418,10 +418,10 @@ void tapFlash() {
   fillStrip(colors[0]);
 
   // set bullet
-  static const uint8_t LEN_BULLET = 12;
+  static const uint8_t LEN_BULLET = 15;
   CRGB bullet_colors[LEN_BULLET];
   fill_solid(bullet_colors, LEN_BULLET, colors[1]);
-  bullet(bullet_colors, LEN_BULLET, 2);
+  bullet(bullet_colors, LEN_BULLET, 2, 5);
 
   FastLED.setBrightness(prev_brightness);
 }
