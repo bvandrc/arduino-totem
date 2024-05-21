@@ -8,6 +8,27 @@
 
 const uint32_t MAX_HUE = 65536;
 
+/**
+ * Returns rage switch position if wasn't handled. If was handled, returns 0.
+ * Will never return 5 or 6 (reserved for common flash modes)
+ */
+uint8_t maybePerformRageModes() {
+  const uint8_t bottom_dial_position = getBottomDialPosition();
+  switch (bottom_dial_position) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return bottom_dial_position;
+    case 5:
+      rageFlashOnCurrent();
+      return 0;
+    case 6:
+      rageFlashRandomColor();
+      return 0;
+  }
+}
+
 void fillRainbowEdges(uint16_t first_pixel_hue, uint8_t num_cycles = 1) {
   const uint16_t hue_offset_multiplier = MAX_HUE * num_cycles / NUM_AROUND_EDGE;
   for (uint8_t i = 0; i < NUM_AROUND_EDGE; i++) {
@@ -80,7 +101,14 @@ void rainbowEdgeChaseAccelerate(uint16_t& first_pixel_hue, uint8_t num_cycles) {
   FastLED.setBrightness(prev_brightness);
 }
 
-void rainbowChaseEdges(uint8_t num_cycles, uint16_t rage_hue_step) {
+void rainbowEdgeChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, uint16_t rage_hue_step) {
+  while (rageButtonPushed()) {
+    fillRainbowEdges(first_pixel_hue, num_cycles);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    first_pixel_hue += rage_hue_step;
+  }
+}
   static const uint16_t HUE_STEP = MAX_HUE / NUM_AROUND_EDGE;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
@@ -92,25 +120,14 @@ void rainbowChaseEdges(uint8_t num_cycles, uint16_t rage_hue_step) {
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
-      switch (getBottomDialPosition()) {
+      switch (maybePerformRageModes()) {
         case 1:
           rainbowEdgeChaseAccelerate(first_pixel_hue, num_cycles);
           break;
         case 2:
         case 3:
         case 4:
-          while (rageButtonPushed()) {
-            fillRainbowEdges(first_pixel_hue, num_cycles);
-            fillRainbowMiddles(first_pixel_hue);
-            showStrip();
-            first_pixel_hue += rage_hue_step;
-          }
-          break;
-        case 5:
-          rageFlashOnCurrent();
-          break;
-        case 6:
-          rageFlashRandomColor();
+          rainbowEdgeChaseSpeedUp(first_pixel_hue, num_cycles, rage_hue_step);
           break;
       }
     }
@@ -153,7 +170,15 @@ void rainbowQuadrantChaseAccelerate(uint16_t& first_pixel_hue, uint8_t num_cycle
   FastLED.setBrightness(prev_brightness);
 }
 
-void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t rage_hue_step) {
+void rainbowQuadrantChaseSpeedUp(uint16_t& first_pixel_hue, uint8_t num_cycles, uint16_t rage_hue_step,
+                                 ChaseDirection chase_direction) {
+  while (rageButtonPushed()) {
+    fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
+    fillRainbowMiddles(first_pixel_hue);
+    showStrip();
+    first_pixel_hue += rage_hue_step;
+  }
+}
   static const uint16_t HUE_STEP = MAX_HUE / NUM_IN_QUADRANT;  // can't just set to 1 or else is super slow
   static uint16_t first_pixel_hue = 0;
   while (true) {
@@ -167,25 +192,14 @@ void rainbowChaseQuadrants(uint8_t num_cycles, uint16_t rage_hue_step) {
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
-      switch (getBottomDialPosition()) {
+      switch (maybePerformRageModes()) {
         case 1:
           rainbowQuadrantChaseAccelerate(first_pixel_hue, num_cycles, chase_direction);
           break;
         case 2:
         case 3:
         case 4:
-          while (rageButtonPushed()) {
-            fillRainbowQuadrants(first_pixel_hue, num_cycles, chase_direction);
-            fillRainbowMiddles(first_pixel_hue);
-            showStrip();
-            first_pixel_hue += rage_hue_step;
-          }
-          break;
-        case 5:
-          rageFlashOnCurrent();
-          break;
-        case 6:
-          rageFlashRandomColor();
+          rainbowQuadrantChaseSpeedUp(first_pixel_hue, num_cycles, rage_hue_step, chase_direction);
           break;
       }
     }
@@ -240,7 +254,7 @@ void rainbowFade() {
     if (return_code == WaitReturnCode::MODE_CHANGED) {
       return;
     } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
-      switch (getBottomDialPosition()) {
+      switch (maybePerformRageModes()) {
         case 1:
           rainbowFadeAccelerate(hue);
           break;
@@ -248,12 +262,6 @@ void rainbowFade() {
         case 3:
         case 4:
           hue_step = 2000;
-          break;
-        case 5:
-          rageFlashOnCurrent();
-          break;
-        case 6:
-          rageFlashRandomColor();
           break;
       }
     }
@@ -295,7 +303,7 @@ void theaterChaseCycle() {
       if (return_code == WaitReturnCode::MODE_CHANGED) {
         return;
       } else if (return_code == WaitReturnCode::RAGE_PRESSED) {
-        switch (getBottomDialPosition()) {
+        switch (maybePerformRageModes()) {
           case 1:
           // TODO: acceleration mode
           case 2:
@@ -308,12 +316,6 @@ void theaterChaseCycle() {
               }
             }
             getNewColors(colors, LEN_COLORS);
-            break;
-          case 5:
-            rageFlashOnCurrent();
-            break;
-          case 6:
-            rageFlashRandomColor();
             break;
         }
       }
