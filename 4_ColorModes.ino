@@ -362,16 +362,13 @@ void bullet(CRGB* bullet, uint8_t len_bullet, uint16_t delay_millis) {
   }
 }
 
+/**
+ * Returns a higher brightness than current
+ */
 uint8_t rageOrBumpBrightness(uint8_t prev_brightness) {
-  if (prev_brightness < 5) {
-    return prev_brightness + 1;
-  }
-
-  uint8_t new_brightness = prev_brightness * 1.5;
-  if (new_brightness > MAX_BRIGHTNESS) {
-    new_brightness = MAX_BRIGHTNESS;
-  }
-  return new_brightness;
+  const uint8_t min_new_brightness = prev_brightness + 1;
+  const uint8_t new_brightness = prev_brightness * 1.3;
+  return constrain(new_brightness, prev_brightness + 1, MAX_BRIGHTNESS);
 }
 
 void rageFlashRandomColor() {
