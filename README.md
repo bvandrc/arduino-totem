@@ -138,3 +138,6 @@ Select **Arduino Nano Every** as the board, set the port, and upload.
 [bvandrc/bvandrc-conventions](https://github.com/bvandrc/bvandrc-conventions) by
 `.github/workflows/sync-conventions.yml` (Mondays, or on demand). That directory is overwritten on every
 sync — edit the conventions upstream, not here.
+
+`CLAUDE.md` points Claude Code at those conventions and adds the rules specific to this sketch — file
+ordering, the memory constraints of the board, and how the animation loops handle input.
