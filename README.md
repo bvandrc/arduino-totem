@@ -1,10 +1,14 @@
 # Arduino Totem
 
-Arduino C++ firmware for a festival totem — a double-sided, LED-lit sign carried on a pole, driven by
-a WS2812 strip and controlled live with two rotary selectors, two potentiometers, a "rage" button and
-a tap-sensitive accelerometer.
+The code that runs my festival totem — a double-sided, LED-lit sign on a pole, driven by a WS2812 strip
+and controlled on the fly with two rotary selectors, two potentiometers, a "rage" button and a
+tap-sensitive accelerometer.
 
-Both faces of the totem are lit identically (mirrored), so the totem looks the same from either side.
+These are notes to myself, mostly for the next time I pick this up a year later and can't remember which
+dial does what. It's public in case any of it is useful to someone building their own — but it's wired
+for my totem specifically, so the pin numbers and pixel counts won't match yours.
+
+Both faces are lit identically (mirrored), so it looks the same from either side.
 
 ## Hardware
 
@@ -18,11 +22,11 @@ Both faces of the totem are lit identically (mirrored), so the totem looks the s
 | Potentiometer (speed) | `A2` |
 | "Rage" button | pin `2`, `INPUT_PULLUP`, wired normally-closed to GND (pressing it opens the circuit and reads HIGH) |
 | Adafruit LIS3DH accelerometer | I2C `0x18`, interrupt on pin `3` — single-tap detection |
-| Microphone | `A7`, wired but not currently used |
+| Microphone | `A7`, wired up but nothing reads it yet |
 
 ### Strip layout
 
-The strip is one continuous run wired across both faces. Each face is 101 pixels:
+One continuous run wired across both faces. Each face is 101 pixels:
 
 ```
              top edge (28)
@@ -40,24 +44,25 @@ The strip is one continuous run wired across both faces. Each face is 101 pixels
   on side 1, 6–19 on side 2) so light doesn't spill past the artwork; `showStrip()` force-blanks the rest
   on every frame.
 
-`2_HardwareOutputs.ino` exists to hide all of this: you address pixels by *edge*, *quadrant* or *middle*
-index and it maps that to the physical index, mirroring side 2 so animations run the same direction on
+`2_HardwareOutputs.ino` exists to hide all of this — address pixels by *edge*, *quadrant* or *middle*
+index and it works out the physical index, mirroring side 2 so animations run the same direction on
 both faces.
 
 ### Power
 
-`MAX_BRIGHTNESS` is capped at `20` — the brightness dial maps to `0..20`, not `0..255`. Measured current
-draw at various brightness levels for the 2021 (72 px) and 2022 (156 px) builds is tabulated in the
-comment at the top of `initStrip()` in `2_HardwareOutputs.ino`.
+`MAX_BRIGHTNESS` is capped at `20` — the brightness dial maps to `0..20`, not `0..255`. Current draw I
+measured at various brightness levels is in the comment at the top of `initStrip()` in
+`2_HardwareOutputs.ino`. Those tables are from the 2021 (72 px) and 2022 (156 px) builds, so at 202
+pixels the real numbers are higher than anything written there.
 
 ## Files
 
-Arduino concatenates every `.ino` in the sketch folder in alphabetical order, so the files are
-number-prefixed to keep that order meaningful. Each has a matching `.h` declaring what the others may use.
+Arduino concatenates every `.ino` in the sketch folder alphabetically, so the files are number-prefixed
+to keep that order meaningful. Each has a matching `.h` declaring what the rest of the sketch can use.
 
 | File | Contents |
 | --- | --- |
-| `Totem.ino` | `setup()` / `loop()`, boot diagnostics, mode dispatch, and `readAllInputs()` — the single place every input is polled |
+| `Totem.ino` | `setup()` / `loop()`, boot diagnostics, mode dispatch, and `readAllInputs()` — the one place every input is polled |
 | `1_HardwareInputs.ino` | Pin definitions, dial/button reads, `MyMotionSensor` (LIS3DH subclass) |
 | `2_HardwareOutputs.ino` | Strip init and the edge/quadrant/middle → physical index mapping |
 | `3_ColorModeUtils.ino` | `wait()` (the speed-dial-aware frame delay), random color selection, gamma correction, `ColorHSV()` |
@@ -93,7 +98,7 @@ Hold the rage button; the effect runs until you let go.
 
 ### Potentiometers
 
-- **Brightness** — maps directly onto `FastLED.setBrightness()`.
+- **Brightness** — maps straight onto `FastLED.setBrightness()`.
 - **Speed** — sets the per-frame delay between each mode's `min_wait_millis` and `max_wait_millis`.
   Turned below a threshold of `10` the animation **freezes** on the current frame.
 
@@ -104,30 +109,27 @@ while a 15-pixel "bullet" of a second color runs around all four quadrants at on
 
 ## Debug and boot diagnostics
 
-**At power-on** — hold the rage button for 5 seconds while the sketch boots. The dial positions select
-a diagnostic; the normal lighting loop does not start for the top-dial options:
+**At power-on** — hold the rage button for 5 seconds while it boots. The dial positions pick the
+diagnostic, and for the top-dial ones the normal lighting loop never starts:
 
 | Dial | Position | Result |
 | --- | --- | --- |
-| Top | 2 | Dim static rainbow on edges and middles (check every pixel) |
-| Top | 3 | Dim solid green (check for dead pixels / wiring) |
+| Top | 2 | Dim static rainbow on edges and middles — check every pixel |
+| Top | 3 | Dim solid green — spot dead pixels and bad wiring |
 | Bottom | 2 | Boot with tap detection disabled |
 
-**At runtime** — press the rage button while flipping the top dial back and forth between positions 1 and
-6. Five alternating presses opens debug mode: the totem goes solid blue for 5s, then acts on the bottom
-dial position (position 2 toggles tap detection; green flash = now on, red = now off). Other positions
-are reserved.
+**At runtime** — hold the rage button while flipping the top dial back and forth between positions 1 and
+6. Five alternating presses opens debug mode: solid blue for 5s, then it acts on the bottom dial
+(position 2 toggles tap detection; green flash = now on, red = now off). The other positions are empty
+slots waiting for something to toggle.
 
-## Building
+## Flashing it
 
-Built with the [VS Code Arduino extension](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino);
-`.vscode/arduino.json` pins the board, sketch and programmer, and `.vscode/c_cpp_properties.json` wires up
-IntelliSense. The Arduino IDE works too — open `Totem.ino`.
+VS Code with the [Arduino extension](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino).
+`.vscode/arduino.json` already pins the board, sketch and programmer — the port is set to `COM3`, so that's
+the thing to fix first when it won't upload. `.vscode/c_cpp_properties.json` has the include paths for
+IntelliSense, hardcoded to my machine. The Arduino IDE works fine too; just open `Totem.ino`.
 
-Libraries required:
-
-- [FastLED](https://github.com/FastLED/FastLED)
-- [Adafruit LIS3DH](https://github.com/adafruit/Adafruit_LIS3DH) 1.2.2 (pulls in Adafruit BusIO and
-  Adafruit Unified Sensor)
-
-Select **Arduino Nano Every** as the board, set the port, and upload.
+Libraries: [FastLED](https://github.com/FastLED/FastLED) and
+[Adafruit LIS3DH](https://github.com/adafruit/Adafruit_LIS3DH) 1.2.2 (which drags in Adafruit BusIO and
+Adafruit Unified Sensor).

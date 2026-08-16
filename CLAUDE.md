@@ -10,9 +10,13 @@ conflict, `conventions/all.md` wins.
 
 ## What this is
 
-Arduino C++ firmware for a festival totem — a double-sided WS2812-lit sign on a pole. See
-[`README.md`](README.md) for the hardware, strip layout and controls. Read it before changing anything
-that touches pixel addressing or the dials.
+The Arduino sketch for the repo owner's festival totem — a double-sided WS2812-lit sign on a pole. One
+physical device, one person maintaining it, no users. See [`README.md`](README.md) for the hardware, strip
+layout and controls; read it before changing anything that touches pixel addressing or the dials.
+
+That context should shape what you build. The constants describe the totem that exists — don't
+parameterize them for hypothetical other builds, don't add config layers or feature flags, and don't keep
+old code paths working for compatibility's sake. If something is being replaced, delete it.
 
 ## Layout
 
@@ -43,6 +47,7 @@ Match the surrounding code:
 - 2-space indent, 120-column lines, braces on the same line.
 - Trailing `//` on an argument line is a formatting marker that pins a multi-line call's layout; leave it
   in place when editing those calls.
+- The `TODO`s scattered around are real notes, not cruft. Leave them unless you're doing the thing.
 
 ## Animation loop rules
 
@@ -59,10 +64,12 @@ Paint through the `setPixelColor*` helpers in `2_HardwareOutputs.ino` (edge / qu
 rather than indexing `leds[]` directly — they handle the side-2 mirroring. Call `showStrip()`, not
 `FastLED.show()`, so the unused middle pixels get blanked.
 
-## Building
+## Verifying
 
-There is no CI build and no test suite; changes are verified by flashing the board. Compile with the VS
-Code Arduino extension (`.vscode/arduino.json` pins board, sketch and programmer) or the Arduino IDE,
-targeting **Arduino Nano Every**. Requires the FastLED and Adafruit LIS3DH (1.2.2) libraries.
+There is no CI, no test suite, and no emulator. The only way to know a change works is to flash the board
+and look at it, which only the owner can do — you can't. Say what you changed and what needs eyes on it;
+never imply you tested something you didn't.
 
-If you change something you can't flash, say so plainly rather than implying it was tested.
+The timing, brightness and color values were tuned by eye on the real hardware. Treat them as
+measurements, not guesses — if a change alters how something looks or how fast it moves, flag it as a
+judgement call rather than quietly retuning it.
