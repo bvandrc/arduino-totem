@@ -44,7 +44,9 @@ Match the surrounding code:
 
 - `camelCase` functions, `snake_case` locals and members, `SCREAMING_SNAKE_CASE` constants.
 - `const` on locals that don't change — this codebase does it consistently.
-- 2-space indent, 120-column lines, braces on the same line.
+- 2-space indent, 120-column lines, braces on the same line. This is `.clang-format` (Google, 120 columns,
+  short bodies never collapsed onto their declaration line) — run `clang-format --style=file -i *.ino *.h`
+  after editing, and CI checks it.
 - Trailing `//` on an argument line is a formatting marker that pins a multi-line call's layout; leave it
   in place when editing those calls.
 - The `TODO`s scattered around are real notes, not cruft. Leave them unless you're doing the thing.
@@ -66,9 +68,10 @@ rather than indexing `leds[]` directly — they handle the side-2 mirroring. Cal
 
 ## Verifying
 
-There is no CI, no test suite, and no emulator. The only way to know a change works is to flash the board
-and look at it, which only the owner can do — you can't. Say what you changed and what needs eyes on it;
-never imply you tested something you didn't.
+CI only checks formatting. There is no test suite, no emulator, and nothing that compiles the sketch — a
+green check means the code is formatted, not that it works. The only way to know a change works is to flash
+the board and look at it, which only the owner can do — you can't. Say what you changed and what needs eyes
+on it; never imply you tested something you didn't.
 
 The timing, brightness and color values were tuned by eye on the real hardware. Treat them as
 measurements, not guesses — if a change alters how something looks or how fast it moves, flag it as a

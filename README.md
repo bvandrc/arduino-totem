@@ -133,3 +133,14 @@ IntelliSense, hardcoded to my machine. The Arduino IDE works fine too; just open
 Libraries: [FastLED](https://github.com/FastLED/FastLED) and
 [Adafruit LIS3DH](https://github.com/adafruit/Adafruit_LIS3DH) 1.2.2 (which drags in Adafruit BusIO and
 Adafruit Unified Sensor).
+
+## Formatting
+
+`.clang-format` holds the house style (Google, 120 columns). Reformat with:
+
+```
+clang-format --style=file -i *.ino *.h
+```
+
+A GitHub Actions job checks it on every push and PR. That's the only CI — nothing compiles or runs the
+sketch, so a green check says the code is formatted and nothing more.

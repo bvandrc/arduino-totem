@@ -1,0 +1,23 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # Allows manual triggering
+
+permissions:
+  contents: read
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned so a runner-image bump can't reformat the sketch out from under us.
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends clang-format-18
+
+      - name: Check formatting
+        run: clang-format-18 --style=file --dry-run --Werror *.ino *.h
