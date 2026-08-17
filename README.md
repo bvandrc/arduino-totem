@@ -118,4 +118,4 @@ Libraries: [FastLED](https://github.com/FastLED/FastLED) and [Adafruit LIS3DH](h
 clang-format --style=file -i *.ino *.h
 ```
 
-A GitHub Actions job checks it on every push and PR. That's the only CI — nothing compiles or runs the sketch, so a green check says the code is formatted and nothing more.
+A GitHub Actions job checks it on every push and PR, alongside a second job that compiles the sketch for the Nano Every (same board, libraries and `mode=off` register setting as `.vscode/arduino.json`). Nothing runs the sketch, so a green check says it's formatted and it builds — not that it does the right thing on the pole.

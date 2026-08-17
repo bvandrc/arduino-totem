@@ -50,6 +50,6 @@ Paint through the `setPixelColor*` helpers in `2_HardwareOutputs.ino` (edge / qu
 
 ## Verifying
 
-CI only checks formatting. There is no test suite, no emulator, and nothing that compiles the sketch — a green check means the code is formatted, not that it works. The only way to know a change works is to flash the board and look at it, which only the owner can do — you can't. Say what you changed and what needs eyes on it; never imply you tested something you didn't.
+CI checks formatting and compiles the sketch for the Nano Every. There is no test suite and no emulator — a green check means the code is formatted and builds, not that it works. The only way to know a change works is to flash the board and look at it, which only the owner can do — you can't. Say what you changed and what needs eyes on it; never imply you tested something you didn't.
 
 The timing, brightness and color values were tuned by eye on the real hardware. Treat them as measurements, not guesses — if a change alters how something looks or how fast it moves, flag it as a judgement call rather than quietly retuning it.

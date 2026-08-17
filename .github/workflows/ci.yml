@@ -21,3 +21,33 @@ jobs:
 
       - name: Check formatting
         run: clang-format-18 --style=file --dry-run --Werror *.ino *.h
+
+  compile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10 # The job takes about a minute; this is just a backstop against a hung download.
+    steps:
+      - uses: actions/checkout@v4
+
+      # Arduino only accepts a sketch folder whose name matches its main .ino, and
+      # the checkout is named after the repo. Copy the sketch into a folder it likes.
+      - name: Stage sketch as Totem/
+        run: |
+          mkdir Totem
+          cp *.ino *.h Totem/
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      # LIS3DH is pinned to the version the sketch notes it was written against.
+      # FastLED isn't pinned, because the totem isn't pinned to a version either — if an
+      # upstream release breaks this job, pin it here and in the README together.
+      - name: Install board and libraries
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:megaavr
+          arduino-cli lib install FastLED
+          arduino-cli lib install "Adafruit LIS3DH"@1.2.2
+
+      # mode=off is the register-emulation setting from .vscode/arduino.json — it
+      # changes the build, so compile the same way the board is actually flashed.
+      - name: Compile for Nano Every
+        run: arduino-cli compile --fqbn arduino:megaavr:nona4809:mode=off Totem
