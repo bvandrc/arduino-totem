@@ -8,7 +8,7 @@ extern const uint16_t DIAL_MAX;
 extern const uint8_t MAX_BRIGHTNESS;
 
 class MyMotionSensor : public Adafruit_LIS3DH {
-  public:
+ public:
   MyMotionSensor();
 
   void init();
