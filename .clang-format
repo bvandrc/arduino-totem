@@ -1,0 +1,8 @@
+BasedOnStyle: Google
+ColumnLimit: 120
+InsertNewlineAtEOF: true
+
+# The sketch never collapses a body onto its declaration line, even a one-liner.
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
