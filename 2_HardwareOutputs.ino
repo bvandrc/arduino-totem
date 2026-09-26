@@ -53,13 +53,17 @@ void setPixelColor(uint16_t index, CRGB color) {
 }
 
 void fillStrip(int16_t first, uint16_t count, CRGB color) {
-  if (first >= FastLED.size()) {
-    return;
-  } else if (first < 0) {
-    fill_solid(leds, count + first, color);
-  } else {
-    fill_solid(leds + (uint16_t)first, count, color);
+  int16_t end = first + (int16_t)count;  // exclusive; clamp both ends so a partial stripe stays on the strip
+  if (first < 0) {
+    first = 0;
   }
+  if (end > FastLED.size()) {
+    end = FastLED.size();
+  }
+  if (end <= first) {
+    return;
+  }
+  fill_solid(leds + (uint16_t)first, end - first, color);
 }
 
 void fillStrip(CRGB color) {

@@ -22,6 +22,9 @@ void debugMode() {
       break;
     case 2:
       motionSensor.tap_enabled = !motionSensor.tap_enabled;
+      if (motionSensor.tap_enabled) {
+        motionSensor.init();  // setup() skips init when booted with tap disabled, so the sensor may not be set up yet
+      }
       indicateSettingChange(motionSensor.tap_enabled);
       break;
     case 3:
