@@ -289,7 +289,8 @@ void theaterChaseCycle() {
   static const uint32_t COLOR_CHANGE_TIME_MILLIS = 10000;
   static const uint8_t MAX_STAGGER = WIDTH * 2;
   static const uint8_t LEN_COLORS = 2;
-  CRGB colors[LEN_COLORS];
+  // getNewColors avoids hues already in the array, so it must start from known values, not stack garbage
+  CRGB colors[LEN_COLORS] = {CRGB::Black, CRGB::Black};
   getNewColors(colors, LEN_COLORS);
 
   unsigned long last_changed_time = millis();
@@ -353,7 +354,7 @@ void bullet(CRGB* bullet_colors, uint8_t len_bullet, uint16_t num_move_each_fram
       }
     }
 
-    FastLED.show();
+    showStrip();
 
     for (uint8_t bullet_index = 0; bullet_index < len_bullet; bullet_index++) {
       uint8_t quadrant_index = bullet_start + bullet_index;
